@@ -18,6 +18,16 @@ export default function Login() {
             placeholder="Password"
             className="p-2 border rounded-lg"
           />
+          
+           <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-white hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
 
           <button className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
             Login
