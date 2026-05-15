@@ -2,11 +2,35 @@ import { Link } from "react-router-dom";
 
 export default function Login() {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-80">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
+    <div
+      className="
+        flex
+        items-center
+        justify-center
+        min-h-screen
+        bg-gradient-to-br
+        from-blue-500
+        via-indigo-500
+        to-purple-600
+        p-4
+      "
+    >
+      <div
+        className="
+          backdrop-blur-lg
+          bg-white/20
+          border
+          border-white/30
+          p-8
+          rounded-3xl
+          shadow-2xl
+          w-full
+          max-w-sm
+        "
+      >
+        <h2 className="text-2xl font-semibold mb-6 text-center">Welcome Back</h2>
 
-        <form className="flex flex-col gap-3">
+        <form className="flex flex-col gap-4">
           <input
             type="email"
             placeholder="Email"
