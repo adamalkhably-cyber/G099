@@ -9,41 +9,70 @@ export default function Login() {
         justify-center
         min-h-screen
         bg-gradient-to-br
-        from-blue-500
-        via-indigo-500
-        to-purple-600
+        from-pink-300
+        via-purple-300
+        to-indigo-400
         p-4
       "
     >
       <div
         className="
-          backdrop-blur-lg
-          bg-white/20
-          border
-          border-white/30
-          p-8
-          rounded-3xl
-          shadow-2xl
           w-full
           max-w-sm
+          p-8
+          rounded-3xl
+
+          bg-white/20
+          backdrop-blur-xl
+
+          border
+          border-white/30
+
+          shadow-2xl
         "
       >
-        <h2 className="text-2xl font-semibold mb-6 text-center">Welcome Back</h2>
+        <h2
+          className="
+            text-3xl
+            font-bold
+            text-white
+            text-center
+            mb-6
+          "
+        >
+          Welcome Back
+        </h2>
 
         <form className="flex flex-col gap-4">
           <input
             type="email"
             placeholder="Email"
-            className="p-2 border rounded-lg"
+            className="
+              p-3
+              rounded-xl
+              bg-white/80
+              outline-none
+              focus:ring-2
+              focus:ring-blue-300
+              transition
+            "
           />
 
           <input
             type="password"
             placeholder="Password"
-            className="p-2 border rounded-lg"
+            className="
+              p-3
+              rounded-xl
+              bg-white/80
+              outline-none
+              focus:ring-2
+              focus:ring-blue-300
+              transition
+            "
           />
-          
-           <div className="text-right">
+
+          <div className="text-right">
             <Link
               to="/forgot-password"
               className="text-sm text-white hover:underline"
@@ -52,15 +81,29 @@ export default function Login() {
             </Link>
           </div>
 
-
-          <button className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
+          <button
+            className="
+              bg-white
+              text-blue-600
+              font-semibold
+              p-3
+              rounded-xl
+              hover:bg-blue-100
+              transition
+              duration-300
+              shadow-md
+            "
+          >
             Login
           </button>
         </form>
 
-        <p className="text-sm mt-4 text-center">
+        <p className="text-sm mt-4 text-center text-white">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-500">
+          <Link
+            to="/register"
+            className="font-semibold hover:underline"
+          >
             Register
           </Link>
         </p>
