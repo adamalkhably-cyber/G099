@@ -74,7 +74,7 @@ export default function Login() {
 
           <div className="text-right">
             <Link
-              to="/forgot-password"
+              to="/ForgotPassword"
               className="text-sm text-white hover:underline"
             >
               Forgot Password?
@@ -101,7 +101,7 @@ export default function Login() {
         <p className="text-sm mt-4 text-center text-white">
           Don’t have an account?{" "}
           <Link
-            to="/register"
+            to="/Register"
             className="font-semibold hover:underline"
           >
             Register

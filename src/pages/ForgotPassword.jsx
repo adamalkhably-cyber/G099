@@ -44,10 +44,17 @@ export default function ForgotPassword() {
           Enter your email and we’ll send you a password reset link.
         </p>
 
-        <form className="flex flex-col gap-4">
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log("Reset link sent");
+          }}
+        >
           <input
             type="email"
             placeholder="Enter your email"
+            required
             className="
               p-3
               rounded-xl
@@ -60,6 +67,7 @@ export default function ForgotPassword() {
           />
 
           <button
+            type="submit"
             className="
               bg-white
               text-blue-600
@@ -79,7 +87,7 @@ export default function ForgotPassword() {
         <p className="text-sm text-center text-white mt-6">
           Remember your password?{" "}
           <Link
-            to="/login"
+            to="/" 
             className="font-semibold hover:underline"
           >
             Back to Login
