@@ -1,12 +1,16 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_mail import Mail
+from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
 
 from config import config
 from models import db, bcrypt
 from routes.auth import auth_bp, init_mail
+from routes.wardrobe import wardrobe_bp
+from routes.outfits import outfits_bp
+from routes.calendar import calendar_bp
 
 # Load environment variables
 load_dotenv()
@@ -22,7 +26,8 @@ def create_app(config_name=None):
     # Initialize extensions
     db.init_app(app)
     bcrypt.init_app(app)
-    CORS(app)
+    jwt = JWTManager(app)
+    CORS(app, supports_credentials=True)
     
     # Initialize mail
     Mail(app)
@@ -30,6 +35,9 @@ def create_app(config_name=None):
     
     # Register blueprints
     app.register_blueprint(auth_bp)
+    app.register_blueprint(wardrobe_bp)
+    app.register_blueprint(outfits_bp)
+    app.register_blueprint(calendar_bp)
     
     # Create database tables
     with app.app_context():
