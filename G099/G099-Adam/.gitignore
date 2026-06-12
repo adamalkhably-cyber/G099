@@ -1,0 +1,12 @@
+closet.db
+
+# SQLite databases
+*.db
+*.sqlite
+
+# VS Code settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
