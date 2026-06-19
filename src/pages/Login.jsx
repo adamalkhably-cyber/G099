@@ -8,10 +8,10 @@ export default function Login() {
         items-center
         justify-center
         min-h-screen
-        bg-gradient-to-br
-        from-pink-300
-        via-purple-300
-        to-indigo-400
+        bg-gradient-to-b
+        from-teal-500
+        via-teal-300
+        to-cyan-300
         p-4
       "
     >

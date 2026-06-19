@@ -8,10 +8,10 @@ export default function ForgotPassword() {
         items-center
         justify-center
         min-h-screen
-        bg-gradient-to-br
-        from-pink-300
-        via-purple-300
-        to-indigo-400
+        bg-gradient-to-b
+        from-teal-600
+        via-teal-400
+        to-cyan-400
         p-4
       "
     >
