@@ -5,8 +5,6 @@
 <title>Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --exterior: #045D5D;
     --exterior-dark: #033f3f;
@@ -17,41 +15,21 @@
     --interior-soft: #c2e9e6;
     --text-on-exterior: #e4f5f3;
     --text-on-interior: #033f3f;
-    --accent-gold: #c9a84c;
-    --accent-gold-light: #e8c97a;
     --white: #ffffff;
-    --shadow-deep: rgba(4, 93, 93, 0.18);
     --shadow-subtle: rgba(4, 93, 93, 0.08);
   }
 
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--exterior-dark);
-    min-height: 100vh;
     color: var(--text-on-exterior);
-    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  /* Subtle texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 60px,
-      rgba(129, 205, 198, 0.03) 60px,
-      rgba(129, 205, 198, 0.03) 61px
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body 
-   { font-family: 'DM Sans', sans-serif; background: var(--exterior-dark); color: var(--text-on-exterior); }
-
-  .layout {
+    .layout {
     position: relative;
     z-index: 1;
     display: grid;
@@ -790,8 +768,8 @@
   }
   .login-box button:hover { background: var(--exterior-light); }
 
-  /* Hide dashboard until login */
-  .layout { display: none; }
+  /* Dashboard hidden until login */
+  .layout { display: none; grid-template-columns: 260px 1fr; min-height: 100vh; }
 </style>
 </head>
 <body>
@@ -807,24 +785,20 @@
 </div>
 
 <!-- ADMIN DASHBOARD -->
-<div class="layout">
-
-  <!-- SIDEBAR -->
+<div class="layout" id="adminLayout">
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">⚙️</div>
       <div class="brand-name">Admin</div>
       <div class="brand-sub">Control Panel</div>
     </div>
-
     <div class="sidebar-section">Management</div>
-    <a class="nav-item" href="admin-users.html">Users</a>
-    <a class="nav-item" href="admin-clothes.html">Clothes</a>
-    <a class="nav-item" href="admin-analytics.html">Analytics</a>
-    <a class="nav-item" href="admin-settings.html">System Settings</a>
+    <a class="nav-item" href="#">Users</a>
+    <a class="nav-item" href="#">Clothes</a>
+    <a class="nav-item" href="#">Analytics</a>
+    <a class="nav-item" href="#">System Settings</a>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
     <header class="topbar">
       <div class="topbar-title">Admin Dashboard</div>
@@ -832,63 +806,31 @@
         <button class="btn-add">+ Add User</button>
       </div>
     </header>
-
     <div class="content">
-      <!-- Stats -->
       <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">Total Users</div>
-          <div class="stat-value">12</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Total Clothes</div>
-          <div class="stat-value">142</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Items Added</div>
-          <div class="stat-value">8</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Login Activity</div>
-          <div class="stat-value">34</div>
-        </div>
+        <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">12</div></div>
+        <div class="stat-card"><div class="stat-label">Total Clothes</div><div class="stat-value">142</div></div>
+        <div class="stat-card"><div class="stat-label">Items Added</div><div class="stat-value">8</div></div>
+        <div class="stat-card"><div class="stat-label">Login Activity</div><div class="stat-value">34</div></div>
       </div>
-
-      <!-- User Management Panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">User Accounts</span>
-          <button class="panel-action">Manage →</button>
-        </div>
-        <table class="recent-table">
-          <tr><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr>
-          <tr><td>ava</td><td>Admin</td><td>Active</td><td><button>Edit</button> <button>Delete</button></td></tr>
-          <tr><td>john</td><td>User</td><td>Active</td><td><button>Edit</button> <button>Delete</button></td></tr>
-        </table>
-      </div>
-
-      <!-- Clothes Management Panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Clothes Database</span>
-          <button class="panel-action">View All →</button>
-        </div>
-        <div class="wardrobe-grid">
-          <!-- Same clothing-card style as dashboard -->
-          <div class="clothing-card">
-            <div class="clothing-img">
-                <img src="assets/images/striped-oxford.png" alt="Striped Oxford" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <div class="clothing-info">
-              <div class="clothing-name">Striped Oxford</div>
-              <div class="clothing-cat">Tops</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </main>
 </div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  // Replace with real backend call
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+  if(user === "Adam" && pass === "adam12adam"){ // demo check
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminLayout").style.display = "grid";
+  } else {
+    alert("Login failed");
+  }
+});
+</script>
+
 </body>
 </html>
