@@ -11,6 +11,7 @@ from routes.auth import auth_bp, init_mail
 from routes.wardrobe import wardrobe_bp
 from routes.outfits import outfits_bp
 from routes.calendar import calendar_bp
+from routes.admin import admin_bp
 
 # Load environment variables
 load_dotenv()
@@ -38,6 +39,7 @@ def create_app(config_name=None):
     app.register_blueprint(wardrobe_bp)
     app.register_blueprint(outfits_bp)
     app.register_blueprint(calendar_bp)
+    app.register_blueprint(admin_bp)
     
     # Create database tables
     with app.app_context():
