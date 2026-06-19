@@ -8,7 +8,7 @@ export default function Login() {
         items-center
         justify-center
         min-h-screen
-        bg-gradient-to-b
+        bg-linear-to-b
         from-teal-500
         via-teal-300
         to-cyan-300

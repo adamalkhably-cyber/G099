@@ -8,7 +8,7 @@ export default function ForgotPassword() {
         items-center
         justify-center
         min-h-screen
-        bg-gradient-to-b
+        bg-linear-to-b
         from-teal-600
         via-teal-400
         to-cyan-400
