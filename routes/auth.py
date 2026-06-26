@@ -66,6 +66,9 @@ def login():
         
         if not user or not user.check_password(data['password']):
             return jsonify({'error': 'Invalid email or password'}), 401
+
+        if not user.is_active:
+            return jsonify({'error': 'User account is deactivated'}), 403
         
         # Create JWT token
         access_token = create_access_token(identity=user.id)

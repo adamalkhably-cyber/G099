@@ -238,6 +238,203 @@ def delete_user(user_id):
         return jsonify({'error': str(e)}), 500
 
 
+@admin_bp.route('/users/<int:user_id>/toggle-active', methods=['POST'])
+@check_admin_access
+def toggle_user_active(user_id):
+    """Activate or deactivate a user account"""
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        if get_jwt_identity() == user_id:
+            return jsonify({'error': 'Cannot modify your own active status'}), 400
+
+        user.is_active = not user.is_active
+        db.session.commit()
+
+        return jsonify({
+            'message': 'User active status updated',
+            'is_active': user.is_active
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/users/<int:user_id>/reset-password', methods=['POST'])
+@check_admin_access
+def admin_reset_user_password(user_id):
+    """Reset a user's password as an admin"""
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        data = request.json
+        if not data or 'new_password' not in data:
+            return jsonify({'error': 'Missing new_password'}), 400
+
+        user.set_password(data['new_password'])
+        db.session.commit()
+
+        return jsonify({'message': 'User password reset successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/items', methods=['GET'])
+@check_admin_access
+def get_all_items():
+    """Get all wardrobe items across all users"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        category = request.args.get('category', type=str)
+        color = request.args.get('color', type=str)
+        brand = request.args.get('brand', type=str)
+        search = request.args.get('search', type=str)
+
+        query = ClothingItem.query
+        if category:
+            query = query.filter(ClothingItem.category.ilike(f'%{category}%'))
+        if color:
+            query = query.filter(ClothingItem.color.ilike(f'%{color}%'))
+        if brand:
+            query = query.filter(ClothingItem.brand.ilike(f'%{brand}%'))
+        if search:
+            query = query.filter(ClothingItem.name.ilike(f'%{search}%'))
+
+        items = query.paginate(page=page, per_page=per_page, error_out=False)
+        items_data = []
+        for item in items.items:
+            item_data = item.to_dict()
+            item_data['username'] = item.user.username
+            item_data['user_email'] = item.user.email
+            items_data.append(item_data)
+
+        return jsonify({
+            'items': items_data,
+            'total': items.total,
+            'pages': items.pages,
+            'current_page': page
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/items/<int:item_id>/delete', methods=['DELETE'])
+@check_admin_access
+def delete_item(item_id):
+    """Delete a wardrobe item"""
+    try:
+        item = ClothingItem.query.get(item_id)
+        if not item:
+            return jsonify({'error': 'Item not found'}), 404
+
+        db.session.delete(item)
+        db.session.commit()
+
+        return jsonify({'message': 'Item deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/outfits', methods=['GET'])
+@check_admin_access
+def get_all_outfits():
+    """Get all outfits across all users"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        search = request.args.get('search', type=str)
+        flagged = request.args.get('flagged', type=str)
+
+        query = Outfit.query
+        if search:
+            query = query.filter(Outfit.name.ilike(f'%{search}%'))
+        if flagged is not None:
+            if flagged.lower() in ['true', '1', 'yes']:
+                query = query.filter(Outfit.is_flagged.is_(True))
+            elif flagged.lower() in ['false', '0', 'no']:
+                query = query.filter(Outfit.is_flagged.is_(False))
+
+        outfits = query.paginate(page=page, per_page=per_page, error_out=False)
+        outfits_data = []
+        for outfit in outfits.items:
+            outfits_data.append({
+                'id': outfit.id,
+                'name': outfit.name,
+                'description': outfit.description,
+                'is_flagged': outfit.is_flagged,
+                'flagged_reason': outfit.flagged_reason,
+                'username': outfit.user.username,
+                'user_email': outfit.user.email,
+                'items': [item.to_dict() for item in outfit.items],
+                'created_at': outfit.created_at.isoformat(),
+                'updated_at': outfit.updated_at.isoformat() if outfit.updated_at else None
+            })
+
+        return jsonify({
+            'outfits': outfits_data,
+            'total': outfits.total,
+            'pages': outfits.pages,
+            'current_page': page
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/outfits/<int:outfit_id>/flag', methods=['POST'])
+@check_admin_access
+def flag_outfit(outfit_id):
+    """Flag or unflag an outfit"""
+    try:
+        outfit = Outfit.query.get(outfit_id)
+        if not outfit:
+            return jsonify({'error': 'Outfit not found'}), 404
+
+        data = request.json or {}
+        if 'is_flagged' in data:
+            outfit.is_flagged = bool(data['is_flagged'])
+        else:
+            outfit.is_flagged = True
+
+        if 'flagged_reason' in data:
+            outfit.flagged_reason = data['flagged_reason']
+
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Outfit flag status updated',
+            'is_flagged': outfit.is_flagged,
+            'flagged_reason': outfit.flagged_reason
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/outfits/<int:outfit_id>/delete', methods=['DELETE'])
+@check_admin_access
+def delete_outfit_admin(outfit_id):
+    """Delete an outfit"""
+    try:
+        outfit = Outfit.query.get(outfit_id)
+        if not outfit:
+            return jsonify({'error': 'Outfit not found'}), 404
+
+        db.session.delete(outfit)
+        db.session.commit()
+
+        return jsonify({'message': 'Outfit deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 # ==================== SYSTEM STATS ====================
 
 @admin_bp.route('/stats/users', methods=['GET'])
@@ -297,6 +494,17 @@ def get_wardrobe_stats():
         
         color_data = [{'color': color, 'count': count} for color, count in colors]
         
+        brands = db.session.query(
+            ClothingItem.brand,
+            func.count(ClothingItem.id).label('count')
+        ).filter(ClothingItem.brand != None).group_by(
+            ClothingItem.brand
+        ).order_by(
+            func.count(ClothingItem.id).desc()
+        ).limit(10).all()
+        
+        brand_data = [{'brand': brand, 'count': count} for brand, count in brands]
+        
         # Average items per user
         avg_items_per_user = db.session.query(
             func.avg(func.count(ClothingItem.id))
@@ -306,7 +514,8 @@ def get_wardrobe_stats():
             'total_items': total_items,
             'avg_items_per_user': round(float(avg_items_per_user), 2),
             'categories': category_data,
-            'top_colors': color_data
+            'top_colors': color_data,
+            'top_brands': brand_data
         }), 200
     
     except Exception as e:

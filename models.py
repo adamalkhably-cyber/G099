@@ -16,6 +16,7 @@ class User(db.Model):
     reset_token = db.Column(db.String(255), nullable=True)
     reset_token_expiry = db.Column(db.DateTime, nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -39,7 +40,10 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'created_at': self.created_at.isoformat()
+            'is_admin': self.is_admin,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
     
     def __repr__(self):
@@ -62,6 +66,7 @@ class ClothingItem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False)  # shirt, pants, dress, jacket, etc.
+    brand = db.Column(db.String(100))
     color = db.Column(db.String(50))
     size = db.Column(db.String(10))
     image_path = db.Column(db.String(255))
@@ -74,11 +79,13 @@ class ClothingItem(db.Model):
             'id': self.id,
             'name': self.name,
             'category': self.category,
+            'brand': self.brand,
             'color': self.color,
             'size': self.size,
             'image_path': self.image_path,
             'description': self.description,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
     
     def __repr__(self):
@@ -94,6 +101,8 @@ class Outfit(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     items = db.relationship('ClothingItem', secondary=outfit_items, lazy='joined')
+    is_flagged = db.Column(db.Boolean, default=False)
+    flagged_reason = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -103,7 +112,10 @@ class Outfit(db.Model):
             'name': self.name,
             'description': self.description,
             'items': [item.to_dict() for item in self.items],
-            'created_at': self.created_at.isoformat()
+            'is_flagged': self.is_flagged,
+            'flagged_reason': self.flagged_reason,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
     
     def __repr__(self):
