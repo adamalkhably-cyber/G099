@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit Planner</title>
+    <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+
+    <div class="planner-container">
+        <h2>Outfit Planner</h2>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-header">
+                <button id="prevMonthBtn">&lt;</button>
+                <h4 id="monthYearTitle"></h4>
+                <button id="nextMonthBtn">&gt;</button>
+            </div>
+            <div class="weekdays-grid">
+                <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+            </div>
+            <div id="daysGrid" class="days-grid"></div>
+        </div>
+
+        <h3 class="date-display">Selected Date: <span id="selectedDateText"></span></h3>
+
+        <div id="outfitDisplay" class="outfit-box">
+            </div>
+    </div>
+
+    <script src="calendar.js"></script>
+</body>
+</html>

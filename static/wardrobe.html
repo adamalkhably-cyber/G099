@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Wardrobe</title>
+  <link rel="stylesheet" href="theme.css">
+<script src="app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/><path d="M8 6V4a2 2 0 0 1 4 0v2"/></svg>
+    </div>
+    <div class="brand-name">Wardrobe</div>
+    <div class="brand-sub">Digital Closet</div>
+  </div>
+
+  <div class="sidebar-section">Main</div>
+
+  <a class="nav-item" href="dashboard.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+
+  <a class="nav-item" href="wardrobe.html">
+    <svg viewBox="0 0 24 24"><path d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5z"/><path d="M14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5z"/><path d="M4 17a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2z"/><path d="M14 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6z"/></svg>
+    My Wardrobe
+    <span class="nav-badge">142</span>
+  </a>
+
+  <a class="nav-item" href="planner.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    Outfit Planner
+  </a>
+
+  <a class="nav-item" href="capsule.html">
+    <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    Capsule Wardrobe
+  </a>
+
+  <a class="nav-item" href="favorites.html">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Favorites
+  </a>
+
+  <div class="sidebar-section">Insights</div>
+
+  <a class="nav-item" href="outfits.html">
+    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-4 4"/></svg>
+    Outfits Worn This Week
+  </a>
+
+  <a class="nav-item" href="insights.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Style Insights
+  </a>
+
+  <div class="sidebar-section">Settings</div>
+
+  <a class="nav-item" href="settings.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6.1A10 10 0 0 0 2.05 14"/><path d="M5.08 19.14A10 10 0 0 0 12 22c1.39 0 2.72-.28 3.93-.79"/><path d="M19.07 19.07A10 10 0 0 0 22 12a10 10 0 0 0-.08-1.32"/></svg>
+    Settings
+  </a>
+
+  <div class="sidebar-spacer"></div>
+
+<div class="sidebar-profile">
+    <div class="avatar-container">
+        <!-- The image tag (hidden by default until a picture is uploaded) -->
+        <img id="sidebar-avatar-img" src="" alt="Profile" style="display: none;">
+        <!-- The initials fallback -->
+        <div class="avatar" id="sidebar-avatar">H</div>
+    </div>
+    <div class="profile-info">
+        <span class="profile-name" id="sidebar-username">Haziq</span>
+        <span class="profile-plan">Pro Plan</span>
+    </div>
+</div>
+</aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title">My Wardrobe</div>
+      </header>
+      <div class="content">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Wardrobe Items</span></div>
+          <div class="outfit-builder">
+            <input type="text" id="outfit-name-input" placeholder="Enter Outfit Name (e.g., Summer Vibes)">
+           <button onclick="createOutfit()" class="save-btn">Create & Save Outfit</button>
+          </div>
+       <div class="wardrobe-grid">
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Casual T-Shirt"> 
+        <div class="clothing-img">
+            <img src="assets/images/shirt.png" alt="Casual T-Shirt" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Casual T-Shirt</div>
+            <div class="clothing-cat">Tops</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Denim Jeans">
+        <div class="clothing-img">
+            <img src="assets/images/jeans.png" alt="Denim Jeans" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Denim Jeans</div>
+            <div class="clothing-cat">Bottoms</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Leather Jacket">
+        <div class="clothing-img">
+            <img src="assets/images/jacket.png" alt="Leather Jacket" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Leather Jacket</div>
+            <div class="clothing-cat">Outerwear</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="White Sneakers">
+        <div class="clothing-img">
+            <img src="assets/images/white-sneakers.png" alt="White Sneakers" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">White Sneakers</div>
+            <div class="clothing-cat">Footwear</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Summer Dress">
+        <div class="clothing-img">
+            <img src="assets/images/linen-slip-dress.png" alt="Summer Dress" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Summer Dress</div>
+            <div class="clothing-cat">Dresses</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Wool Overcoat">
+        <div class="clothing-img">
+            <img src="assets/images/wool-overcoat.png" alt="Wool Overcoat" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Wool Overcoat</div>
+            <div class="clothing-cat">Outerwear</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Striped Oxford">
+        <div class="clothing-img">
+            <img src="assets/images/striped-oxford.png" alt="Striped Shirt" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Striped Oxford</div>
+            <div class="clothing-cat">Tops</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Strappy Sandals">
+        <div class="clothing-img">
+            <img src="assets/images/strappy-sandals.png" alt="Strappy Sandals" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Strappy Sandals</div>
+            <div class="clothing-cat">Footwear</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Skirt">
+        <div class="clothing-img">
+            <img src="assets/images/skirt.png" alt="Skirt" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Skirt</div>
+            <div class="clothing-cat">Bottoms</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Hoodie">
+        <div class="clothing-img">
+            <img src="assets/images/hoodie.png" alt="Hoodie" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Hoodie</div>
+            <div class="clothing-cat">Outerwear</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Cashmere Scarf">
+        <div class="clothing-img">
+            <img src="assets/images/cashmere-scarf.png" alt="Cashmere Scarf" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Cashmere Scarf</div>
+            <div class="clothing-cat">Accessories</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Leather Tote">
+        <div class="clothing-img">
+            <img src="assets/images/leather-tote.png" alt="Leather Tote" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Leather Tote</div>
+            <div class="clothing-cat">Accessories</div>
+        </div>
+    </div>
+    
+    <div class="clothing-card">
+        <input type="checkbox" class="item-select" value="Loafers">
+        <div class="clothing-img">
+            <img src="assets/images/loafers.png" alt="Loafers" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="clothing-info">
+            <div class="clothing-name">Loafers</div>
+            <div class="clothing-cat">Footwear</div>
+        </div>
+    </div>
+</div>
+    </main>
+  </div>
+</body>
+</html>

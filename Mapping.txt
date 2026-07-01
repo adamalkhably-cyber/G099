@@ -1,0 +1,29 @@
+Backend first (nothing works without this)
+
+1.config.py — settings, secret keys, DB path. Everything else imports from here.
+2.models.py — your database tables (User, Outfit, Wardrobe item, etc). Everything depends on knowing your data shape.
+3.init_db.py — script that creates the database from your models. Run this once to get a working DB file.
+4.app.py — the Flask app that ties everything together (creates the app, registers blueprints, starts the server).
+5.auth.py — login/register/forgot-password logic. This has to exist before almost anything else works, since most pages will require a logged-in user.
+
+Then the feature backends, in the order a user would hit them
+
+6.wardrobe.py — add/view clothing items (the raw data other features are built from)
+7.outfits.py — combine wardrobe items into outfits (depends on wardrobe existing)
+8.calendar.py — schedule outfits on dates (depends on outfits existing)
+9.settings.py — user preferences (mostly independent, can be built anytime)
+10.admin.py — admin-only views over everyone else's data (needs auth roles working first, so this comes last)
+
+Frontend, matching that same order
+For each one: build the .html structure → style with .css → wire up behavior/API calls with .js.
+
+1.login.html/css/js + register.html/css/js + forgot-password.html/css/js
+2.dashboard.html (the post-login landing page)
+3.wardrobe.html
+4.outfits.html, outfit selection, capsule.html
+5.calendar.html, planner.html
+6.settings.html
+7.favorites.html
+8.admin-dashboard.html + admin.js/css
+9.Shared theme.css and app.js — pull these together last, once you know what's actually duplicated across pages (nav bar, fetch helpers, etc.)
+

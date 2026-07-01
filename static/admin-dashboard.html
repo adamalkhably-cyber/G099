@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<script src="admin.js"></script>
+<body>
+
+<!-- ADMIN DASHBOARD -->
+<div class="layout visible" id="adminLayout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🧵</div>
+      <div class="brand-name">Wardrobe</div>
+      <div class="brand-sub">Admin Panel</div>
+    </div>
+    <div class="sidebar-section">Management</div>
+    <button class="nav-item active" data-view="overview">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+      <span>Overview</span>
+    </button>
+    <button class="nav-item" data-view="users">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Users</span>
+      <span class="nav-badge live" id="usersLiveBadge" style="display:none;"><span class="live-dot" style="width:5px;height:5px;background:white;"></span>live</span>
+    </button>
+    <button class="nav-item" data-view="clothes">
+      <svg viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+      <span>Clothes</span>
+    </button>
+    <button class="nav-item" data-view="analytics">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+      <span>Analytics</span>
+    </button>
+    <button class="nav-item" data-view="settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <span>System Settings</span>
+    </button>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">A</div>
+      <div>
+        <div class="user-name" id="sidebarName">Admin</div>
+        <div class="user-plan" id="logoutBtn">Log out</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title" id="topbarTitle">Overview</div>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="text" id="globalSearch" placeholder="Search users or items...">
+        </div>
+        <button class="btn-icon" title="Login activity">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span class="ping" id="notifPing"></span>
+        </button>
+        <button class="btn-add" id="addUserBtn">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add User
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <section class="view active" id="view-overview">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="statTotalUsers">0</div>
+            <div class="stat-sub"><span class="up">+2</span> this week</div>
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Clothes</div>
+            <div class="stat-value" id="statTotalClothes">0</div>
+            <div class="stat-sub"><span class="up">+8</span> added recently</div>
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Sign-ups (7d)</div>
+            <div class="stat-value" id="statNewSignups">2</div>
+            <div class="stat-sub">vs <span class="down">-1</span> prior week</div>
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Live Sessions</div>
+            <div class="stat-value" id="statLiveSessions">0</div>
+            <div class="stat-sub"><span class="live-dot"></span> updating in real time</div>
+            <div class="stat-icon pulse"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><span class="live-dot"></span> Live Login Activity</div>
+              <button class="panel-action" data-view-link="users">View all users</button>
+            </div>
+            <div class="live-feed" id="liveFeed"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Category Breakdown</div>
+            </div>
+            <div class="category-list" id="categoryList"></div>
+          </div>
+        </div>
+
+        <h2 class="section-title">Suggested Outfits</h2>
+        <div class="outfits-row" id="outfitsRow"></div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Recently Worn</div>
+            <button class="panel-action" data-view-link="clothes">View wardrobe</button>
+          </div>
+          <table class="recent-table">
+            <thead><tr><th>Item</th><th>Owner</th><th>Occasion</th><th>Date Used</th><th>Wear Frequency</th></tr></thead>
+            <tbody id="recentWornBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- USERS -->
+      <section class="view" id="view-users">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">All Users</div>
+            <button class="btn-add ghost" id="refreshUsersBtn">Refresh</button>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>User</th><th>Status</th><th>Joined</th><th>Items</th><th>Last Login</th><th>Actions</th></tr></thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CLOTHES -->
+      <section class="view" id="view-clothes">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Wardrobe Inventory</div>
+            <button class="btn-add ghost" id="addClothingBtn">+ Add Item</button>
+          </div>
+          <div class="chip-row" id="categoryChips"></div>
+          <div class="wardrobe-grid" id="wardrobeGrid"></div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="view" id="view-analytics">
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Upcoming Calendar Events</div></div>
+            <div id="eventsList"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Category Breakdown</div></div>
+            <div class="category-list" id="categoryListAnalytics"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">All Outfit Usage</div></div>
+          <table class="recent-table">
+            <thead><tr><th>Item</th><th>Owner</th><th>Occasion</th><th>Date Used</th></tr></thead>
+            <tbody id="allUsageBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" id="view-settings">
+        <div class="panel" style="padding: 1.5rem;">
+          <div class="panel-title" style="margin-bottom: 0.75rem;">Security Notice</div>
+          <p style="font-size: 0.85rem; color: rgba(4,93,93,0.7); line-height: 1.6; margin: 0 0 0.75rem;">
+            This dashboard currently checks the admin username and password directly in the page's JavaScript, which
+            means anyone can view the source and read the credentials. Before this goes live, move login checks to a
+            server endpoint that verifies against the <code>admin_users</code> table's hashed password, and issue a
+            session token instead of trusting the browser.
+          </p>
+          <p style="font-size: 0.85rem; color: rgba(4,93,93,0.7); line-height: 1.6; margin: 0;">
+            The "live" login feed on this page is simulated in the browser for demo purposes. To make it real, have your
+            backend write a row to <code>login_log</code> on every user login, and either poll that table every few
+            seconds or push new rows to the dashboard over a WebSocket.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal-box">
+    <h3>Add a new user</h3>
+    <form id="addUserForm">
+      <label for="newUsername">Username</label>
+      <input type="text" id="newUsername" placeholder="e.g. jordan_k" required>
+      <div class="modal-actions">
+        <button type="button" class="btn-add ghost" id="cancelAddUser">Cancel</button>
+        <button type="submit" class="btn-add">Add user</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
