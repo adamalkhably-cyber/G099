@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, app, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import Outfit, ClothingItem, Favorite, db
 
@@ -10,7 +10,7 @@ outfits_bp = Blueprint('outfits', __name__, url_prefix='/api/outfits')
 def get_outfits():
     """Get all outfits for authenticated user"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         outfits = Outfit.query.filter_by(user_id=user_id).all()
         return jsonify([outfit.to_dict() for outfit in outfits]), 200
     except Exception as e:
@@ -22,7 +22,7 @@ def get_outfits():
 def get_outfit(outfit_id):
     """Get specific outfit"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
         
         if not outfit:
@@ -38,7 +38,7 @@ def get_outfit(outfit_id):
 def create_outfit():
     """Create new outfit"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         data = request.json
         
         # Validate required fields
@@ -82,7 +82,7 @@ def create_outfit():
 def update_outfit(outfit_id):
     """Update outfit"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
         
         if not outfit:
@@ -125,7 +125,7 @@ def update_outfit(outfit_id):
 def delete_outfit(outfit_id):
     """Delete outfit"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
         
         if not outfit:
@@ -146,7 +146,7 @@ def delete_outfit(outfit_id):
 def add_item_to_outfit(outfit_id, item_id):
     """Add item to outfit"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
         
         if not outfit:
@@ -176,7 +176,7 @@ def add_item_to_outfit(outfit_id, item_id):
 def remove_item_from_outfit(outfit_id, item_id):
     """Remove item from outfit"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
         
         if not outfit:
@@ -196,6 +196,30 @@ def remove_item_from_outfit(outfit_id, item_id):
             'outfit': outfit.to_dict()
         }), 200
     
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+@outfits_bp.route('/<int:outfit_id>/favorite', methods=['POST'])
+@jwt_required()
+def toggle_favorite(outfit_id):
+    """Toggle favorite status for an outfit"""
+    try:
+        user_id = int(get_jwt_identity())
+        outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
+        
+        if not outfit:
+            return jsonify({'error': 'Outfit not found'}), 404
+            
+        # Toggle the boolean value
+        outfit.is_favorite = not outfit.is_favorite
+        db.session.commit()
+        
+        return jsonify({
+            "message": "Favorite toggled", 
+            "is_favorite": outfit.is_favorite
+        }), 200
+        
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

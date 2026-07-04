@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import secrets
 from models import User, db, bcrypt
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+auth_bp = Blueprint("auth", __name__)
 mail = None  # Will be initialized in app.py
 
 def init_mail(app):
@@ -41,7 +41,9 @@ def register():
         db.session.commit()
         
         # Create JWT token
-        access_token = create_access_token(identity=user.id)
+        # NOTE: identity must be a string - flask-jwt-extended 4.x rejects
+        # a raw int "sub" claim on decode with a 422 error.
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
             'message': 'User registered successfully',
@@ -81,7 +83,9 @@ def login():
         db.session.commit()
 
         # Create JWT token
-        access_token = create_access_token(identity=user.id)
+        # NOTE: identity must be a string - flask-jwt-extended 4.x rejects
+        # a raw int "sub" claim on decode with a 422 error.
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
     "message": "Login successful",
@@ -102,7 +106,7 @@ def login():
 def get_current_user():
     """Get current authenticated user"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         user = User.query.get(user_id)
         
         if not user:
@@ -141,7 +145,8 @@ def forgot_password():
         # Send email
         if mail:
             try:
-                reset_link = f"https://yoursite.com/reset-password?token={user.reset_token}"
+                reset_link = f"https://127.0.0.1:5000/reset-password?token={user.reset_token}"
+                print("PASSWORD RESET LINK:", reset_link)
                 msg = Message(
                     'Password Reset Request',
                     recipients=[user.email]

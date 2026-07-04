@@ -10,7 +10,7 @@ wardrobe_bp = Blueprint('wardrobe', __name__, url_prefix='/api/wardrobe')
 def get_wardrobe():
     """Get all wardrobe items for authenticated user"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         items = ClothingItem.query.filter_by(user_id=user_id).all()
         return jsonify([item.to_dict() for item in items]), 200
     except Exception as e:
@@ -22,7 +22,7 @@ def get_wardrobe():
 def get_wardrobe_item(item_id):
     """Get specific wardrobe item"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         item = ClothingItem.query.filter_by(id=item_id, user_id=user_id).first()
         
         if not item:
@@ -38,7 +38,7 @@ def get_wardrobe_item(item_id):
 def create_wardrobe_item():
     """Add new item to wardrobe"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         data = request.json
         
         # Validate required fields
@@ -74,7 +74,7 @@ def create_wardrobe_item():
 def update_wardrobe_item(item_id):
     """Update wardrobe item"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         item = ClothingItem.query.filter_by(id=item_id, user_id=user_id).first()
         
         if not item:
@@ -113,7 +113,7 @@ def update_wardrobe_item(item_id):
 def delete_wardrobe_item(item_id):
     """Delete wardrobe item"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         item = ClothingItem.query.filter_by(id=item_id, user_id=user_id).first()
         
         if not item:
@@ -134,7 +134,7 @@ def delete_wardrobe_item(item_id):
 def search_wardrobe():
     """Search wardrobe by category, color, or name"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         category = request.args.get('category')
         color = request.args.get('color')
         name = request.args.get('name')
@@ -160,7 +160,7 @@ def search_wardrobe():
 def get_wardrobe_stats():
     """Get wardrobe statistics"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         items = ClothingItem.query.filter_by(user_id=user_id).all()
         
         # Count by category

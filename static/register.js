@@ -35,12 +35,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Store the JWT so the user is logged in right after registering
-            localStorage.setItem("access_token", data.access_token);
+            // Wipe any leftover data from a previous account on this browser
+            // (token, username, avatar, theme, etc.) before storing the new
+            // session, so nothing from the old account can bleed through.
+            localStorage.clear();
+
+            // Store the JWT so the user is logged in right after registering.
+            // NOTE: must be the key "token" - app.js reads it back via
+            // localStorage.getItem('token'). It was previously being saved
+            // as "access_token", which meant the rest of the app kept using
+            // whatever token was already sitting in localStorage from the
+            // last logged-in user instead of this new account's token.
+            localStorage.setItem("token", data.access_token);
             localStorage.setItem("user", JSON.stringify(data.user));
 
+            localStorage.setItem("username", data.user.username);
+            localStorage.setItem("email", data.user.email);
+
             alert("Registration successful!");
-            window.location.href = "dashboard.html";
+            window.location.href = "/dashboard"; // Redirect to dashboard or another page after successful registration
         } catch (err) {
             console.error("Registration error:", err);
             alert("Could not reach the server. Please try again.");

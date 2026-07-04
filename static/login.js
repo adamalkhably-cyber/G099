@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.textContent = "Logging in...";
 
         try {
-            const response = await fetch(`${API_BASE_URL}/login`, {
+            const response = await fetch(`/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -28,15 +28,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Store the JWT so other pages/requests can use it
-            localStorage.setItem("access_token", data.access_token);
+            // Wipe any leftover data from a previous account on this browser
+            // (token, username, avatar, theme, etc.) before storing the new
+            // session, so nothing from the old account can bleed through.
+            localStorage.clear();
+
+            // Store the JWT so other pages/requests can use it.
+            // NOTE: app.js reads this back via localStorage.getItem('token'),
+            // so the key here must match exactly.
+            localStorage.setItem("token", data.access_token);
             localStorage.setItem("user", JSON.stringify(data.user));
+
+            localStorage.setItem("username", data.user.username);
+            localStorage.setItem("email", data.user.email);
 
             // Redirect to wherever your logged-in landing page is
           if (data.user.is_admin) {
-    window.location.href = "admin-dashboard.html";
+    window.location.href = "/admin"; // Change this to your desired landing page for admin user
 } else {
-    window.location.href = "dashboard.html";
+    window.location.href = "/dashboard";  // Change this to your desired landing page for regular user
 }
         } catch (err) {
             console.error("Login error:", err);

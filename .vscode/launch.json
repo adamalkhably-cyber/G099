@@ -10,12 +10,5 @@
             "request": "launch",
             "name": "Open login.html",
             "url": "file:///c%3A/Users/adama/OneDrive/Documents/Digital%20Closet%20Planner/G099/static/login.html"
-        },
-        {
-            "type": "editor-browser",
-            "request": "launch",
-            "name": "Open index.html",
-            "url": "file:///c%3A/Users/adama/OneDrive/Documents/Digital%20Closet%20Planner/G099/static/index.html"
         }
-    ]
-}
+        

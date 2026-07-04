@@ -1,67 +1,109 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
-from flask_mail import Mail
 from flask_jwt_extended import JWTManager
-import os
-from dotenv import load_dotenv
-
 from config import config
-from models import db, bcrypt
+from models import db, bcrypt, User
 from routes.auth import auth_bp, init_mail
+from routes.admin import admin_bp
 from routes.wardrobe import wardrobe_bp
 from routes.outfits import outfits_bp
-from routes.calendar import calendar_bp
-from routes.admin import admin_bp
+from routes.settings import settings_bp
+from routes.calendar_routes import calendar_bp
 
-# Load environment variables
-load_dotenv()
 
-def create_app(config_name=None):
-    """Application factory"""
-    if config_name is None:
-        config_name = os.getenv('FLASK_ENV', 'development')
-    
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
-    
-    # Initialize extensions
-    db.init_app(app)
-    bcrypt.init_app(app)
-    jwt = JWTManager(app)
-    CORS(app, supports_credentials=True)
-    
-    # Initialize mail
-    Mail(app)
-    init_mail(app)
-    
-    # Register blueprints
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(wardrobe_bp)
-    app.register_blueprint(outfits_bp)
-    app.register_blueprint(calendar_bp)
-    app.register_blueprint(admin_bp)
-    
-    # Create database tables
-    with app.app_context():
-        db.create_all()
-    
-    # Health check route
-    @app.route('/api/health', methods=['GET'])
-    def health():
-        return {'status': 'ok'}, 200
-    
-    # Error handlers
-    @app.errorhandler(404)
-    def not_found(error):
-        return {'error': 'Resource not found'}, 404
-    
-    @app.errorhandler(500)
-    def internal_error(error):
-        db.session.rollback()
-        return {'error': 'Internal server error'}, 500
-    
-    return app
+app = Flask(__name__, static_folder="static", static_url_path="/static")
+CORS(app)
+app.config.from_object(config["development"])
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+db.init_app(app)
+bcrypt.init_app(app)
+JWTManager(app)
+init_mail(app)
+
+with app.app_context():
+    db.create_all()
+
+    admin = User.query.filter_by(email="adamalkhably@gmail.com").first()
+
+    if not admin:
+        admin = User(
+            username="Sick",
+            email="adamalkhably@gmail.com",
+            is_admin=True,
+            is_active=True
+        )
+        admin.set_password("adam12adam")
+        db.session.add(admin)
+        db.session.commit()
+        print("Default admin account created.")
+    else:
+        admin.is_admin = True
+        db.session.commit()
+        print("Admin account already exists.")
+
+app.secret_key = app.config["SECRET_KEY"]
+
+
+@app.route("/")
+def home():
+    return send_from_directory("static", "login.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+    return send_from_directory("static", "dashboard.html")
+
+
+@app.route("/wardrobe")
+def wardrobe_page():
+    return send_from_directory("static", "wardrobe.html")
+
+
+@app.route("/calendar")
+def calendar_page():
+    return send_from_directory("static", "calendar.html")
+
+
+@app.route("/outfits")
+def outfits_page():
+    return send_from_directory("static", "outfits.html")
+
+
+@app.route("/favorites")
+def favorites_page():
+    return send_from_directory("static", "favorites.html")
+
+
+@app.route("/settings")
+def settings_page():
+    return send_from_directory("static", "settings.html")
+
+
+@app.route("/admin")
+def admin_page():
+    return send_from_directory("static", "admin-dashboard.html")
+
+
+@app.route("/forgot-password")
+def forgot_password_page():
+    return send_from_directory("static", "forgot-password.html")
+
+@app.route("/register")
+def register_page():
+    return send_from_directory("static", "register.html")
+
+@app.route("/reset-password")
+def reset_password_page():
+    return send_from_directory("static", "reset-password.html")
+
+
+app.register_blueprint(auth_bp, url_prefix="/api/auth")
+app.register_blueprint(admin_bp, url_prefix="/api/admin")
+app.register_blueprint(wardrobe_bp, url_prefix="/api/wardrobe")
+app.register_blueprint(outfits_bp, url_prefix="/api/outfits")
+app.register_blueprint(settings_bp, url_prefix="/api/settings")
+app.register_blueprint(calendar_bp, url_prefix="/api/calendar")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

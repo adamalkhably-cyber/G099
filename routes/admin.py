@@ -6,7 +6,6 @@ from sqlalchemy import func
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/api/admin')
 
-
 def check_admin_access(f):
     """Decorator to check if user is admin"""
     from functools import wraps
@@ -19,6 +18,13 @@ def check_admin_access(f):
         
         if not user or not user.is_admin:
             return jsonify({'error': 'Admin access required'}), 403
+        
+        # Heartbeat: mark this admin as currently active. Distinct from
+        # last_login, which only fires at sign-in time - this keeps
+        # "online" status accurate for the whole session, not just the
+        # first minute after logging in.
+        user.last_seen = datetime.utcnow()
+        db.session.commit()
         
         return f(*args, **kwargs)
     
@@ -48,6 +54,22 @@ def get_dashboard():
         first_of_month = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         new_users_this_month = User.query.filter(
             User.created_at >= first_of_month
+        ).count()
+
+        # Weekly trends for the overview stat cards - real numbers instead
+        # of the placeholder "+2 this week" style text that used to be
+        # hardcoded in the template.
+        now = datetime.utcnow()
+        week_ago = now - timedelta(days=7)
+        two_weeks_ago = now - timedelta(days=14)
+
+        signups_this_week = User.query.filter(User.created_at >= week_ago).count()
+        signups_prior_week = User.query.filter(
+            User.created_at >= two_weeks_ago, User.created_at < week_ago
+        ).count()
+
+        items_added_this_week = ClothingItem.query.filter(
+            ClothingItem.created_at >= week_ago
         ).count()
         
         # Most popular outfit (by favorites)
@@ -106,7 +128,10 @@ def get_dashboard():
                 'new_users_this_month': new_users_this_month,
                 'total_wardrobe_items': total_items,
                 'total_outfits': total_outfits,
-                'total_planned_outfits': total_planned
+                'total_planned_outfits': total_planned,
+                'signups_this_week': signups_this_week,
+                'signups_prior_week': signups_prior_week,
+                'items_added_this_week': items_added_this_week
             },
             'top_stats': {
                 'most_popular_outfit': popular_outfit_data,
@@ -146,7 +171,7 @@ def get_all_users():
             user_info['is_admin'] = user.is_admin
             user_info['items_count'] = len(user.wardrobe_items)
             user_info['outfits_count'] = len(user.outfits)
-            user_info['updated_at'] = user.updated_at.isoformat()
+            user_info['updated_at'] = user.updated_at.isoformat() + 'Z'
             users_data.append(user_info)
         
         return jsonify({
@@ -172,7 +197,7 @@ def get_user_details(user_id):
         
         user_data = user.to_dict()
         user_data['is_admin'] = user.is_admin
-        user_data['updated_at'] = user.updated_at.isoformat()
+        user_data['updated_at'] = user.updated_at.isoformat() + 'Z'
         user_data['wardrobe_items'] = [item.to_dict() for item in user.wardrobe_items]
         user_data['outfits'] = [outfit.to_dict() for outfit in user.outfits]
         user_data['planned_outfits'] = [outfit.to_dict() for outfit in user.planned_outfits]
@@ -373,8 +398,8 @@ def get_all_outfits():
                 'username': outfit.user.username,
                 'user_email': outfit.user.email,
                 'items': [item.to_dict() for item in outfit.items],
-                'created_at': outfit.created_at.isoformat(),
-                'updated_at': outfit.updated_at.isoformat() if outfit.updated_at else None
+                'created_at': outfit.created_at.isoformat() + 'Z',
+                'updated_at': outfit.updated_at.isoformat() + 'Z' if outfit.updated_at else None
             })
 
         return jsonify({
@@ -567,20 +592,22 @@ def get_outfit_stats():
 @admin_bp.route('/activity/recent', methods=['GET'])
 @check_admin_access
 def get_recent_activity():
-    """Get recent user activity"""
+    """Get recent user login activity"""
     try:
         limit = request.args.get('limit', 20, type=int)
         
-        # Get recently active users
-        active_users = User.query.order_by(User.updated_at.desc()).limit(limit).all()
+        # Get users who have actually logged in, most recent first
+        active_users = User.query.filter(
+            User.last_login.isnot(None)
+        ).order_by(User.last_login.desc()).limit(limit).all()
         
         activity_data = []
         for user in active_users:
             activity_data.append({
                 'username': user.username,
                 'email': user.email,
-                'last_active': user.updated_at.isoformat(),
-                'created_at': user.created_at.isoformat()
+                'last_active': user.last_login.isoformat() + 'Z',
+                'created_at': user.created_at.isoformat() + 'Z'
             })
         
         return jsonify({'recent_activity': activity_data}), 200

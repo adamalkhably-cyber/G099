@@ -20,12 +20,14 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = db.Column(db.DateTime, nullable=True)
+    last_seen = db.Column(db.DateTime, nullable=True)  # heartbeat: updated on every authenticated request, used for real online/offline status
     
     # Relationships
     wardrobe_items = db.relationship('ClothingItem', backref='user', lazy=True, cascade='all, delete-orphan')
     outfits = db.relationship('Outfit', backref='user', lazy=True, cascade='all, delete-orphan')
     planned_outfits = db.relationship('PlannedOutfit', backref='user', lazy=True, cascade='all, delete-orphan')
     favorites = db.relationship('Favorite', backref='user', lazy=True, cascade='all, delete-orphan')
+    settings = db.relationship('UserSettings', backref='user', uselist=False, cascade='all, delete-orphan')
     
     def set_password(self, password):
         """Hash and set password"""
@@ -43,8 +45,10 @@ class User(db.Model):
             'email': self.email,
             'is_admin': self.is_admin,
             'is_active': self.is_active,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+            'created_at': self.created_at.isoformat() + 'Z' if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() + 'Z' if self.updated_at else None,
+            'last_login': self.last_login.isoformat() + 'Z' if self.last_login else None,
+            'last_seen': self.last_seen.isoformat() + 'Z' if self.last_seen else None
         }
     
     def __repr__(self):
@@ -70,7 +74,7 @@ class ClothingItem(db.Model):
     brand = db.Column(db.String(100))
     color = db.Column(db.String(50))
     size = db.Column(db.String(10))
-    image_path = db.Column(db.String(255))
+    image_path = db.Column(db.Text)  # widened from String(255) - base64 photo data needs far more room
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -106,6 +110,7 @@ class Outfit(db.Model):
     flagged_reason = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_favorite = db.Column(db.Boolean, default=False)
     
     def to_dict(self):
         return {
@@ -116,7 +121,8 @@ class Outfit(db.Model):
             'is_flagged': self.is_flagged,
             'flagged_reason': self.flagged_reason,
             'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'is_favorite': self.is_favorite
         }
     
     def __repr__(self):
@@ -146,6 +152,39 @@ class PlannedOutfit(db.Model):
     
     def __repr__(self):
         return f'<PlannedOutfit {self.date}>'
+
+
+class UserSettings(db.Model):
+    """Per-user app preferences (display name, theme, notifications).
+
+    Previously this data lived in a single shared data/settings.json file
+    with no user scoping at all, so any account's saved settings
+    overwrote every other account's. This ties settings to a user_id FK
+    like the rest of the schema (wardrobe, outfits, etc.) so each account
+    has its own row.
+    """
+    __tablename__ = 'user_settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True, index=True)
+    display_name = db.Column(db.String(100), default='')
+    theme = db.Column(db.String(20), default='default')
+    email_notifications = db.Column(db.Boolean, default=False)
+    push_notifications = db.Column(db.Boolean, default=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'username': self.display_name or '',
+            'theme': self.theme or 'default',
+            'notifications': {
+                'email': bool(self.email_notifications),
+                'push': bool(self.push_notifications)
+            }
+        }
+
+    def __repr__(self):
+        return f'<UserSettings user_id={self.user_id}>'
 
 
 class Favorite(db.Model):

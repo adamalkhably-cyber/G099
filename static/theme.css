@@ -1,5 +1,5 @@
 /* theme.css - shared across all pages */
-/* Core variables (light / default) */
+/* Core variables (light theme) */
 :root{
   --exterior: #045D5D;
   --exterior-dark: #033f3f;
@@ -39,24 +39,55 @@ html[data-theme="dark"]{
   --bg-surface: #0b2f2f;      /* Slightly lighter dark panels */
 }
 
+html[data-theme="dark"] .sidebar, 
+html[data-theme="dark"] .topbar, 
+html[data-theme="dark"] .panel, 
+html[data-theme="dark"] .stat-card, 
+html[data-theme="dark"] .clothing-card, 
+html[data-theme="dark"] .outfit-card {
+    background: rgba(11, 47, 47, 0.45) !important; /* Semi-transparent dark cyan */
+    border: 1px solid rgba(127, 207, 198, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .panel-title,
+html[data-theme="dark"] .cat-name,
+html[data-theme="dark"] .cat-count,
+html[data-theme="dark"] .stat-value {
+    color: var(--text-main); 
+}
+
+/* Make clothing card text a bright green/cyan in dark mode */
+html[data-theme="dark"] .clothing-name,
+html[data-theme="dark"] .clothing-cat,
+html[data-theme="dark"] .stat-sub {
+    color: var(--interior-light);
+}
+
+html[data-theme="dark"] .search-bar, 
+html[data-theme="dark"] .modal-content input, 
+html[data-theme="dark"] .modal-content select {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
 /* =========================================
    Dark Theme: Form Styles 
    ========================================= */
 
-/* 1. The Form Container (if your form looks like a card or box) */
+/* 1. The Form Container */
 html[data-theme="dark"] form {
-    background-color: #1e1e1e; /* Darker background for the form box */
-    border: 1px solid #333333; /* Subtle dark border */
-    color: #e0e0e0; /* Light text for form labels */
+    background-color: #1e1e1e;
+    border: 1px solid #333333;
+    color: #e0e0e0;
 }
 
 /* 2. Input Fields, Dropdowns, and Textareas */
 html[data-theme="dark"] input,
 html[data-theme="dark"] select,
 html[data-theme="dark"] textarea {
-    background-color: #1a2626 !important; /* Solid dark background matching your palette */
-    color: #ffffff !important;            /* Crisp white text */
-    border: 1px solid #4f9f98 !important;  /* Solid, non-transparent teal border */
+    background-color: #1a2626 !important;
+    color: #ffffff !important;
+    border: 1px solid #4f9f98 !important;
     border-radius: 6px !important;
 }
 
@@ -64,31 +95,31 @@ html[data-theme="dark"] textarea {
 html[data-theme="dark"] input:focus,
 html[data-theme="dark"] select:focus,
 html[data-theme="dark"] textarea:focus {
-    border-color: #7fcfc6 !important;     /* Lighter solid border when active */
+    border-color: #7fcfc6 !important;
     outline: none !important;
 }
 
-/* 4. Label Text Fix (Stops labels from disappearing in the dark) */
+/* 4. Label Text Fix */
 html[data-theme="dark"] form label {
-    color: #e6f7f5 !important;            /* Changes dark green text to a readable light tone */
+    color: #e6f7f5 !important;
 }
 
-/* 5. Placeholder Text (The gray hint text before you type) */
+/* 5. Placeholder Text */
 html[data-theme="dark"] input::placeholder,
 html[data-theme="dark"] textarea::placeholder {
     color: #999999; 
-    opacity: 1; /* Ensures Firefox doesn't make it too transparent */
+    opacity: 1;
 }
 
-/* Put all your component rules below and use variables everywhere */
 body{
   font-family: 'DM Sans', sans-serif;
-  background: var(--exterior-dark);
+  background: linear-gradient(135deg, #e4f5f3 0%, #c2e9e6 100%);
+  background-attachment: fixed;
   min-height:100vh;
   margin:0;
   background-color: var(--bg-base);
-    color: var(--text-main);
-    transition: background-color 0.3s ease, color 0.3s ease;
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body::before {
@@ -104,30 +135,72 @@ body::before {
     );
     pointer-events: none;
     z-index: 0;
-  }
+}
+
+html[data-theme="dark"] body {
+    background: linear-gradient(135deg, #041b1b 0%, #0b2f2f 100%);
+}
 
 /* =========================================
    Sidebar Profile Aesthetics
    ========================================= */
 .sidebar-profile {
-    display: flex; /* This puts the avatar and text side-by-side */
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
     padding: 15px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider line */
-    margin-top: auto; /* Pushes it to the very bottom of the sidebar */
+    border-top: 1px solid rgba(4, 93, 93, 0.1); /* Changed to dark tint for light mode */
+    margin-top: auto;
     text-decoration: none;
+}
+
+.sidebar-profile-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted); /* Uses theme variable instead of hardcoded white */
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.logout-btn:hover {
+    background: var(--interior-soft); /* Better hover contrast for light mode */
+    color: var(--text-main);
+}
+
+.logout-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .avatar-container {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #4f9f98; /* Theme teal */
+    background-color: #4f9f98;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* Keeps the uploaded image perfectly round */
+    overflow: hidden;
     flex-shrink: 0;
 }
 
@@ -140,47 +213,126 @@ body::before {
 #sidebar-avatar-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image doesn't stretch weirdly */
+    object-fit: cover;
 }
 
 .profile-info {
     display: flex;
-    flex-direction: column; /* Stacks the name and the plan */
+    flex-direction: column;
 }
 
 .profile-name {
-    color: #ffffff;
+    color: var(--text-main); /* Uses theme variable instead of hardcoded white */
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 2px;
 }
 
-.profile-plan {
-    color: #8ab4b4; /* Softer text for the plan */
-    font-size: 12px;
-}
-
 /* =========================================
    Custom File Upload Aesthetics
    ========================================= */
-
 .hidden-file-input {
-    display: none !important; /* Completely hides the ugly default white bar */
+    display: none !important;
 }
 
 .file-upload-wrapper {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+}
+
+.file-upload-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* Circular/rounded preview thumbnail for the chosen photo */
+.photo-preview {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1.5px dashed var(--interior);
+    background: var(--interior-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-preview-icon {
+    width: 24px;
+    height: 24px;
+    stroke: var(--exterior-light);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.6;
+}
+
+.custom-file-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--interior-pale);
+    color: var(--exterior);
+    border: 1px solid var(--interior);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.custom-file-button svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.custom-file-button:hover {
+    background-color: var(--interior);
+    color: var(--exterior-dark);
+}
+
+.file-chosen-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+html[data-theme="dark"] .photo-preview {
+    border-color: #4f9f98;
+    background: #1a2626;
+}
+
+html[data-theme="dark"] .photo-preview-icon {
+    stroke: #7fcfc6;
 }
 
 html[data-theme="dark"] .custom-file-button {
     display: inline-flex;
     align-items: center;
     padding: 8px 16px;
-    background-color: #1a2626; /* Dark background matching your text inputs */
+    background-color: #1a2626;
     color: #e6f7f5;
-    border: 1px solid #4f9f98; /* Solid theme teal border */
+    border: 1px solid #4f9f98;
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 500;
@@ -188,7 +340,6 @@ html[data-theme="dark"] .custom-file-button {
     transition: all 0.2s ease;
 }
 
-/* Hover effect so it feels interactive */
 html[data-theme="dark"] .custom-file-button:hover {
     background-color: #4f9f98; 
     color: #ffffff;
@@ -196,11 +347,10 @@ html[data-theme="dark"] .custom-file-button:hover {
 
 html[data-theme="dark"] .file-chosen-text {
     font-size: 0.85rem;
-    color: #8ab4b4; /* Muted teal text for the file name */
+    color: #8ab4b4;
     font-style: italic;
 }
 
-/* Fix mismatched heading fonts across the settings page */
 h1, h2, h3, h4, .settings-title, .section-title {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
 }
@@ -208,95 +358,227 @@ h1, h2, h3, h4, .settings-title, .section-title {
 /* =========================================
    Settings Page: Layout & Alignment Fixes
    ========================================= */
-
-/* 1. Force all setting boxes (panels) to be identical in width */
 .panel {
     width: 100% !important;
     box-sizing: border-box !important;
-    margin-bottom: 24px !important; /* Adds clean spacing between the two boxes */
+    margin-bottom: 24px !important;
     background-color: var(--bg-surface);
     color: var(--text-main);
 }
 
-/* 2. Lock the Display Name, Theme Dropdown, and all other inputs to the exact same size */
 .panel input[type="text"],
 .panel input[type="password"],
 .panel input[type="email"],
 .panel select {
-    width: 100% !important;            /* Stretches the bar to fit the box perfectly */
-    box-sizing: border-box !important; /* Prevents border padding from breaking the layout */
-    height: 44px !important;           /* Locks them to the exact same height */
-    padding: 0 14px !important;        /* Clean, consistent inner text spacing */
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 44px !important;
+    padding: 0 14px !important;
 }
 
-/* 3. Ensure the main container holding the panels is also full width */
 .content {
     width: 100% !important;
-    max-width: 800px; /* Optional: Keeps the boxes from getting too stretched on huge monitors */
+    max-width: 800px;
+}
+
+.content-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.filter-controls button {
+    padding: 8px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--interior);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filter-controls button:hover {
+    background: var(--interior-pale);
 }
 
 /* =========================================
    Add Item Modal Styles
    ========================================= */
 .modal-overlay {
+    display: none;
     position: fixed;
-    top: 0; left: 0; 
+    top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px); /* Adds a modern, aesthetic frosted-glass look */
-    display: flex;
-    align-items: center; /* Perfectly centers vertically */
-    justify-content: center; /* Perfectly centers horizontally */
+    background: rgba(0,0,0,0.5);
     z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: 0.3s ease;
 }
 
 .modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
 }
 
 .modal-content {
-    background: var(--white);
+    background: white;
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: 1rem;
     width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
+/* --- Specific Overrides (Unique) --- */
+
+#add-item-modal .modal-content {
+    max-width: 500px;
+}
+
+#detail-modal .modal-content {
+    max-width: 400px;
+}
+
+html[data-theme="dark"] .modal-content h2,
 html[data-theme="dark"] .modal-content h3,
 html[data-theme="dark"] .modal-content label,
+html[data-theme="dark"] .modal-content strong,
+html[data-theme="dark"] .modal-content p,
 html[data-theme="dark"] #close-modal {
     color: #e6f7f5 !important;
 }
 
-html[data-theme="dark"] .modal-content input[type="text"],
-html[data-theme="dark"] .modal-content select,
-html[data-theme="dark"] .modal-content input[type="file"] {
-    background-color: #1a2626 !important;
-    color: #ffffff !important;
-    border: 1px solid #4f9f98 !important;
+/* Modal box itself needs to switch to the dark surface color,
+   otherwise it stays hard-coded white while its children (form,
+   inputs) pick up dark styling, producing a mismatched box-in-a-box. */
+html[data-theme="dark"] .modal-content {
+    background: var(--bg-surface) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
-/* Style for modal inputs to match each other perfectly */
-/* Ensure all modal inputs are uniform */
+/* The generic `form` rule below adds its own dark background/border,
+   which (now that the modal itself is dark) creates a redundant
+   nested rectangle. Let it inherit the modal's background instead. */
+html[data-theme="dark"] .modal-content form {
+    background-color: transparent;
+    border: none;
+}
+
+/* .modal-content input/select (further down) sets a translucent
+   white background with the same specificity as the dark-theme
+   input rule, so on dark mode it was winning by source order and
+   turning inputs frosted/blurred instead of solid dark. Use a more
+   specific selector so dark mode always wins here. */
+html[data-theme="dark"] .modal-content input,
+html[data-theme="dark"] .modal-content select,
+html[data-theme="dark"] .modal-content textarea {
+    background-color: #1a2626 !important;
+    color: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-theme="dark"] .modal-content select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237fcfc6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 16px !important;
+}
+
+html[data-theme="dark"] .modal-content input::placeholder,
+html[data-theme="dark"] .modal-content textarea::placeholder {
+    color: #999999 !important;
+    opacity: 1;
+}
+
+/* .btn-close had no base rule at all, so it fell back to the browser's
+   default button chrome (a plain white/gray box). Give it real styling. */
+.btn-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--exterior);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-close:hover {
+    background: var(--interior-pale);
+}
+
+html[data-theme="dark"] .btn-close {
+    color: #e6f7f5 !important;
+}
+
+html[data-theme="dark"] .btn-close:hover {
+    background: rgba(127, 207, 198, 0.15) !important;
+}
+
+/* In dark mode --exterior and --bg-surface are the same value, so
+   .btn-add (background: var(--exterior)) was blending invisibly into
+   the modal's background. Give the modal's submit button its own
+   visible dark-mode color. */
+html[data-theme="dark"] .modal-content .btn-add {
+    background: #4f9f98 !important;
+    color: #0b1f1f !important;
+}
+
+html[data-theme="dark"] .modal-content .btn-add:hover {
+    background: #7fcfc6 !important;
+}
+
 .modal-content input, 
-.modal-content select {
+.modal-content select,
+.modal-content textarea {
+    box-sizing: border-box !important;
     width: 100% !important;
-    height: 45px !important;
     padding: 0 15px !important;
     margin: 8px 0 20px 0 !important;
-    background: var(--interior-soft) !important;
+   background: rgba(255, 255, 255, 0.5) !important;
     border: 1px solid var(--interior) !important;
     border-radius: 8px !important;
     color: var(--exterior) !important;
     font-family: 'DM Sans', sans-serif !important;
+    backdrop-filter: blur(8px);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-/* Custom File Upload Button (The aesthetic replacement) */
+.modal-content input,
+.modal-content select {
+    height: 45px !important;
+}
+
+.modal-content textarea {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    resize: vertical !important;
+    min-height: 70px !important;
+    font-size: inherit;
+}
+
+.modal-content select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23045D5D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 16px !important;
+    padding-right: 40px !important;
+}
+
 .file-upload-aesthetic {
     display: flex;
     align-items: center;
@@ -316,7 +598,6 @@ html[data-theme="dark"] .modal-content input[type="file"] {
 
 .hidden-input { display: none; }
 
-/* Notification list aesthetics */
 .notif-item {
     padding: 12px;
     border-bottom: 1px solid rgba(4, 93, 93, 0.1);
@@ -324,34 +605,35 @@ html[data-theme="dark"] .modal-content input[type="file"] {
 }
 .notif-item small { display: block; color: #8ab4b4; font-size: 0.75rem; }
 
-/* Shared components (example) */
-/* 1. Reset the layout to use Flexbox */
 .layout {
     display: flex;
-    height: 100vh; /* Lock the layout to the viewport height */
+    height: 100vh;
     width: 100%;
-    overflow: hidden; /* This prevents the 'body' from scrolling */
+    overflow: hidden;
 }
 
-/* 2. Configure the sidebar for sticky positioning */
 .sidebar {
     width: 260px;
-    background: var(--exterior);
+     background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
     border-right: 1px solid rgba(129, 205, 198, 0.15);
     display: flex;
     flex-direction: column;
-    flex-shrink: 0; /* Prevents the sidebar from getting squished */
-    height: 100%;   /* Fills the height of the layout */
+    flex-shrink: 0;
+    height: 100%;
     background-color: var(--bg-surface);
     color: var(--text-main);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
 }
 
-  .sidebar-brand {
+.sidebar-brand {
     padding: 2rem 1.75rem 1.5rem;
     border-bottom: 1px solid rgba(129, 205, 198, 0.12);
-  }
+}
 
-  .brand-icon {
+.brand-icon {
     width: 42px;
     height: 42px;
     background: var(--interior);
@@ -360,9 +642,9 @@ html[data-theme="dark"] .modal-content input[type="file"] {
     align-items: center;
     justify-content: center;
     margin-bottom: 0.75rem;
-  }
+}
 
-  .brand-icon svg {
+.brand-icon svg {
     width: 22px;
     height: 22px;
     stroke: var(--exterior-dark);
@@ -370,34 +652,35 @@ html[data-theme="dark"] .modal-content input[type="file"] {
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-  }
+}
 
-  .brand-name {
+.brand-name {
     font-family: 'Playfair Display', serif;
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--interior-light);
     letter-spacing: 0.02em;
-  }
+}
 
-  .brand-sub {
+.brand-sub {
     font-size: 0.7rem;
     color: rgba(162, 221, 216, 0.5);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-top: 2px;
-  }
+}
 
-  .sidebar-section {
+.sidebar-section {
     padding: 1.25rem 1rem 0.5rem 1.5rem;
     font-size: 0.65rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(162, 221, 216, 0.4);
-    font-weight: 500;
-  }
+    color: var(--text-muted);
+    font-weight: 600;
+    opacity: 0.75;
+}
 
-  .nav-item {
+.nav-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -406,24 +689,35 @@ html[data-theme="dark"] .modal-content input[type="file"] {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: rgba(162, 221, 216, 0.65);
+    color: var(--text-muted); /* Changes color dynamically to match background theme contrast */
     font-size: 0.875rem;
-    font-weight: 400;
+    font-weight: 500; /* Makes item labels slightly thicker to read easily */
     text-decoration: none;
-  }
+}
 
-  .nav-item:hover {
-    background: rgba(129, 205, 198, 0.1);
+.nav-item:hover {
+    background: rgba(4, 93, 93, 0.05);
+    color: var(--exterior);
+}
+
+.nav-item.active {
+    background: rgba(4, 93, 93, 0.08);
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+/* Perfect adaptation layout contrast for dark mode explicitly */
+html[data-theme="dark"] .nav-item:hover {
+    background: rgba(127, 207, 198, 0.1);
     color: var(--interior-light);
-  }
+}
 
-  .nav-item.active {
-    background: rgba(129, 205, 198, 0.15);
-    color: var(--interior);
-    font-weight: 500;
-  }
+html[data-theme="dark"] .nav-item.active {
+    background: rgba(127, 207, 198, 0.15);
+    color: var(--text-main);
+}
 
-  .nav-item svg {
+.nav-item svg {
     width: 17px;
     height: 17px;
     stroke: currentColor;
@@ -432,9 +726,9 @@ html[data-theme="dark"] .modal-content input[type="file"] {
     stroke-linecap: round;
     stroke-linejoin: round;
     flex-shrink: 0;
-  }
+}
 
-  .nav-badge {
+.nav-badge {
     margin-left: auto;
     background: var(--interior);
     color: var(--exterior-dark);
@@ -442,19 +736,19 @@ html[data-theme="dark"] .modal-content input[type="file"] {
     font-weight: 500;
     padding: 1px 7px;
     border-radius: 20px;
-  }
+}
 
-  .sidebar-spacer { flex: 1; }
+.sidebar-spacer { flex: 1; }
 
-  .sidebar-user {
+.sidebar-user {
     padding: 1.25rem 1.5rem;
     border-top: 1px solid rgba(129, 205, 198, 0.12);
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
+}
 
-  .user-avatar {
+.user-avatar {
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -466,71 +760,61 @@ html[data-theme="dark"] .modal-content input[type="file"] {
     font-weight: 500;
     color: var(--exterior-dark);
     flex-shrink: 0;
-  }
+}
 
-  .user-name {
+.user-name {
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--interior-light);
-  }
-
-  .user-plan {
-    font-size: 0.7rem;
-    color: rgba(162, 221, 216, 0.45);
-  }
-
-  /* ── MAIN ── */
- /* 1. Ensure the Main area is the scrollable container */
-.main {
-    flex: 1;
-    height: 100vh;      /* Takes full height of window */
-    overflow-y: auto;   /* ONLY this section will scroll */
-    position: relative; /* Allows the topbar to stick relative to this container */
 }
 
-/* 2. Style the Topbar to be a solid layer */
+.main {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+}
+
 .topbar {
     position: sticky;
     top: 0;
-    z-index: 50;        /* Keeps it above the scrolling content */
-    background: var(--white); /* Solid background to prevent blending */
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
     padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid rgba(4, 93, 93, 0.1);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Adds depth so it separates from content */
-}
-
-/* 3. Dark mode support for the Topbar */
-html[data-theme="dark"] .topbar {
-    background: var(--exterior); /* Uses your dark background color */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
 }
 
 .topbar-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--exterior); /* Set to your dark primary text color */
+    color: var(--exterior);
 }
 
 html[data-theme="dark"] .topbar-title {
-    color: var(--interior-light); /* Light color for dark mode */
+    color: var(--interior-light);
 }
 
-  .topbar-right {
+.topbar-right {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
+}
 
-  .search-bar {
+.search-bar {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--interior-pale);
+    background: rgba(255, 255, 255, 0.5) !important;
     border: 1px solid rgba(4, 93, 93, 0.12);
     border-radius: 8px;
     padding: 0.4rem 0.85rem;
@@ -538,14 +822,15 @@ html[data-theme="dark"] .topbar-title {
     color: var(--exterior);
     width: 220px;
     transition: border-color 0.2s;
-  }
+    backdrop-filter: blur(8px);
+}
 
-  .search-bar:focus-within {
+.search-bar:focus-within {
     border-color: var(--interior);
     outline: none;
-  }
+}
 
-  .search-bar input {
+.search-bar input {
     border: none;
     background: transparent;
     font-size: 0.85rem;
@@ -553,11 +838,11 @@ html[data-theme="dark"] .topbar-title {
     outline: none;
     font-family: 'DM Sans', sans-serif;
     width: 100%;
-  }
+}
 
-  .search-bar input::placeholder { color: rgba(4, 93, 93, 0.35); }
+.search-bar input::placeholder { color: rgba(4, 93, 93, 0.35); }
 
-  .search-bar svg {
+.search-bar svg {
     width: 15px;
     height: 15px;
     stroke: rgba(4, 93, 93, 0.4);
@@ -565,33 +850,33 @@ html[data-theme="dark"] .topbar-title {
     stroke-width: 2;
     stroke-linecap: round;
     flex-shrink: 0;
-  }
+}
 
-  .btn-icon {
+.btn-icon {
     background: none;
     border: none;
     cursor: pointer;
     padding: 8px;
     display: flex;
     align-items: center;
-    color: var(--exterior); /* This colors the SVG stroke */
+    color: var(--exterior);
 }
   
 html[data-theme="dark"] .btn-icon {
-    color: var(--interior-light); /* Light color for dark mode icons */
+    color: var(--interior-light);
 }
 
-  .btn-icon:hover { background: var(--interior-soft); }
+.btn-icon:hover { background: var(--interior-soft); }
 
-  .btn-icon svg {
+.btn-icon svg {
     width: 24px;
     height: 24px;
-    stroke: currentColor; /* Inherits color from the button */
+    stroke: currentColor;
     stroke-width: 2;
     fill: none;
 }
 
-  .btn-add {
+.btn-add {
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -605,49 +890,131 @@ html[data-theme="dark"] .btn-icon {
     font-weight: 500;
     cursor: pointer;
     transition: background 0.2s;
-  }
+}
 
-  .btn-add:hover { background: var(--exterior-light); }
+.btn-add:hover { background: var(--exterior-light); }
 
-  .btn-add svg {
+.btn-add svg {
     width: 15px;
     height: 15px;
     stroke: currentColor;
     fill: none;
     stroke-width: 2.5;
     stroke-linecap: round;
-  }
+}
 
-  /* ── CONTENT ── */
-  .content {
+.btn-danger {
+    background: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.btn-danger:hover {
+    background: #cc0000;
+}
+
+/* --- WEEKLY CALENDAR STYLES --- */
+.calendar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.calendar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(100px, 1fr));
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+.calendar-day-card {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(4, 93, 93, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+html[data-theme="dark"] .calendar-day-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(127, 207, 198, 0.15);
+}
+.calendar-day-card.today {
+    background: linear-gradient(135deg, rgba(127, 207, 198, 0.3), rgba(4, 93, 93, 0.1));
+    border: 1px solid rgba(4, 93, 93, 0.4);
+    box-shadow: 0 4px 15px rgba(4, 93, 93, 0.1);
+}
+.day-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; color: var(--text-main); }
+.day-number { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
+.outfit-slot {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 2px dashed rgba(4, 93, 93, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+.outfit-slot:hover { background: rgba(4, 93, 93, 0.05); border-color: rgba(4, 93, 93, 0.5); color: var(--text-main); }
+html[data-theme="dark"] .outfit-slot { border-color: rgba(127, 207, 198, 0.2); }
+html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1); border-color: rgba(127, 207, 198, 0.5); }
+.outfit-slot.assigned { border: none; background-size: cover; background-position: center; }
+
+.content {
     padding: 1.75rem 2rem;
     flex: 1;
-  }
+}
 
-  /* Stats row */
-  .stats-row {
+.stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-bottom: 1.75rem;
-  }
+}
 
-  .stat-card {
-    background: var(--white);
+.stat-card {
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
     border-radius: 12px;
     padding: 1.25rem 1.4rem;
-    border: 1px solid rgba(4, 93, 93, 0.07);
     position: relative;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
-  }
+}
 
-  .stat-card:hover {
+.stat-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px var(--shadow-subtle);
-  }
+}
 
-  .stat-card::after {
+.stat-card::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -658,50 +1025,51 @@ html[data-theme="dark"] .btn-icon {
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.3s;
-  }
+}
 
-  .stat-card:hover::after { transform: scaleX(1); }
+.stat-card:hover::after { transform: scaleX(1); }
 
-  .stat-label {
+.stat-label {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: rgba(4, 93, 93, 0.45);
     font-weight: 500;
     margin-bottom: 0.6rem;
-  }
+}
 
-  .stat-value {
+.stat-value {
     font-family: 'Playfair Display', serif;
     font-size: 1.9rem;
     font-weight: 500;
     color: var(--exterior);
     line-height: 1;
     margin-bottom: 0.35rem;
-  }
+}
 
-  .stat-sub {
+.stat-sub {
     font-size: 0.75rem;
     color: rgba(4, 93, 93, 0.45);
-  }
+}
 
-  .stat-sub .up { color: #2e9c6e; }
-  .stat-sub .down { color: #c04a3a; }
+.stat-sub .up { color: #2e9c6e; }
+.stat-sub .down { color: #c04a3a; }
 
-  .stat-icon {
+.stat-icon {
     position: absolute;
     top: 1.2rem;
     right: 1.2rem;
     width: 36px;
     height: 36px;
-    background: var(--interior-pale);
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(8px);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
 
-  .stat-icon svg {
+.stat-icon svg {
     width: 18px;
     height: 18px;
     stroke: var(--exterior);
@@ -709,39 +1077,41 @@ html[data-theme="dark"] .btn-icon {
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
-  }
+}
 
-  /* Two-column section */
-  .two-col {
+.two-col {
     display: grid;
     grid-template-columns: 1fr 340px;
     gap: 1.25rem;
     margin-bottom: 1.75rem;
-  }
+}
 
-  .panel {
-    background: var(--white);
+.panel {
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
     border-radius: 12px;
-    border: 1px solid rgba(4, 93, 93, 0.07);
     overflow: hidden;
-  }
+}
 
-  .panel-header {
+.panel-header {
     padding: 1.1rem 1.4rem;
     border-bottom: 1px solid rgba(4, 93, 93, 0.06);
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
+}
 
-  .panel-title {
+.panel-title {
     font-family: 'Playfair Display', serif;
     font-size: 1rem;
     font-weight: 500;
     color: var(--exterior);
-  }
+}
 
-  .panel-action {
+.panel-action {
     font-size: 0.78rem;
     color: var(--exterior);
     opacity: 0.5;
@@ -751,19 +1121,20 @@ html[data-theme="dark"] .btn-icon {
     background: none;
     border: none;
     font-family: 'DM Sans', sans-serif;
-  }
+}
 
-  .panel-action:hover { opacity: 1; }
+.panel-action:hover { opacity: 1; }
 
-  /* Wardrobe grid */
-  .wardrobe-grid {
+.wardrobe-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 1rem;
     padding: 1.25rem;
-  }
+}
 
-  .clothing-card {
+.clothing-card {
+    display: flex;
+    flex-direction: column;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid rgba(4, 93, 93, 0.08);
@@ -773,44 +1144,104 @@ html[data-theme="dark"] .btn-icon {
     position: relative;
     background-color: var(--bg-surface);
     color: var(--text-main);
-  }
+}
 
-  .clothing-card:hover {
+.clothing-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px var(--shadow-subtle);
     border-color: var(--interior);
-  }
+}
 
-  .clothing-img {
+.clothing-img {
     height: 110px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, var(--interior-soft), var(--interior-pale));
     font-size: 2.4rem;
-  }
+    overflow: hidden;
+}
 
-  .clothing-info {
+.clothing-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.clothing-img-placeholder {
+    width: 34px;
+    height: 34px;
+    stroke: var(--exterior-light);
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.55;
+}
+
+.modal-item-image {
+    width: 100%;
+    height: 200px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--interior-soft), var(--interior-pale));
+    margin: 0.75rem 0 1.25rem;
+}
+
+.modal-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.modal-item-image .clothing-img-placeholder {
+    width: 56px;
+    height: 56px;
+}
+
+html[data-theme="dark"] .clothing-img,
+html[data-theme="dark"] .modal-item-image {
+    background: linear-gradient(135deg, #123232, #0f1f1f);
+}
+
+html[data-theme="dark"] .clothing-img-placeholder {
+    stroke: #7fcfc6;
+}
+
+.clothing-info {
+    flex: 1;
     padding: 0.6rem 0.7rem;
-    background: var(--white);
-  }
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
+}
 
-  .clothing-name {
+html[data-theme="dark"] .clothing-info {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(127, 207, 198, 0.1) !important;
+}
+
+.clothing-name {
     font-size: 0.78rem;
     font-weight: 500;
     color: var(--exterior);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+}
 
-  .clothing-cat {
+.clothing-cat {
     font-size: 0.68rem;
     color: rgba(4, 93, 93, 0.45);
     margin-top: 1px;
-  }
+}
 
-  .clothing-tag {
+.clothing-tag {
     position: absolute;
     top: 7px;
     right: 7px;
@@ -822,72 +1253,70 @@ html[data-theme="dark"] .btn-icon {
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-  }
+}
 
-  /* Category breakdown */
-  .category-list {
+.category-list {
     padding: 0.5rem 1.25rem 1.25rem;
-  }
+}
 
-  .cat-row {
+.cat-row {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.65rem 0;
     border-bottom: 1px solid rgba(4, 93, 93, 0.05);
-  }
+}
 
-  .cat-row:last-child { border-bottom: none; }
+.cat-row:last-child { border-bottom: none; }
 
-  .cat-emoji { font-size: 1.2rem; width: 28px; text-align: center; }
+.cat-emoji { font-size: 1.2rem; width: 28px; text-align: center; }
 
-  .cat-name {
+.cat-name {
     flex: 1;
     font-size: 0.85rem;
     color: var(--exterior);
     font-weight: 400;
-  }
+}
 
-  .cat-count {
+.cat-count {
     font-size: 0.8rem;
     font-weight: 500;
     color: var(--exterior);
-  }
+}
 
-  .cat-bar-wrap {
+.cat-bar-wrap {
     width: 80px;
     height: 5px;
     background: var(--interior-pale);
     border-radius: 3px;
     overflow: hidden;
-  }
+}
 
-  .cat-bar {
+.cat-bar {
     height: 100%;
     background: var(--interior);
     border-radius: 3px;
     transition: width 0.6s ease;
-  }
+}
 
-  /* Outfit suggestions */
-  .outfits-row {
+.outfits-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-bottom: 1.75rem;
-  }
+}
 
- .outfit-card {
-    background: var(--white);
-    border: 1px solid rgba(129, 205, 198, 0.2);
+.outfit-card {
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
     border-radius: 12px;
     padding: 1.5rem;
     transition: 0.3s;
-    /* Keep your existing styles here, but ADD this: */
     position: relative; 
-    overflow: hidden; /* Keeps the button from spilling outside the card's rounded corners */
+    overflow: hidden; 
 }
-
 
 .outfit-card h3 {
     font-family: 'Playfair Display', serif;
@@ -900,47 +1329,52 @@ html[data-theme="dark"] .btn-icon {
     gap: 10px;
 }
 
-  .outfit-card:hover {
+.outfit-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px var(--shadow-subtle);
-  }
+}
 
-  .outfit-banner {
+.outfit-banner {
     height: 8px;
     background: transparent;
     border-top: 4px solid var(--interior);
-  }
+}
 
-  .outfit-banner.warm { background: #c9a84c; }
-  .outfit-banner.cool { background: var(--interior); }
-  .outfit-banner.mono { background: #555; }
+.outfit-banner.warm { background: #c9a84c; }
+.outfit-banner.cool { background: var(--interior); }
+.outfit-banner.mono { background: #555; }
 
-  .outfit-body {
+.outfit-body {
     padding: 1rem 1.1rem;
-  }
+}
 
-  /* =========================================
+/* =========================================
    Aesthetic Outfit Builder Controls Fix
    ========================================= */
-
-/* 1. The Container Bar Wrapper */
 .outfit-builder {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 1.25rem;
-    background: var(--interior-soft); /* Uses your soft moody dark background block */
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
     border-bottom: 1px solid rgba(129, 205, 198, 0.08);
     margin-bottom: 1rem;
 }
 
-/* 2. The Outfit Name Input Bar */
+html[data-theme="dark"] .outfit-builder {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(127, 207, 198, 0.15) !important;
+}
+
 #outfit-name-input {
     flex: 1;
     height: 44px !important;
-    background-color: #1a2626 !important; /* Rich solid dark background */
-    color: #ffffff !important;            /* Crisp white typing text */
-    border: 1px solid #4f9f98 !important;  /* Elegant matching teal border */
+    background-color: #1a2626 !important;
+    color: #ffffff !important;
+    border: 1px solid #4f9f98 !important;
     border-radius: 8px !important;
     padding: 0 16px !important;
     font-size: 0.9rem;
@@ -948,24 +1382,21 @@ html[data-theme="dark"] .btn-icon {
     transition: all 0.2s ease;
 }
 
-/* Glow accent when clicking into the input field */
 #outfit-name-input:focus {
     border-color: #7fcfc6 !important;
     box-shadow: 0 0 0 3px rgba(127, 207, 198, 0.15);
 }
 
-/* Make placeholder text cleanly readable but muted */
 #outfit-name-input::placeholder {
     color: rgba(255, 255, 255, 0.35) !important;
 }
 
-/* 3. The Premium "Create & Save Outfit" Button */
 .outfit-builder .save-btn {
     height: 44px;
     padding: 0 24px;
-    background: var(--exterior-light); /* Dark teal base */
-    color: var(--text-on-exterior);    /* Light contrasting text */
-    border: 1px solid var(--interior); /* Bright framing border border */
+    background: var(--exterior-light);
+    color: var(--text-on-exterior);
+    border: 1px solid var(--interior);
     border-radius: 8px;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
@@ -977,42 +1408,40 @@ html[data-theme="dark"] .btn-icon {
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Smooth color swap on hover with subtle interactive pop */
 .outfit-builder .save-btn:hover {
-    background: var(--interior);       /* Vibrant theme teal */
-    color: var(--exterior-dark);       /* Dark primary background text color */
+    background: var(--interior);
+    color: var(--exterior-dark);
     border-color: var(--interior-light);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(79, 159, 152, 0.25); /* Elegant glow shadow */
+    box-shadow: 0 6px 16px rgba(79, 159, 152, 0.25);
 }
 
-/* Tactile bounce click effect */
 .outfit-builder .save-btn:active {
     transform: translateY(1px);
 }
 
-  .outfit-occasion {
+.outfit-occasion {
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: rgba(4, 93, 93, 0.4);
     margin-bottom: 0.3rem;
-  }
+}
 
-  .outfit-name {
+.outfit-name {
     font-family: 'Playfair Display', serif;
     font-size: 0.95rem;
     color: var(--exterior);
     margin-bottom: 0.7rem;
-  }
+}
 
-  .outfit-pieces {
+.outfit-pieces {
     display: flex;
     gap: 0.4rem;
     flex-wrap: wrap;
-  }
+}
 
-  .outfit-piece {
+.outfit-piece {
     font-size: 1.1rem;
     background: var(--interior-pale);
     width: 34px;
@@ -1021,67 +1450,85 @@ html[data-theme="dark"] .btn-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
 
-  .outfit-footer {
+.outfit-footer {
     padding: 0.65rem 1.1rem;
     border-top: 1px solid rgba(4, 93, 93, 0.06);
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
+}
 
-  .outfit-weather {
+.outfit-weather {
     font-size: 0.75rem;
     color: rgba(4, 93, 93, 0.45);
-  }
+}
 
-  .outfit-save {
+.outfit-save {
     position: absolute;
     top: 12px;
     right: 12px;
-    background-color: rgba(255, 255, 255, 0.9); /* Creates a sleek, slightly transparent white background */
-    color: #333; /* Dark grey text/heart icon */
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
     border: none;
-    border-radius: 20px; /* Nice rounded pill shape */
+    border-radius: 20px;
     padding: 6px 14px;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    z-index: 10; /* Ensures the button stays on top of the image */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Soft drop shadow for depth */
-    transition: all 0.2s ease; /* Smooth animation for hovering */
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
 }
 
-/* Add a nice hover effect */
 .outfit-save:hover {
     background-color: #ffffff;
-    transform: scale(1.05); /* Slight pop effect when the mouse hovers over it */
+    transform: scale(1.05);
 }
 
-/* Container for the row of item pictures */
 .outfit-image-gallery {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
-    overflow-x: auto; /* Allows scrolling left/right if there are many items */
+    overflow-x: auto;
     padding-bottom: 5px; 
 }
 
-/* Individual item thumbnails */
+.outfit-image-gallery::-webkit-scrollbar {
+    height: 8px; /* Sizes the horizontal scrollbar */
+}
+
+.outfit-image-gallery::-webkit-scrollbar-track {
+    background: var(--interior-pale); 
+    border-radius: 8px;
+}
+
+.outfit-image-gallery::-webkit-scrollbar-thumb {
+    background: var(--interior);
+    border-radius: 8px;
+}
+
+.outfit-image-gallery::-webkit-scrollbar-thumb:hover {
+    background: var(--interior-light);
+}
+
+html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
 .outfit-item-img {
     width: 65px;
     height: 65px;
-    object-fit: cover; /* Keeps images from looking squished */
-    border-radius: 8px; /* Soft rounded corners */
-    border: 2px solid #2d4a46; /* Matches your teal dark theme */
-    background-color: #1a2e2a; /* Fallback color while image loads */
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #2d4a46;
+    background-color: #1a2e2a;
 }
 
-/* The Remove Button */
 .aesthetic-remove-btn {
     background: transparent;
-    color: #63b3ab; /* A soft muted teal that matches your brand */
+    color: #63b3ab;
     border: 1px solid #63b3ab;
     padding: 6px 12px;
     border-radius: 6px;
@@ -1092,7 +1539,7 @@ html[data-theme="dark"] .btn-icon {
 }
 
 .aesthetic-remove-btn:hover {
-    background: #ff5f5f; /* A softer, muted red for the hover state */
+    background: #ff5f5f;
     color: #ffffff;
     border-color: #ff5f5f;
     box-shadow: 0 4px 12px rgba(255, 95, 95, 0.2);
@@ -1105,41 +1552,39 @@ html[data-theme="dark"] .btn-icon {
     padding: 20px;
 }
 
-  /* Recently worn */
-  .recent-table {
+.recent-table {
     width: 100%;
     border-collapse: collapse;
-  }
+}
 
-  .recent-table th {
+.recent-table th {
     text-align: left;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(4, 93, 93, 0.4);
+    color: var(--interior-light);
     padding: 0.6rem 1.4rem;
     border-bottom: 1px solid rgba(4, 93, 93, 0.07);
     font-weight: 500;
-  }
+}
 
-  .recent-table td {
+.recent-table td {
     padding: 0.75rem 1.4rem;
     border-bottom: 1px solid rgba(4, 93, 93, 0.05);
     font-size: 0.85rem;
-    color: var(--exterior);
-  }
+    color: var(--interior-light);
+}
 
-  .recent-table tr:last-child td { border-bottom: none; }
+.recent-table tr:last-child td { border-bottom: none; }
 
-  .recent-table tr:hover td { background: rgba(4, 93, 93, 0.02); }
+.recent-table tr:hover td { background: rgba(4, 93, 93, 0.02); }
 
-  .item-cell {
+.item-cell {
     display: flex;
     align-items: center;
     gap: 0.65rem;
-  }
+}
 
- /* 1. Hide the default checkbox and style a custom one */
 .item-select {
     appearance: none;
     -webkit-appearance: none;
@@ -1149,27 +1594,24 @@ html[data-theme="dark"] .btn-icon {
     z-index: 10;
     width: 24px;
     height: 24px;
-    background-color: rgba(255, 255, 255, 0.15); /* Soft, glassy transparent background */
-    border: 2px solid rgba(255, 255, 255, 0.6);  /* Subtle white border */
-    border-radius: 50%; /* Makes it a perfect circle */
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
     cursor: pointer;
-    backdrop-filter: blur(4px); /* Adds a premium frosted glass effect */
+    backdrop-filter: blur(4px);
     transition: all 0.2s ease-in-out;
 }
 
-/* 2. Make it react when you hover over it */
 .item-select:hover {
     background-color: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1); /* Slight pop effect */
+    transform: scale(1.1);
 }
 
-/* 3. The Active/Checked State (Matches your teal theme) */
 .item-select:checked {
     background-color: #63b3ab; 
     border-color: #63b3ab;
 }
 
-/* 4. Draw the actual checkmark inside the circle */
 .item-select:checked::after {
     content: '';
     position: absolute;
@@ -1182,7 +1624,7 @@ html[data-theme="dark"] .btn-icon {
     transform: rotate(45deg);
 }
 
-  .item-thumb {
+.item-thumb {
     width: 30px;
     height: 30px;
     background: var(--interior-soft);
@@ -1192,50 +1634,47 @@ html[data-theme="dark"] .btn-icon {
     justify-content: center;
     font-size: 1rem;
     flex-shrink: 0;
-  }
+}
 
-  .wear-badge {
+.wear-badge {
     display: inline-block;
     padding: 2px 9px;
     border-radius: 20px;
     font-size: 0.7rem;
     font-weight: 500;
-  }
+}
 
-  .wear-badge.high { background: rgba(46, 156, 110, 0.1); color: #2e9c6e; }
-  .wear-badge.med  { background: rgba(4, 93, 93, 0.08); color: var(--exterior); }
-  .wear-badge.low  { background: rgba(192, 74, 58, 0.08); color: #c04a3a; }
+.wear-badge.high { background: rgba(46, 156, 110, 0.1); color: #2e9c6e; }
+.wear-badge.med  { background: rgba(4, 93, 93, 0.08); color: var(--exterior); }
+.wear-badge.low  { background: rgba(192, 74, 58, 0.08); color: #c04a3a; }
 
-  .condition-dot {
+.condition-dot {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     font-size: 0.8rem;
     color: rgba(4, 93, 93, 0.6);
-  }
+}
 
-  .condition-dot::before {
+.condition-dot::before {
     content: '';
     width: 7px;
     height: 7px;
     border-radius: 50%;
     display: inline-block;
-  }
+}
 
-  .condition-dot.excellent::before { background: #2e9c6e; }
-  .condition-dot.good::before      { background: var(--interior); }
-  .condition-dot.worn::before      { background: #c9a84c; }
+.condition-dot.excellent::before { background: #2e9c6e; }
+.condition-dot.good::before      { background: var(--interior); }
+.condition-dot.worn::before      { background: #c9a84c; }
 
 /* =========================================
    Aesthetic Upgrades & Glassmorphism
    ========================================= */
-
-/* Smooth global transitions for theme switching */
 body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -1250,19 +1689,13 @@ body {
     background: var(--interior-light);
 }
 
-/* Glassmorphism Topbar */
 .topbar {
     background: rgba(255, 255, 255, 0.75) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(4, 93, 93, 0.1);
 }
-html[data-theme="dark"] .topbar {
-    background: rgba(11, 47, 47, 0.75) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
 
-/* Premium Card Hover Physics */
 .clothing-card, .outfit-card, .stat-card {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease !important;
     will-change: transform;
@@ -1272,11 +1705,9 @@ html[data-theme="dark"] .topbar {
     box-shadow: 0 14px 28px var(--shadow-deep) !important;
 }
 
-/* Button Click Animations */
 .btn-add, .save-btn {
     transition: all 0.2s ease !important;
 }
 .btn-add:active, .save-btn:active {
     transform: scale(0.96) !important;
 }
-

@@ -2,244 +2,162 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Wardrobe</title>
-  <link rel="stylesheet" href="theme.css">
-<script src="app.js"></script>
+  <link rel="stylesheet" href="/static/theme.css">
+  <script src="/static/app.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="layout">
-    <!-- Sidebar -->
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <div class="brand-icon">
-      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/><path d="M8 6V4a2 2 0 0 1 4 0v2"/></svg>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/><path d="M8 6V4a2 2 0 0 1 4 0v2"/></svg>
+      </div>
+      <div class="brand-name">Wardrobe</div>
+      <div class="brand-sub">Digital Closet</div>
     </div>
-    <div class="brand-name">Wardrobe</div>
-    <div class="brand-sub">Digital Closet</div>
-  </div>
 
-  <div class="sidebar-section">Main</div>
-
-  <a class="nav-item" href="dashboard.html">
+    <div class="sidebar-section">Main</div>
+    <a class="nav-item" href="/dashboard">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-    Dashboard
-  </a>
+    Dashboard</a>
 
-  <a class="nav-item" href="wardrobe.html">
+    <a class="nav-item active" href="/wardrobe">
     <svg viewBox="0 0 24 24"><path d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5z"/><path d="M14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5z"/><path d="M4 17a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2z"/><path d="M14 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6z"/></svg>
-    My Wardrobe
-    <span class="nav-badge">142</span>
-  </a>
+    My Wardrobe</a>
 
-  <a class="nav-item" href="planner.html">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-    Outfit Planner
-  </a>
+    <a class="nav-item" href="/outfits">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>  
+    Outfit Planner</a>
 
-  <a class="nav-item" href="capsule.html">
-    <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-    Capsule Wardrobe
-  </a>
+    <a class="nav-item" href="/favorites">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>  
+    Favorites</a>
 
-  <a class="nav-item" href="favorites.html">
-    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Favorites
-  </a>
+    <div class="sidebar-section">Insights</div>
 
-  <div class="sidebar-section">Insights</div>
+    <a class="nav-item" href="/calendar">
+    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-4 4"/></svg>  
+    Outfits Worn This Week</a>
 
-  <a class="nav-item" href="outfits.html">
-    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-4 4"/></svg>
-    Outfits Worn This Week
-  </a>
+    <div class="sidebar-section">Settings</div>
+    
+    <a class="nav-item" href="/settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6.1A10 10 0 0 0 2.05 14"/><path d="M5.08 19.14A10 10 0 0 0 12 22c1.39 0 2.72-.28 3.93-.79"/><path d="M19.07 19.07A10 10 0 0 0 22 12a10 10 0 0 0-.08-1.32"/></svg>  
+    Settings</a>
 
-  <a class="nav-item" href="insights.html">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-    Style Insights
-  </a>
-
-  <div class="sidebar-section">Settings</div>
-
-  <a class="nav-item" href="settings.html">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6.1A10 10 0 0 0 2.05 14"/><path d="M5.08 19.14A10 10 0 0 0 12 22c1.39 0 2.72-.28 3.93-.79"/><path d="M19.07 19.07A10 10 0 0 0 22 12a10 10 0 0 0-.08-1.32"/></svg>
-    Settings
-  </a>
-
-  <div class="sidebar-spacer"></div>
+    <div class="sidebar-spacer"></div>
 
 <div class="sidebar-profile">
-    <div class="avatar-container">
-        <!-- The image tag (hidden by default until a picture is uploaded) -->
-        <img id="sidebar-avatar-img" src="" alt="Profile" style="display: none;">
-        <!-- The initials fallback -->
-        <div class="avatar" id="sidebar-avatar">H</div>
+    <div class="sidebar-profile-left">
+        <div class="avatar-container">
+            <img id="sidebar-avatar-img" src="" alt="Profile" style="display: none;">
+            <div class="avatar" id="sidebar-avatar">H</div>
+        </div>
+        <div class="profile-info">
+            <span class="profile-name" id="sidebar-username">Haziq</span>
+        </div>
     </div>
-    <div class="profile-info">
-        <span class="profile-name" id="sidebar-username">Haziq</span>
-        <span class="profile-plan">Pro Plan</span>
-    </div>
+    <button type="button" id="logout-btn" class="logout-btn" title="Log out">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
 </div>
-</aside>
+  </aside>
 
-    <!-- Main -->
-    <main class="main">
-      <header class="topbar">
-        <div class="topbar-title">My Wardrobe</div>
-      </header>
-      <div class="content">
-        <div class="panel">
-          <div class="panel-header"><span class="panel-title">Wardrobe Items</span></div>
-          <div class="outfit-builder">
-            <input type="text" id="outfit-name-input" placeholder="Enter Outfit Name (e.g., Summer Vibes)">
-           <button onclick="createOutfit()" class="save-btn">Create & Save Outfit</button>
-          </div>
-       <div class="wardrobe-grid">
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Casual T-Shirt"> 
-        <div class="clothing-img">
-            <img src="assets/images/shirt.png" alt="Casual T-Shirt" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Casual T-Shirt</div>
-            <div class="clothing-cat">Tops</div>
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title">My Wardrobe</div>
+      <button class="btn-add" id="open-add-modal">Add Item</button>
+    </header>
+
+    <div class="content">
+      <div class="filter-controls" style="margin-bottom: 20px;">
+        <button onclick="renderWardrobe('All')">All</button>
+        <button onclick="renderWardrobe('Top Wear')">Top Wear</button>
+        <button onclick="renderWardrobe('Bottom Wear')">Bottom Wear</button>
+        <button onclick="renderWardrobe('Outerwear')">Outerwear</button>
+        <button onclick="renderWardrobe('Footwear')">Footwear</button>
+      </div>
+
+      <div id="wardrobe-grid" class="wardrobe-grid">
         </div>
     </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Denim Jeans">
-        <div class="clothing-img">
-            <img src="assets/images/jeans.png" alt="Denim Jeans" style="width: 100%; height: 100%; object-fit: cover;">
+  </main>
+</div>
+
+<div id="add-item-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add New Item</h2>
+            <button id="close-add-modal" class="btn-close">&times;</button>
         </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Denim Jeans</div>
-            <div class="clothing-cat">Bottoms</div>
-        </div>
+        <form id="add-item-form">
+            <div class="form-group">
+                <label>Item Name</label>
+                <input type="text" id="new-item-name" placeholder="e.g., Denim Jacket" required>
+            </div>
+            <div class="form-group">
+                <label>Photo</label>
+                <div class="file-upload-wrapper">
+                    <div class="photo-preview" id="new-item-photo-preview">
+                        <svg class="photo-preview-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                    </div>
+                    <div class="file-upload-controls">
+                        <label for="new-item-photo" class="custom-file-button">
+                            <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M8 7l4-4 4 4"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg>
+                            Choose Photo
+                        </label>
+                        <span class="file-chosen-text" id="new-item-photo-filename">No file chosen</span>
+                    </div>
+                </div>
+                <input type="file" id="new-item-photo" class="hidden-file-input" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="new-item-category">
+                    <option>Top Wear</option>
+                    <option>Bottom Wear</option>
+                    <option>Outerwear</option>
+                    <option>Footwear</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Size</label>
+                <input type="text" id="new-item-size" placeholder="e.g., M">
+            </div>
+            <div class="form-group">
+                <label>Color</label>
+                <input type="text" id="new-item-color" placeholder="e.g., Blue">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="new-item-description" placeholder="e.g., Lightweight cotton tee, great for summer" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn-add">Add to Wardrobe</button>
+        </form>
     </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Leather Jacket">
-        <div class="clothing-img">
-            <img src="assets/images/jacket.png" alt="Leather Jacket" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+<div id="detail-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="close-detail-modal" class="btn-close" style="float: right;">&times;</button>
+        
+        <h2 id="modal-name"></h2>
+        <div class="modal-item-image" id="modal-image-wrapper">
+            <img id="modal-image" src="" alt="" style="display: none;">
+            <svg id="modal-image-placeholder" viewBox="0 0 24 24" class="clothing-img-placeholder"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
         </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Leather Jacket</div>
-            <div class="clothing-cat">Outerwear</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="White Sneakers">
-        <div class="clothing-img">
-            <img src="assets/images/white-sneakers.png" alt="White Sneakers" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">White Sneakers</div>
-            <div class="clothing-cat">Footwear</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Summer Dress">
-        <div class="clothing-img">
-            <img src="assets/images/linen-slip-dress.png" alt="Summer Dress" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Summer Dress</div>
-            <div class="clothing-cat">Dresses</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Wool Overcoat">
-        <div class="clothing-img">
-            <img src="assets/images/wool-overcoat.png" alt="Wool Overcoat" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Wool Overcoat</div>
-            <div class="clothing-cat">Outerwear</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Striped Oxford">
-        <div class="clothing-img">
-            <img src="assets/images/striped-oxford.png" alt="Striped Shirt" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Striped Oxford</div>
-            <div class="clothing-cat">Tops</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Strappy Sandals">
-        <div class="clothing-img">
-            <img src="assets/images/strappy-sandals.png" alt="Strappy Sandals" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Strappy Sandals</div>
-            <div class="clothing-cat">Footwear</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Skirt">
-        <div class="clothing-img">
-            <img src="assets/images/skirt.png" alt="Skirt" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Skirt</div>
-            <div class="clothing-cat">Bottoms</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Hoodie">
-        <div class="clothing-img">
-            <img src="assets/images/hoodie.png" alt="Hoodie" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Hoodie</div>
-            <div class="clothing-cat">Outerwear</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Cashmere Scarf">
-        <div class="clothing-img">
-            <img src="assets/images/cashmere-scarf.png" alt="Cashmere Scarf" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Cashmere Scarf</div>
-            <div class="clothing-cat">Accessories</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Leather Tote">
-        <div class="clothing-img">
-            <img src="assets/images/leather-tote.png" alt="Leather Tote" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Leather Tote</div>
-            <div class="clothing-cat">Accessories</div>
-        </div>
-    </div>
-    
-    <div class="clothing-card">
-        <input type="checkbox" class="item-select" value="Loafers">
-        <div class="clothing-img">
-            <img src="assets/images/loafers.png" alt="Loafers" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="clothing-info">
-            <div class="clothing-name">Loafers</div>
-            <div class="clothing-cat">Footwear</div>
+        <div class="modal-details">
+            <p><strong>Category:</strong> <span id="modal-category"></span></p>
+            <p><strong>Size:</strong> <span id="modal-size"></span></p>
+            <p><strong>Color:</strong> <span id="modal-color"></span></p>
+            <hr>
+            <p><strong>Description:</strong></p>
+            <p id="modal-description"></p>
         </div>
     </div>
 </div>
-    </main>
-  </div>
 </body>
 </html>
