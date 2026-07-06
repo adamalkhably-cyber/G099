@@ -247,21 +247,6 @@
             </label>
           </div>
         </div>
-
-        <div class="panel" style="padding: 1.5rem;">
-          <div class="panel-title" style="margin-bottom: 0.75rem;">Security Notice</div>
-          <p style="font-size: 0.85rem; color: rgba(4,93,93,0.7); line-height: 1.6; margin: 0 0 0.75rem;">
-            This dashboard currently checks the admin username and password directly in the page's JavaScript, which
-            means anyone can view the source and read the credentials. Before this goes live, move login checks to a
-            server endpoint that verifies against the <code>admin_users</code> table's hashed password, and issue a
-            session token instead of trusting the browser.
-          </p>
-          <p style="font-size: 0.85rem; color: rgba(4,93,93,0.7); line-height: 1.6; margin: 0;">
-            The "live" login feed on this page is simulated in the browser for demo purposes. To make it real, have your
-            backend write a row to <code>login_log</code> on every user login, and either poll that table every few
-            seconds or push new rows to the dashboard over a WebSocket.
-          </p>
-        </div>
       </section>
 
     </div>
