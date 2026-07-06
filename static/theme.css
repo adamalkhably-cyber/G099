@@ -1,0 +1,2032 @@
+/* theme.css - shared across all pages */
+/* Core variables (light theme) */
+:root{
+  --exterior: #045D5D;
+  --exterior-dark: #033f3f;
+  --exterior-light: #056b6b;
+  --interior: #81cdc6;
+  --interior-light: #a8ddd8;
+  --interior-pale: #e4f5f3;
+  --interior-soft: #c2e9e6;
+  --text-on-exterior: #e4f5f3;
+  --text-on-interior: #033f3f;
+  --white: #ffffff;
+  --shadow-deep: rgba(4,93,93,0.18);
+  --shadow-subtle: rgba(4,93,93,0.08);
+  --text-main: #033f3f;       /* Dark cyan for readability on light backgrounds */
+  --text-muted: #056b6b;      /* Slightly lighter for secondary text */
+  --bg-base: #f4f9f9;         /* Soft off-white for the main app background */
+  --bg-surface: #ffffff;      /* Pure white for panels and cards */
+}
+
+html {
+    background: #f4f9f9;
+}
+
+/* Dark theme: switch variables when html[data-theme="dark"] is present */
+html[data-theme="dark"]{
+    background: #041b1b;
+  --exterior: #0b2f2f;
+  --exterior-dark: #041b1b;
+  --exterior-light: #0e4b4b;
+  --interior: #4f9f98;
+  --interior-light: #7fcfc6;
+  --interior-pale: #0f1f1f;
+  --interior-soft: #123232;
+  --text-on-exterior: #e6f7f5;
+  --text-on-interior: #e6f7f5;
+  --white: #0b0b0b;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #e6f7f5;       /* Bright, clear text for dark backgrounds */
+  --text-muted: #7fcfc6;      /* Muted cyan for secondary text */
+  
+  --bg-base: #041b1b;         /* Deep dark background */
+  --bg-surface: #0b2f2f;      /* Slightly lighter dark panels */
+}
+
+html[data-theme="dark"] .sidebar, 
+html[data-theme="dark"] .topbar, 
+html[data-theme="dark"] .panel, 
+html[data-theme="dark"] .stat-card, 
+html[data-theme="dark"] .clothing-card, 
+html[data-theme="dark"] .outfit-card {
+    background: rgba(11, 47, 47, 0.45) !important; /* Semi-transparent dark cyan */
+    border: 1px solid rgba(127, 207, 198, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .panel-title,
+html[data-theme="dark"] .cat-name,
+html[data-theme="dark"] .cat-count,
+html[data-theme="dark"] .stat-value {
+    color: var(--text-main); 
+}
+
+/* Make clothing card text a bright green/cyan in dark mode */
+html[data-theme="dark"] .clothing-name,
+html[data-theme="dark"] .clothing-cat,
+html[data-theme="dark"] .stat-sub {
+    color: var(--interior-light);
+}
+
+html[data-theme="dark"] .search-bar, 
+html[data-theme="dark"] .modal-content input, 
+html[data-theme="dark"] .modal-content select {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-theme="dark"] .panel-action {
+    color: var(--text-main) !important;
+}
+
+/* =========================================
+   Dark Theme: Form Styles 
+   ========================================= */
+
+/* 1. The Form Container */
+html[data-theme="dark"] form {
+    background-color: #1e1e1e;
+    border: 1px solid #333333;
+    color: #e0e0e0;
+}
+
+/* 2. Input Fields, Dropdowns, and Textareas */
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background-color: #1a2626 !important;
+    color: #ffffff !important;
+    border: 1px solid #4f9f98 !important;
+    border-radius: 6px !important;
+}
+
+/* 3. When clicking into the input (Active Focus State) */
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] textarea:focus {
+    border-color: #7fcfc6 !important;
+    outline: none !important;
+}
+
+/* 4. Label Text Fix */
+html[data-theme="dark"] form label {
+    color: #e6f7f5 !important;
+}
+
+/* 5. Placeholder Text */
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #999999; 
+    opacity: 1;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+
+    background-color:#f4f9f9;
+    background-image:linear-gradient(
+        135deg,
+        #e4f5f3 0%,
+        #c2e9e6 100%
+    );
+
+    background-attachment:fixed;
+
+    color:var(--text-main);
+    font-family:'DM Sans',sans-serif;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 60px,
+      rgba(129, 205, 198, 0.03) 60px,
+      rgba(129, 205, 198, 0.03) 61px
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+html[data-theme="dark"] body {
+    background: linear-gradient(135deg, #041b1b 0%, #0b2f2f 100%);
+}
+
+/* =========================================
+   Sidebar Profile Aesthetics
+   ========================================= */
+.sidebar-profile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 20px;
+    border-top: 1px solid rgba(4, 93, 93, 0.1); /* Changed to dark tint for light mode */
+    margin-top: auto;
+    text-decoration: none;
+}
+
+.sidebar-profile-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted); /* Uses theme variable instead of hardcoded white */
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.logout-btn:hover {
+    background: var(--interior-soft); /* Better hover contrast for light mode */
+    color: var(--text-main);
+}
+
+.logout-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.avatar-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4f9f98;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+#sidebar-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    color: var(--text-main); /* Uses theme variable instead of hardcoded white */
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+/* =========================================
+   Custom File Upload Aesthetics
+   ========================================= */
+.hidden-file-input {
+    display: none !important;
+}
+
+.file-upload-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.file-upload-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* Circular/rounded preview thumbnail for the chosen photo */
+.photo-preview {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1.5px dashed var(--interior);
+    background: var(--interior-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-preview-icon {
+    width: 24px;
+    height: 24px;
+    stroke: var(--exterior-light);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.6;
+}
+
+.custom-file-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--interior-pale);
+    color: var(--exterior);
+    border: 1px solid var(--interior);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.custom-file-button svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.custom-file-button:hover {
+    background-color: var(--interior);
+    color: var(--exterior-dark);
+}
+
+.file-chosen-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+html[data-theme="dark"] .photo-preview {
+    border-color: #4f9f98;
+    background: #1a2626;
+}
+
+html[data-theme="dark"] .photo-preview-icon {
+    stroke: #7fcfc6;
+}
+
+html[data-theme="dark"] .custom-file-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #1a2626;
+    color: #e6f7f5;
+    border: 1px solid #4f9f98;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+html[data-theme="dark"] .custom-file-button:hover {
+    background-color: #4f9f98; 
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .file-chosen-text {
+    font-size: 0.85rem;
+    color: #8ab4b4;
+    font-style: italic;
+}
+
+h1, h2, h3, h4, .settings-title, .section-title {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+/* =========================================
+   Settings Page: Layout & Alignment Fixes
+   ========================================= */
+.panel {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 24px !important;
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+}
+
+.panel input[type="text"],
+.panel input[type="password"],
+.panel input[type="email"],
+.panel select {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 44px !important;
+    padding: 0 14px !important;
+}
+
+.content {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.content-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.filter-controls button {
+    padding: 8px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--interior);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filter-controls button:hover {
+    background: var(--interior-pale);
+}
+
+/* =========================================
+   Add Item Modal Styles
+   ========================================= */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* --- Specific Overrides (Unique) --- */
+
+#add-item-modal .modal-content {
+    max-width: 500px;
+}
+
+#detail-modal .modal-content {
+    max-width: 400px;
+}
+
+html[data-theme="dark"] .modal-content h2,
+html[data-theme="dark"] .modal-content h3,
+html[data-theme="dark"] .modal-content label,
+html[data-theme="dark"] .modal-content strong,
+html[data-theme="dark"] .modal-content p,
+html[data-theme="dark"] #close-modal {
+    color: #e6f7f5 !important;
+}
+
+/* Modal box itself needs to switch to the dark surface color,
+   otherwise it stays hard-coded white while its children (form,
+   inputs) pick up dark styling, producing a mismatched box-in-a-box. */
+html[data-theme="dark"] .modal-content {
+    background: var(--bg-surface) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* The generic `form` rule below adds its own dark background/border,
+   which (now that the modal itself is dark) creates a redundant
+   nested rectangle. Let it inherit the modal's background instead. */
+html[data-theme="dark"] .modal-content form {
+    background-color: transparent;
+    border: none;
+}
+
+/* .modal-content input/select (further down) sets a translucent
+   white background with the same specificity as the dark-theme
+   input rule, so on dark mode it was winning by source order and
+   turning inputs frosted/blurred instead of solid dark. Use a more
+   specific selector so dark mode always wins here. */
+html[data-theme="dark"] .modal-content input,
+html[data-theme="dark"] .modal-content select,
+html[data-theme="dark"] .modal-content textarea {
+    background-color: #1a2626 !important;
+    color: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-theme="dark"] .modal-content select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237fcfc6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 16px !important;
+}
+
+html[data-theme="dark"] .modal-content input::placeholder,
+html[data-theme="dark"] .modal-content textarea::placeholder {
+    color: #999999 !important;
+    opacity: 1;
+}
+
+/* .btn-close had no base rule at all, so it fell back to the browser's
+   default button chrome (a plain white/gray box). Give it real styling. */
+.btn-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--exterior);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-close:hover {
+    background: var(--interior-pale);
+}
+
+html[data-theme="dark"] .btn-close {
+    color: #e6f7f5 !important;
+}
+
+html[data-theme="dark"] .btn-close:hover {
+    background: rgba(127, 207, 198, 0.15) !important;
+}
+
+/* In dark mode --exterior and --bg-surface are the same value, so
+   .btn-add (background: var(--exterior)) was blending invisibly into
+   the modal's background. Give the modal's submit button its own
+   visible dark-mode color. */
+html[data-theme="dark"] .modal-content .btn-add {
+    background: #4f9f98 !important;
+    color: #0b1f1f !important;
+}
+
+html[data-theme="dark"] .modal-content .btn-add:hover {
+    background: #7fcfc6 !important;
+}
+
+.modal-content input, 
+.modal-content select,
+.modal-content textarea {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding: 0 15px !important;
+    margin: 8px 0 20px 0 !important;
+   background: rgba(255, 255, 255, 0.5) !important;
+    border: 1px solid var(--interior) !important;
+    border-radius: 8px !important;
+    color: var(--exterior) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    backdrop-filter: blur(8px);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.modal-content input,
+.modal-content select {
+    height: 45px !important;
+}
+
+.modal-content textarea {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    resize: vertical !important;
+    min-height: 70px !important;
+    font-size: inherit;
+}
+
+.modal-content select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23045D5D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 16px !important;
+    padding-right: 40px !important;
+}
+
+.file-upload-aesthetic {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border: 2px dashed var(--interior);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--exterior);
+    transition: 0.3s;
+    text-align: center;
+}
+
+.file-upload-aesthetic:hover {
+    background: var(--interior-pale);
+}
+
+.hidden-input { display: none; }
+
+.notif-item {
+    padding: 12px;
+    border-bottom: 1px solid rgba(4, 93, 93, 0.1);
+    font-size: 0.9rem;
+}
+.notif-item small { display: block; color: #8ab4b4; font-size: 0.75rem; }
+
+.layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 260px;
+     background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    border-right: 1px solid rgba(129, 205, 198, 0.15);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
+}
+
+.sidebar-brand {
+    padding: 2rem 1.75rem 1.5rem;
+    border-bottom: 1px solid rgba(129, 205, 198, 0.12);
+}
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+    background: var(--interior);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.brand-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--exterior-dark);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--interior-light);
+    letter-spacing: 0.02em;
+}
+
+.brand-sub {
+    font-size: 0.7rem;
+    color: rgba(162, 221, 216, 0.5);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.sidebar-section {
+    padding: 1.25rem 1rem 0.5rem 1.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    opacity: 0.75;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem 0.65rem 1.5rem;
+    margin: 0 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-muted); /* Changes color dynamically to match background theme contrast */
+    font-size: 0.875rem;
+    font-weight: 500; /* Makes item labels slightly thicker to read easily */
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    background: rgba(4, 93, 93, 0.05);
+    color: var(--exterior);
+}
+
+.nav-item.active {
+    background: rgba(4, 93, 93, 0.08);
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+/* Perfect adaptation layout contrast for dark mode explicitly */
+html[data-theme="dark"] .nav-item:hover {
+    background: rgba(127, 207, 198, 0.1);
+    color: var(--interior-light);
+}
+
+html[data-theme="dark"] .nav-item.active {
+    background: rgba(127, 207, 198, 0.15);
+    color: var(--text-main);
+}
+
+.nav-item svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+.nav-badge {
+    margin-left: auto;
+    background: var(--interior);
+    color: var(--exterior-dark);
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: 20px;
+}
+
+.sidebar-spacer { flex: 1; }
+
+.sidebar-user {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(129, 205, 198, 0.12);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--interior);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--exterior-dark);
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--interior-light);
+}
+
+.main {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(4, 93, 93, 0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
+}
+
+.topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--exterior);
+}
+
+html[data-theme="dark"] .topbar-title {
+    color: var(--interior-light);
+}
+
+.topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.5) !important;
+    border: 1px solid rgba(4, 93, 93, 0.12);
+    border-radius: 8px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    color: var(--exterior);
+    width: 220px;
+    transition: border-color 0.2s;
+    backdrop-filter: blur(8px);
+    position: relative;
+}
+
+.dashboard-search-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 320px;
+    background: var(--white, #fff);
+    border-radius: 10px;
+    border: 1px solid rgba(4, 93, 93, 0.08);
+    box-shadow: 0 12px 30px rgba(4, 93, 93, 0.18);
+    z-index: 50;
+    max-height: 360px;
+    overflow-y: auto;
+    display: none;
+}
+.dashboard-search-dropdown.show { display: block; }
+
+.dashboard-search-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.dashboard-search-row:hover { background: var(--interior-pale); }
+
+.dashboard-search-thumb {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--interior-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+.dashboard-search-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.dashboard-search-title {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    font-weight: 500;
+}
+.dashboard-search-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+.dashboard-search-empty {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.search-bar:focus-within {
+    border-color: var(--interior);
+    outline: none;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    font-size: 0.85rem;
+    color: var(--exterior);
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+}
+
+.search-bar input::placeholder { color: rgba(4, 93, 93, 0.35); }
+
+.search-bar svg {
+    width: 15px;
+    height: 15px;
+    stroke: rgba(4, 93, 93, 0.4);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    flex-shrink: 0;
+}
+
+/* Fix for nested box issue in dark mode search bar */
+html[data-theme="dark"] .search-bar input {
+    background-color: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .search-bar input:focus {
+    border: none !important;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    color: var(--exterior);
+}
+  
+html[data-theme="dark"] .btn-icon {
+    color: var(--interior-light);
+}
+
+.btn-icon:hover { background: var(--interior-soft); }
+
+.btn-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+.btn-add {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    background: var(--exterior);
+    color: var(--interior-light);
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-add:hover { background: var(--exterior-light); }
+
+.btn-add svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+.btn-danger {
+    background: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.btn-danger:hover {
+    background: #cc0000;
+}
+
+/* --- WEEKLY CALENDAR STYLES --- */
+.calendar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.calendar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(100px, 1fr));
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--interior) var(--interior-pale);
+}
+.calendar-grid::-webkit-scrollbar {
+    height: 8px;
+}
+.calendar-grid::-webkit-scrollbar-track {
+    background: var(--interior-pale);
+    border-radius: 8px;
+}
+.calendar-grid::-webkit-scrollbar-thumb {
+    background: var(--interior);
+    border-radius: 8px;
+}
+.calendar-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--interior-light);
+}
+html[data-theme="dark"] .calendar-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+.calendar-day-card {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(4, 93, 93, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+html[data-theme="dark"] .calendar-day-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(127, 207, 198, 0.15);
+}
+.calendar-day-card.today {
+    background: linear-gradient(135deg, rgba(127, 207, 198, 0.3), rgba(4, 93, 93, 0.1));
+    border: 1px solid rgba(4, 93, 93, 0.4);
+    box-shadow: 0 4px 15px rgba(4, 93, 93, 0.1);
+}
+.day-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; color: var(--text-main); }
+.day-number { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
+.outfit-slot {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 2px dashed rgba(4, 93, 93, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+.outfit-slot:hover { background: rgba(4, 93, 93, 0.05); border-color: rgba(4, 93, 93, 0.5); color: var(--text-main); }
+html[data-theme="dark"] .outfit-slot { border-color: rgba(127, 207, 198, 0.2); }
+html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1); border-color: rgba(127, 207, 198, 0.5); }
+.outfit-slot.assigned { border: none; background-size: cover; background-position: center; }
+
+.outfit-slot-mosaic {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.outfit-slot-piece {
+    position: relative;
+    background: var(--interior-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateX(-16px);
+    animation: outfitPieceSlideIn 0.35s ease forwards;
+}
+
+.outfit-slot-piece:nth-child(1) { animation-delay: 0.03s; }
+.outfit-slot-piece:nth-child(2) { animation-delay: 0.1s; }
+.outfit-slot-piece:nth-child(3) { animation-delay: 0.17s; }
+.outfit-slot-piece:nth-child(4) { animation-delay: 0.24s; }
+
+.outfit-slot-piece img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.outfit-slot-piece-more {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* =========================================
+   Log Outfit Modal: Clothes Slide-In Preview
+   ========================================= */
+.outfit-preview-strip {
+    display: flex;
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding: 0.2rem 0.1rem 0.6rem;
+    min-height: 76px;
+}
+
+.outfit-preview-empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0.6rem 0.1rem;
+}
+
+.outfit-preview-item {
+    flex: 0 0 auto;
+    width: 68px;
+    height: 68px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(4, 93, 93, 0.15);
+    box-shadow: 0 4px 10px rgba(4, 93, 93, 0.08);
+    opacity: 0;
+    transform: translateX(36px);
+    animation: outfitItemSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+html[data-theme="dark"] .outfit-preview-item {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(127, 207, 198, 0.2);
+}
+
+.outfit-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.outfit-preview-item:nth-child(1) { animation-delay: 0s; }
+.outfit-preview-item:nth-child(2) { animation-delay: 0.07s; }
+.outfit-preview-item:nth-child(3) { animation-delay: 0.14s; }
+.outfit-preview-item:nth-child(4) { animation-delay: 0.21s; }
+.outfit-preview-item:nth-child(5) { animation-delay: 0.28s; }
+.outfit-preview-item:nth-child(6) { animation-delay: 0.35s; }
+.outfit-preview-item:nth-child(n+7) { animation-delay: 0.4s; }
+
+@keyframes outfitItemSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(36px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.content {
+    padding: 1.75rem 2rem;
+    flex: 1;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
+    border-radius: 12px;
+    padding: 1.25rem 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-subtle);
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--interior);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover::after { transform: scaleX(1); }
+
+.stat-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(4, 93, 93, 0.45);
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+}
+
+.stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 500;
+    color: var(--exterior);
+    line-height: 1;
+    margin-bottom: 0.35rem;
+}
+
+.stat-sub {
+    font-size: 0.75rem;
+    color: rgba(4, 93, 93, 0.45);
+}
+
+.stat-sub .up { color: #2e9c6e; }
+.stat-sub .down { color: #c04a3a; }
+
+.stat-icon {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--exterior);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+    align-items: start; /* don't stretch the shorter panel to match the taller one */
+}
+
+.two-col > .panel {
+    min-width: 0; /* prevents the nested wardrobe-grid's intrinsic width from
+                     blowing out this 1fr track past its available space */
+}
+
+.panel {
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid rgba(4, 93, 93, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--exterior);
+}
+
+.panel-action {
+    font-size: 0.78rem;
+    color: var(--exterior);
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.panel-action:hover { opacity: 1; }
+
+.wardrobe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.clothing-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(4, 93, 93, 0.08);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--interior-pale);
+    position: relative;
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+}
+
+.clothing-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px var(--shadow-subtle);
+    border-color: var(--interior);
+}
+
+.clothing-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--interior-soft), var(--interior-pale));
+    font-size: 2.4rem;
+    overflow: hidden;
+}
+
+.clothing-img img {
+    width: 100%;
+    height: 100%;
+   object-fit: cover !important;
+}
+
+.clothing-img-placeholder {
+    width: 34px;
+    height: 34px;
+    stroke: var(--exterior-light);
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.55;
+}
+
+.modal-item-image {
+    width: 100%;
+    height: 200px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--interior-soft), var(--interior-pale));
+    margin: 0.75rem 0 1.25rem;
+}
+
+.modal-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.modal-item-image .clothing-img-placeholder {
+    width: 56px;
+    height: 56px;
+}
+
+html[data-theme="dark"] .clothing-img,
+html[data-theme="dark"] .modal-item-image {
+    background: linear-gradient(135deg, #123232, #0f1f1f);
+}
+
+html[data-theme="dark"] .clothing-img-placeholder {
+    stroke: #7fcfc6;
+}
+
+.clothing-info {
+    flex: 1;
+    padding: 0.6rem 0.7rem;
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
+}
+
+html[data-theme="dark"] .clothing-info {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(127, 207, 198, 0.1) !important;
+}
+
+.clothing-name {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--exterior);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.clothing-cat {
+    font-size: 0.68rem;
+    color: rgba(4, 93, 93, 0.45);
+    margin-top: 1px;
+}
+
+.clothing-tag {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    background: var(--exterior);
+    color: var(--interior-light);
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.category-list {
+    padding: 0.5rem 1.25rem 1.25rem;
+}
+
+.cat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid rgba(4, 93, 93, 0.05);
+}
+
+.cat-row:last-child { border-bottom: none; }
+
+.cat-emoji { font-size: 1.2rem; width: 28px; text-align: center; }
+
+.cat-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--exterior);
+    font-weight: 400;
+}
+
+.cat-count {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--exterior);
+}
+
+.cat-bar-wrap {
+    width: 80px;
+    height: 5px;
+    background: var(--interior-pale);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cat-bar {
+    height: 100%;
+    background: var(--interior);
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.outfits-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.outfit-card {
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: 0.3s;
+    position: relative; 
+    overflow: hidden; 
+}
+
+.outfit-card h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+}
+
+.item-preview {
+    display: flex;
+    gap: 10px;
+}
+
+.outfit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-subtle);
+}
+
+.outfit-banner {
+    height: 8px;
+    background: transparent;
+    border-top: 4px solid var(--interior);
+}
+
+.outfit-banner.warm { background: #c9a84c; }
+.outfit-banner.cool { background: var(--interior); }
+.outfit-banner.mono { background: #555; }
+
+.outfit-body {
+    padding: 1rem 1.1rem;
+}
+
+/* =========================================
+   Aesthetic Outfit Builder Controls Fix
+   ========================================= */
+.outfit-builder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-bottom: 1px solid rgba(129, 205, 198, 0.08);
+    margin-bottom: 1rem;
+}
+
+html[data-theme="dark"] .outfit-builder {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(127, 207, 198, 0.15) !important;
+}
+
+#outfit-name-input {
+    flex: 1;
+    height: 44px !important;
+    background-color: #1a2626 !important;
+    color: #ffffff !important;
+    border: 1px solid #4f9f98 !important;
+    border-radius: 8px !important;
+    padding: 0 16px !important;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+#outfit-name-input:focus {
+    border-color: #7fcfc6 !important;
+    box-shadow: 0 0 0 3px rgba(127, 207, 198, 0.15);
+}
+
+#outfit-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.outfit-builder .save-btn {
+    height: 44px;
+    padding: 0 24px;
+    background: var(--exterior-light);
+    color: var(--text-on-exterior);
+    border: 1px solid var(--interior);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.outfit-builder .save-btn:hover {
+    background: var(--interior);
+    color: var(--exterior-dark);
+    border-color: var(--interior-light);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(79, 159, 152, 0.25);
+}
+
+.outfit-builder .save-btn:active {
+    transform: translateY(1px);
+}
+
+.outfit-occasion {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(4, 93, 93, 0.4);
+    margin-bottom: 0.3rem;
+}
+
+.outfit-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--exterior);
+    margin-bottom: 0.7rem;
+}
+
+.outfit-pieces {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.outfit-piece {
+    font-size: 1.1rem;
+    background: var(--interior-pale);
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Clothes sliding into the Log Outfit modal preview */
+#log-outfit-preview .outfit-piece {
+    opacity: 0;
+    transform: translateX(-24px);
+    animation: outfitPieceSlideIn 0.35s ease forwards;
+}
+
+#log-outfit-preview .outfit-piece:nth-child(1) { animation-delay: 0.03s; }
+#log-outfit-preview .outfit-piece:nth-child(2) { animation-delay: 0.09s; }
+#log-outfit-preview .outfit-piece:nth-child(3) { animation-delay: 0.15s; }
+#log-outfit-preview .outfit-piece:nth-child(4) { animation-delay: 0.21s; }
+#log-outfit-preview .outfit-piece:nth-child(5) { animation-delay: 0.27s; }
+#log-outfit-preview .outfit-piece:nth-child(6) { animation-delay: 0.33s; }
+#log-outfit-preview .outfit-piece:nth-child(n+7) { animation-delay: 0.39s; }
+
+@keyframes outfitPieceSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.outfit-footer {
+    padding: 0.65rem 1.1rem;
+    border-top: 1px solid rgba(4, 93, 93, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.outfit-weather {
+    font-size: 0.75rem;
+    color: rgba(4, 93, 93, 0.45);
+}
+
+.outfit-save {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.outfit-save:hover {
+    background-color: #ffffff;
+    transform: scale(1.05);
+}
+
+.outfit-image-gallery {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px; 
+}
+
+.outfit-image-gallery::-webkit-scrollbar {
+    height: 8px; /* Sizes the horizontal scrollbar */
+}
+
+.outfit-image-gallery::-webkit-scrollbar-track {
+    background: var(--interior-pale); 
+    border-radius: 8px;
+}
+
+.outfit-image-gallery::-webkit-scrollbar-thumb {
+    background: var(--interior);
+    border-radius: 8px;
+}
+
+.outfit-image-gallery::-webkit-scrollbar-thumb:hover {
+    background: var(--interior-light);
+}
+
+html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.outfit-item-img {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #2d4a46;
+    background-color: #1a2e2a;
+}
+
+.aesthetic-remove-btn {
+    background: transparent;
+    color: #63b3ab;
+    border: 1px solid #63b3ab;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.aesthetic-remove-btn:hover {
+    background: #ff5f5f;
+    color: #ffffff;
+    border-color: #ff5f5f;
+    box-shadow: 0 4px 12px rgba(255, 95, 95, 0.2);
+}
+
+.planner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.recent-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-table th {
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--interior-light);
+    padding: 0.6rem 1.4rem;
+    border-bottom: 1px solid rgba(4, 93, 93, 0.07);
+    font-weight: 500;
+}
+
+.recent-table td {
+    padding: 0.75rem 1.4rem;
+    border-bottom: 1px solid rgba(4, 93, 93, 0.05);
+    font-size: 0.85rem;
+    color: var(--interior-light);
+}
+
+.recent-table tr:last-child td { border-bottom: none; }
+
+.recent-table tr:hover td { background: rgba(4, 93, 93, 0.02); }
+
+.item-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.item-select {
+    appearance: none;
+    -webkit-appearance: none;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease-in-out;
+}
+
+.item-select:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.item-select:checked {
+    background-color: #63b3ab; 
+    border-color: #63b3ab;
+}
+
+.item-select:checked::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 7px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+}
+
+.item-thumb {
+    width: 30px;
+    height: 30px;
+    background: var(--interior-soft);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.wear-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.wear-badge.high { background: rgba(46, 156, 110, 0.1); color: #2e9c6e; }
+.wear-badge.med  { background: rgba(4, 93, 93, 0.08); color: var(--exterior); }
+.wear-badge.low  { background: rgba(192, 74, 58, 0.08); color: #c04a3a; }
+
+.condition-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: rgba(4, 93, 93, 0.6);
+}
+
+.condition-dot::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.condition-dot.excellent::before { background: #2e9c6e; }
+.condition-dot.good::before      { background: var(--interior); }
+.condition-dot.worn::before      { background: #c9a84c; }
+
+/* =========================================
+   Aesthetic Upgrades & Glassmorphism
+   ========================================= */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--exterior-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--interior);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--interior-light);
+}
+
+.topbar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(4, 93, 93, 0.1);
+}
+
+.clothing-card, .outfit-card, .stat-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease !important;
+    will-change: transform;
+}
+.clothing-card:hover, .outfit-card:hover {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow: 0 14px 28px var(--shadow-deep) !important;
+}
+
+.btn-add, .save-btn {
+    transition: all 0.2s ease !important;
+}
+.btn-add:active, .save-btn:active {
+    transform: scale(0.96) !important;
+}
+
+/* Responsive Grid & Layout Fixes */
+#recent-additions-grid, 
+#wardrobe-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* ============================================================
+   RESPONSIVE: Dashboard stat cards + Recent Additions / By
+   Category layout across desktop, laptop, tablet, and mobile.
+   ============================================================ */
+
+/* Laptop / tablet: the fixed 340px "By Category" column gets
+   cramped once the viewport shrinks, so stack Recent Additions
+   and By Category instead of squeezing them side by side. */
+@media (max-width: 1200px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Small phones: one stat card per row reads far better than four
+   squeezed into a scrollable row. */
+@media (max-width: 480px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+    .wardrobe-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .layout {
+        flex-direction: column !important;
+    }
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    /* Fix for empty white space in dashboard layout */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* This ensures that if content is small, it stays at the top */
+    justify-content: flex-start; 
+    height: auto !important;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+/* Ensure sections don't have unnecessary forced padding/margins */
+.section-header {
+    margin-bottom: 0.5rem !important;
+}
+
+/* This fixes the gap if you only have a few items */
+.grid-container {
+    align-content: start;
+}
+}

@@ -21,6 +21,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = db.Column(db.DateTime, nullable=True)
     last_seen = db.Column(db.DateTime, nullable=True)  # heartbeat: updated on every authenticated request, used for real online/offline status
+    theme = db.Column(db.String(20), default="light")
     
     # Relationships
     wardrobe_items = db.relationship('ClothingItem', backref='user', lazy=True, cascade='all, delete-orphan')
@@ -111,6 +112,8 @@ class Outfit(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_favorite = db.Column(db.Boolean, default=False)
+    wear_count = db.Column(db.Integer, default=0)
+    last_worn = db.Column(db.DateTime, nullable=True)
     
     def to_dict(self):
         return {
@@ -120,9 +123,11 @@ class Outfit(db.Model):
             'items': [item.to_dict() for item in self.items],
             'is_flagged': self.is_flagged,
             'flagged_reason': self.flagged_reason,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
-            'is_favorite': self.is_favorite
+            'created_at': self.created_at.isoformat() + 'Z' if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() + 'Z' if self.updated_at else None,
+            'is_favorite': self.is_favorite,
+            'wear_count': self.wear_count or 0,
+            'last_worn': self.last_worn.isoformat() + 'Z' if self.last_worn else None
         }
     
     def __repr__(self):
@@ -168,7 +173,8 @@ class UserSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True, index=True)
     display_name = db.Column(db.String(100), default='')
-    theme = db.Column(db.String(20), default='default')
+    theme = db.Column(db.String(20), default='light')
+    avatar = db.Column(db.Text, nullable=True)  # base64 image data, same pattern as ClothingItem.image_path
     email_notifications = db.Column(db.Boolean, default=False)
     push_notifications = db.Column(db.Boolean, default=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -176,7 +182,8 @@ class UserSettings(db.Model):
     def to_dict(self):
         return {
             'username': self.display_name or '',
-            'theme': self.theme or 'default',
+            'theme': self.theme if self.theme in ('light', 'dark') else 'light',
+            'avatar': self.avatar,
             'notifications': {
                 'email': bool(self.email_notifications),
                 'push': bool(self.push_notifications)

@@ -1,0 +1,8 @@
+{
+  "username": "haziq",
+  "theme": "light",
+  "notifications": {
+    "email": true,
+    "push": true
+  }
+}
