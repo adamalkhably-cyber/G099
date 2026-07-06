@@ -165,6 +165,22 @@
     <div id="adminPersonalWardrobeGrid" class="wardrobe-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem;">
       </div>
   </div>
+
+  <div class="panel" style="padding: 1.5rem; margin-top: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div>
+        <div class="panel-title" style="margin: 0;">My Outfits</div>
+        <p style="font-size: 0.8rem; color: rgba(4,93,93,0.6); margin: 4px 0 0;">Combinations you've put together from your wardrobe</p>
+      </div>
+      <button id="createOutfitBtn" class="btn-add">
+        <svg viewBox="0 0 24 24" style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Create Outfit
+      </button>
+    </div>
+
+    <div id="adminOutfitsGrid" class="wardrobe-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;">
+      </div>
+  </div>
 </section>
 
       <!-- ANALYTICS -->
@@ -307,6 +323,36 @@
             </div>
             
             <button type="submit" class="btn-add" style="width: 100%; justify-content: center; margin-top: 10px; height: 45px;">Add to System Database</button>
+        </form>
+    </div>
+</div>
+
+<div id="admin-create-outfit-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="margin: 0; font-family: 'Playfair Display', serif; color: var(--exterior);">Create Outfit</h2>
+            <button id="close-admin-create-outfit-modal" class="btn-close">&times;</button>
+        </div>
+
+        <form id="admin-create-outfit-form">
+            <div class="form-group">
+                <label>Outfit Name</label>
+                <input type="text" id="admin-new-outfit-name" placeholder="e.g., Weekend Casual" required>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="admin-new-outfit-description" placeholder="Optional notes about this outfit">
+            </div>
+
+            <div class="form-group">
+                <label>Items</label>
+                <div id="admin-new-outfit-items" style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(4,93,93,0.15); border-radius: 8px; padding: 10px; margin-top: 6px;">
+                    <div class="empty-state">Loading your wardrobe…</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-add" style="width: 100%; justify-content: center; margin-top: 10px; height: 45px;">Save Outfit</button>
         </form>
     </div>
 </div>

@@ -19,8 +19,13 @@
   --bg-surface: #ffffff;      /* Pure white for panels and cards */
 }
 
+html {
+    background: #f4f9f9;
+}
+
 /* Dark theme: switch variables when html[data-theme="dark"] is present */
 html[data-theme="dark"]{
+    background: #041b1b;
   --exterior: #0b2f2f;
   --exterior-dark: #041b1b;
   --exterior-light: #0e4b4b;
@@ -35,6 +40,7 @@ html[data-theme="dark"]{
   --shadow-subtle: rgba(0,0,0,0.18);
   --text-main: #e6f7f5;       /* Bright, clear text for dark backgrounds */
   --text-muted: #7fcfc6;      /* Muted cyan for secondary text */
+  
   --bg-base: #041b1b;         /* Deep dark background */
   --bg-surface: #0b2f2f;      /* Slightly lighter dark panels */
 }
@@ -68,6 +74,10 @@ html[data-theme="dark"] .search-bar,
 html[data-theme="dark"] .modal-content input, 
 html[data-theme="dark"] .modal-content select {
     background: rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-theme="dark"] .panel-action {
+    color: var(--text-main) !important;
 }
 
 /* =========================================
@@ -112,14 +122,20 @@ html[data-theme="dark"] textarea::placeholder {
 }
 
 body{
-  font-family: 'DM Sans', sans-serif;
-  background: linear-gradient(135deg, #e4f5f3 0%, #c2e9e6 100%);
-  background-attachment: fixed;
-  min-height:100vh;
-  margin:0;
-  background-color: var(--bg-base);
-  color: var(--text-main);
-  transition: background-color 0.3s ease, color 0.3s ease;
+    margin:0;
+    min-height:100vh;
+
+    background-color:#f4f9f9;
+    background-image:linear-gradient(
+        135deg,
+        #e4f5f3 0%,
+        #c2e9e6 100%
+    );
+
+    background-attachment:fixed;
+
+    color:var(--text-main);
+    font-family:'DM Sans',sans-serif;
 }
 
 body::before {
@@ -378,7 +394,7 @@ h1, h2, h3, h4, .settings-title, .section-title {
 
 .content {
     width: 100% !important;
-    max-width: 800px;
+    box-sizing: border-box !important;
 }
 
 .content-wrapper {
@@ -779,6 +795,8 @@ html[data-theme="dark"] .nav-item.active {
     position: sticky;
     top: 0;
     z-index: 50;
+    width: 100%;
+    box-sizing: border-box;
     background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent white */
     padding: 1.5rem 2rem;
     display: flex;
@@ -823,6 +841,63 @@ html[data-theme="dark"] .topbar-title {
     width: 220px;
     transition: border-color 0.2s;
     backdrop-filter: blur(8px);
+    position: relative;
+}
+
+.dashboard-search-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 320px;
+    background: var(--white, #fff);
+    border-radius: 10px;
+    border: 1px solid rgba(4, 93, 93, 0.08);
+    box-shadow: 0 12px 30px rgba(4, 93, 93, 0.18);
+    z-index: 50;
+    max-height: 360px;
+    overflow-y: auto;
+    display: none;
+}
+.dashboard-search-dropdown.show { display: block; }
+
+.dashboard-search-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.dashboard-search-row:hover { background: var(--interior-pale); }
+
+.dashboard-search-thumb {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--interior-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+.dashboard-search-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.dashboard-search-title {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    font-weight: 500;
+}
+.dashboard-search-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+.dashboard-search-empty {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 .search-bar:focus-within {
@@ -850,6 +925,18 @@ html[data-theme="dark"] .topbar-title {
     stroke-width: 2;
     stroke-linecap: round;
     flex-shrink: 0;
+}
+
+/* Fix for nested box issue in dark mode search bar */
+html[data-theme="dark"] .search-bar input {
+    background-color: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .search-bar input:focus {
+    border: none !important;
 }
 
 .btn-icon {
@@ -940,6 +1027,25 @@ html[data-theme="dark"] .btn-icon {
     gap: 1rem;
     overflow-x: auto;
     padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--interior) var(--interior-pale);
+}
+.calendar-grid::-webkit-scrollbar {
+    height: 8px;
+}
+.calendar-grid::-webkit-scrollbar-track {
+    background: var(--interior-pale);
+    border-radius: 8px;
+}
+.calendar-grid::-webkit-scrollbar-thumb {
+    background: var(--interior);
+    border-radius: 8px;
+}
+.calendar-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--interior-light);
+}
+html[data-theme="dark"] .calendar-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3) !important;
 }
 .calendar-day-card {
     background: rgba(255, 255, 255, 0.4);
@@ -1084,6 +1190,12 @@ html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1
     grid-template-columns: 1fr 340px;
     gap: 1.25rem;
     margin-bottom: 1.75rem;
+    align-items: start; /* don't stretch the shorter panel to match the taller one */
+}
+
+.two-col > .panel {
+    min-width: 0; /* prevents the nested wardrobe-grid's intrinsic width from
+                     blowing out this 1fr track past its available space */
 }
 
 .panel {
@@ -1153,6 +1265,8 @@ html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1
 }
 
 .clothing-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
     height: 110px;
     display: flex;
     align-items: center;
@@ -1165,7 +1279,7 @@ html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1
 .clothing-img img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+   object-fit: cover !important;
 }
 
 .clothing-img-placeholder {
@@ -1710,4 +1824,74 @@ body {
 }
 .btn-add:active, .save-btn:active {
     transform: scale(0.96) !important;
+}
+
+/* Responsive Grid & Layout Fixes */
+#recent-additions-grid, 
+#wardrobe-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* ============================================================
+   RESPONSIVE: Dashboard stat cards + Recent Additions / By
+   Category layout across desktop, laptop, tablet, and mobile.
+   ============================================================ */
+
+/* Laptop / tablet: the fixed 340px "By Category" column gets
+   cramped once the viewport shrinks, so stack Recent Additions
+   and By Category instead of squeezing them side by side. */
+@media (max-width: 1200px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Small phones: one stat card per row reads far better than four
+   squeezed into a scrollable row. */
+@media (max-width: 480px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+    .wardrobe-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .layout {
+        flex-direction: column !important;
+    }
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    /* Fix for empty white space in dashboard layout */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* This ensures that if content is small, it stays at the top */
+    justify-content: flex-start; 
+    height: auto !important;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+/* Ensure sections don't have unnecessary forced padding/margins */
+.section-header {
+    margin-bottom: 0.5rem !important;
+}
+
+/* This fixes the gap if you only have a few items */
+.grid-container {
+    align-content: start;
+}
 }

@@ -367,6 +367,34 @@ def delete_item(item_id):
         return jsonify({'error': str(e)}), 500
 
 
+@admin_bp.route('/calendar/upcoming', methods=['GET'])
+@check_admin_access
+def get_upcoming_calendar_events():
+    """Get upcoming planned outfits across ALL users (next 14 days), for
+    the Analytics tab's 'Upcoming Calendar Events' panel."""
+    try:
+        today = datetime.utcnow().date()
+        limit = request.args.get('limit', 10, type=int)
+
+        planned = PlannedOutfit.query.filter(
+            PlannedOutfit.date >= today,
+            PlannedOutfit.date <= today + timedelta(days=14)
+        ).order_by(PlannedOutfit.date).limit(limit).all()
+
+        events = []
+        for p in planned:
+            events.append({
+                'date': p.date.isoformat(),
+                'username': p.user.username,
+                'outfit_name': p.outfit.name if p.outfit else None,
+                'notes': p.notes
+            })
+
+        return jsonify({'events': events}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @admin_bp.route('/outfits', methods=['GET'])
 @check_admin_access
 def get_all_outfits():
@@ -398,6 +426,8 @@ def get_all_outfits():
                 'username': outfit.user.username,
                 'user_email': outfit.user.email,
                 'items': [item.to_dict() for item in outfit.items],
+                'wear_count': outfit.wear_count or 0,
+                'last_worn': outfit.last_worn.isoformat() + 'Z' if outfit.last_worn else None,
                 'created_at': outfit.created_at.isoformat() + 'Z',
                 'updated_at': outfit.updated_at.isoformat() + 'Z' if outfit.updated_at else None
             })
@@ -592,24 +622,65 @@ def get_outfit_stats():
 @admin_bp.route('/activity/recent', methods=['GET'])
 @check_admin_access
 def get_recent_activity():
-    """Get recent user login activity"""
+    """Get recent activity across all users.
+
+    By default returns logins only (used by the Overview tab's "Live Login
+    Activity" panel, which expects every entry to be a login). Pass
+    ?include_all=true to also mix in item-added and outfit-created events
+    (used by the notification bell), sorted together by most recent."""
     try:
         limit = request.args.get('limit', 20, type=int)
-        
-        # Get users who have actually logged in, most recent first
+        include_all = request.args.get('include_all', 'false').lower() == 'true'
+
+        activity_data = []
+
+        # Logins
         active_users = User.query.filter(
             User.last_login.isnot(None)
         ).order_by(User.last_login.desc()).limit(limit).all()
-        
-        activity_data = []
+
         for user in active_users:
             activity_data.append({
+                'type': 'login',
                 'username': user.username,
                 'email': user.email,
+                'timestamp': user.last_login.isoformat() + 'Z',
                 'last_active': user.last_login.isoformat() + 'Z',
                 'created_at': user.created_at.isoformat() + 'Z'
             })
-        
+
+        if include_all:
+            # Items added
+            recent_items = ClothingItem.query.order_by(
+                ClothingItem.created_at.desc()
+            ).limit(limit).all()
+
+            for item in recent_items:
+                activity_data.append({
+                    'type': 'item_added',
+                    'username': item.user.username,
+                    'item_name': item.name,
+                    'category': item.category,
+                    'timestamp': item.created_at.isoformat() + 'Z'
+                })
+
+            # Outfits created
+            recent_outfits = Outfit.query.order_by(
+                Outfit.created_at.desc()
+            ).limit(limit).all()
+
+            for outfit in recent_outfits:
+                activity_data.append({
+                    'type': 'outfit_created',
+                    'username': outfit.user.username,
+                    'outfit_name': outfit.name,
+                    'timestamp': outfit.created_at.isoformat() + 'Z'
+                })
+
+            # Merge everything and keep only the most recent `limit` entries overall
+            activity_data.sort(key=lambda a: a['timestamp'], reverse=True)
+            activity_data = activity_data[:limit]
+
         return jsonify({'recent_activity': activity_data}), 200
     
     except Exception as e:

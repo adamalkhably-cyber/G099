@@ -42,12 +42,42 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("username", data.user.username);
             localStorage.setItem("email", data.user.email);
 
+            // Fetch per-user settings immediately after login so theme/avatar
+            // are available before redirecting.
+            try {
+                const settingsResponse = await fetch('/api/settings', {
+                    headers: { 'Authorization': `Bearer ${data.access_token}` }
+                });
+                const settingsData = await settingsResponse.json();
+                if (settingsResponse.ok && settingsData.ok) {
+                    const settings = settingsData.settings || {};
+                    if (settings.theme) {
+                        localStorage.setItem('theme', settings.theme);
+                    }
+                    if (settings.avatar) {
+                        localStorage.setItem('profileAvatar', settings.avatar);
+                    }
+                    if (settings.notifications) {
+                        localStorage.setItem('emailNotif', settings.notifications.email);
+                        localStorage.setItem('pushNotif', settings.notifications.push);
+                    }
+                    if (settings.username) {
+                        localStorage.setItem('username', settings.username);
+                        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                        currentUser.username = settings.username;
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                    }
+                }
+            } catch (err) {
+                console.warn('Could not restore saved user settings after login:', err);
+            }
+
             // Redirect to wherever your logged-in landing page is
-          if (data.user.is_admin) {
-    window.location.href = "/admin"; // Change this to your desired landing page for admin user
-} else {
-    window.location.href = "/dashboard";  // Change this to your desired landing page for regular user
-}
+            if (data.user.is_admin) {
+                window.location.href = "/admin"; // Change this to your desired landing page for admin user
+            } else {
+                window.location.href = "/dashboard";  // Change this to your desired landing page for regular user
+            }
         } catch (err) {
             console.error("Login error:", err);
             alert("Could not reach the server. Please try again.");

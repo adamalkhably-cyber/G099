@@ -11,7 +11,7 @@ from routes.settings import settings_bp
 from routes.calendar_routes import calendar_bp
 
 
-app = Flask(__name__, static_folder="static", static_url_path="/static")
+app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app)
 app.config.from_object(config["development"])
 
@@ -46,55 +46,55 @@ app.secret_key = app.config["SECRET_KEY"]
 
 @app.route("/")
 def home():
-    return send_from_directory("static", "login.html")
+    return send_from_directory("templates", "login.html")
 
 
 @app.route("/dashboard")
 def dashboard():
-    return send_from_directory("static", "dashboard.html")
+    return send_from_directory("templates", "dashboard.html")
 
 
 @app.route("/wardrobe")
 def wardrobe_page():
-    return send_from_directory("static", "wardrobe.html")
+    return send_from_directory("templates", "wardrobe.html")
 
 
 @app.route("/calendar")
 def calendar_page():
-    return send_from_directory("static", "calendar.html")
+    return send_from_directory("templates", "calendar.html")
 
 
 @app.route("/outfits")
 def outfits_page():
-    return send_from_directory("static", "outfits.html")
+    return send_from_directory("templates", "outfits.html")
 
 
 @app.route("/favorites")
 def favorites_page():
-    return send_from_directory("static", "favorites.html")
+    return send_from_directory("templates", "favorites.html")
 
 
 @app.route("/settings")
 def settings_page():
-    return send_from_directory("static", "settings.html")
+    return send_from_directory("templates", "settings.html")
 
 
 @app.route("/admin")
 def admin_page():
-    return send_from_directory("static", "admin-dashboard.html")
+    return send_from_directory("templates", "admin-dashboard.html")
 
 
 @app.route("/forgot-password")
 def forgot_password_page():
-    return send_from_directory("static", "forgot-password.html")
+    return send_from_directory("templates", "forgot-password.html")
 
 @app.route("/register")
 def register_page():
-    return send_from_directory("static", "register.html")
+    return send_from_directory("templates", "register.html")
 
 @app.route("/reset-password")
 def reset_password_page():
-    return send_from_directory("static", "reset-password.html")
+    return send_from_directory("templates", "reset-password.html")
 
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")

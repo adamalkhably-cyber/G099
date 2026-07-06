@@ -223,3 +223,34 @@ def toggle_favorite(outfit_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
+@outfits_bp.route('/<int:outfit_id>/wear', methods=['POST'])
+@jwt_required()
+def wear_outfit(outfit_id):
+    """Mark an outfit as worn and update stats"""
+    try:
+        from datetime import datetime
+        user_id = int(get_jwt_identity())
+        outfit = Outfit.query.filter_by(id=outfit_id, user_id=user_id).first()
+        
+        if not outfit:
+            return jsonify({'error': 'Outfit not found'}), 404
+            
+        # Ensure wear_count handles Null values gracefully if your DB model defaults aren't set
+        if getattr(outfit, 'wear_count', None) is None:
+            outfit.wear_count = 0
+            
+        outfit.wear_count += 1
+        outfit.last_worn = datetime.utcnow()
+        
+        db.session.commit()
+        
+        return jsonify({
+            "message": "Outfit marked as worn", 
+            "wear_count": outfit.wear_count,
+            "last_worn": outfit.last_worn.isoformat()
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

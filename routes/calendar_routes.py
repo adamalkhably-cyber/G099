@@ -95,6 +95,16 @@ def plan_outfit():
             outfit = Outfit.query.filter_by(id=data['outfit_id'], user_id=user_id).first()
             if not outfit:
                 return jsonify({'error': 'Outfit not found'}), 404
+            
+            # --- NEW STAT TRACKING LOGIC ---
+            from datetime import datetime as dt
+            # Only increment if the planned date is today or earlier
+            if date <= dt.utcnow().date():
+                if getattr(outfit, 'wear_count', None) is None:
+                    outfit.wear_count = 0
+                outfit.wear_count += 1
+                outfit.last_worn = dt.utcnow()
+            # -------------------------------
         
         # Create planned outfit
         planned = PlannedOutfit(

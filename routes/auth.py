@@ -122,6 +122,45 @@ def get_current_user():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@auth_bp.route('/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    """Change password for the currently authenticated user.
+
+    Requires the current password to verify it's really the account
+    owner making the change (a valid JWT alone isn't enough - if a
+    session token ever leaked, this stops someone from silently
+    locking the real owner out).
+    """
+    try:
+        user_id = int(get_jwt_identity())
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        data = request.json or {}
+
+        if not all(k in data for k in ['current_password', 'new_password']):
+            return jsonify({'error': 'Missing current or new password'}), 400
+
+        if not user.check_password(data['current_password']):
+            return jsonify({'error': 'Current password is incorrect'}), 401
+
+        new_password = data['new_password']
+        if len(new_password) < 6:
+            return jsonify({'error': 'New password must be at least 6 characters'}), 400
+
+        user.set_password(new_password)
+        db.session.commit()
+
+        return jsonify({'message': 'Password changed successfully'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 @auth_bp.route('/forgot-password', methods=['POST'])
 def forgot_password():
     """Send password reset email"""

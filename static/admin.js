@@ -29,12 +29,15 @@ async function loadAdminPersonalWardrobe() {
     if (!response.ok) return;
     const data = await response.json();
 
-    if (!data.items || data.items.length === 0) {
+    // /api/wardrobe returns a plain array of items, not {items: [...]}
+    const items = Array.isArray(data) ? data : (data.items || []);
+
+    if (items.length === 0) {
       grid.innerHTML = '<div style="grid-column: 1/-1; padding: 3rem; text-align: center; color: rgba(4,93,93,0.5);">Your personal admin wardrobe is empty.</div>';
       return;
     }
 
-    grid.innerHTML = data.items.map(item => `
+    grid.innerHTML = items.map(item => `
       <div class="clothing-card" style="background: var(--interior-pale); border-radius: 12px; padding: 12px; position: relative; border: 1px solid rgba(4,93,93,0.1);">
         <div style="height: 160px; border-radius: 8px; overflow: hidden; background: #fff; margin-bottom: 8px;">
           ${item.image_path 
@@ -72,6 +75,108 @@ window.deleteAdminItem = async function(itemId) {
     }
   } catch (err) {
     console.error("Error deleting personal item:", err);
+  }
+};
+
+/* ============================================================
+   ADMIN'S PERSONAL OUTFITS LAYER
+   ============================================================ */
+
+// Fetch and render the logged-in admin's own outfits
+async function loadAdminOutfits() {
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+  const grid = document.getElementById('adminOutfitsGrid');
+  if (!grid) return;
+
+  try {
+    const response = await fetch('/api/outfits', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) return;
+    const data = await response.json();
+
+    // Handle either a plain array or a {outfits: [...]} / {items: [...]} shape,
+    // matching the same defensive pattern used for /api/wardrobe above.
+    const outfits = Array.isArray(data) ? data : (data.outfits || data.items || []);
+
+    if (outfits.length === 0) {
+      grid.innerHTML = '<div style="grid-column: 1/-1; padding: 3rem; text-align: center; color: rgba(4,93,93,0.5);">You haven\'t created any outfits yet.</div>';
+      return;
+    }
+
+    grid.innerHTML = outfits.map(outfit => {
+      const items = outfit.items || [];
+      const previewItems = items.slice(0, 4);
+      const collageHTML = previewItems.length === 0
+        ? `<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--interior); font-size:1.75rem;">👕</div>`
+        : previewItems.map(item => `
+            <div style="flex: 1; height: 100%; overflow: hidden; background: #fff;">
+              ${item.image_path
+                ? `<img src="${item.image_path}" style="width: 100%; height: 100%; object-fit: cover;" alt="${item.name}">`
+                : `<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--interior); font-size:1.25rem;">${CATEGORY_EMOJI[item.category] || '👕'}</div>`
+              }
+            </div>
+          `).join('');
+
+      return `
+      <div class="clothing-card" style="background: var(--interior-pale); border-radius: 12px; padding: 12px; position: relative; border: 1px solid rgba(4,93,93,0.1);">
+        <div style="height: 130px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; display: flex; gap: 2px;">
+          ${collageHTML}
+        </div>
+
+        <div style="font-weight: 600; color: var(--exterior); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 60px;">${outfit.name}</div>
+        ${outfit.description ? `<div style="font-size: 0.75rem; color: rgba(4,93,93,0.7); margin-top: 2px;">${outfit.description}</div>` : ''}
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;">
+          ${items.length === 0
+            ? '<span style="font-size: 0.7rem; color: rgba(4,93,93,0.5);">No items linked</span>'
+            : items.map(item => `
+                <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.7rem; background: rgba(4,93,93,0.08); border-radius: 999px; padding: 3px 9px 3px 3px; color: var(--exterior);">
+                  <span style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #fff; display: flex; align-items: center; justify-content: center;">
+                    ${item.image_path
+                      ? `<img src="${item.image_path}" style="width: 100%; height: 100%; object-fit: cover;" alt="${item.name}">`
+                      : `<span style="font-size: 0.65rem;">${CATEGORY_EMOJI[item.category] || '👕'}</span>`
+                    }
+                  </span>
+                  ${item.name}
+                </span>
+              `).join('')
+          }
+        </div>
+
+        <button onclick="deleteAdminOutfit(${outfit.id})" style="position: absolute; top: 12px; right: 12px; background: rgba(192, 74, 58, 0.9); color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 0.7rem; cursor: pointer;">
+          Delete
+        </button>
+      </div>
+    `;
+    }).join('');
+  } catch (err) {
+    console.error("Error loading outfits:", err);
+  }
+}
+
+// Action handler to delete one of your own outfits
+window.deleteAdminOutfit = async function(outfitId) {
+  if (!confirm("Delete this outfit? This won't delete the individual clothing items.")) return;
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+
+  try {
+    const response = await fetch(`/api/outfits/${outfitId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (response.ok) {
+      showToast("Outfit deleted.");
+      loadAdminOutfits();
+    } else {
+      showToast("Failed to delete outfit.");
+    }
+  } catch (err) {
+    console.error("Error deleting outfit:", err);
   }
 };
 
@@ -179,7 +284,7 @@ function applyAdminTheme(theme) {
 
 let adminCurrentNotifPrefs = { email: false, push: false };
 
-// Populate the Settings form with the admin's current username/theme,
+// Populate the Settings form with the admin's current username/theme/avatar,
 // pulled from the same /api/settings endpoint the main app's Settings
 // page already uses (it's per-user, not admin-specific).
 async function loadAdminSettingsForm() {
@@ -198,6 +303,17 @@ async function loadAdminSettingsForm() {
       currentUser.username = s.username || currentUser.username;
       localStorage.setItem('user', JSON.stringify(currentUser));
 
+      if (s.theme) {
+        localStorage.setItem('theme', s.theme);
+        applyAdminTheme(s.theme);
+      }
+
+      if (s.avatar) {
+        localStorage.setItem('profileAvatar', s.avatar);
+      } else {
+        localStorage.removeItem('profileAvatar');
+      }
+
       usernameInput.value = currentUser.username || '';
       adminCurrentNotifPrefs = s.notifications || { email: false, push: false };
 
@@ -208,7 +324,6 @@ async function loadAdminSettingsForm() {
     console.error('Failed to load admin settings:', err);
   }
 
-  // Reflect whatever avatar/name is already saved locally
   refreshSettingsAvatarPreview();
 }
 
@@ -298,7 +413,7 @@ function setupAdminSettingsForm() {
   // next time settings were fetched from the server.
   if (darkToggle) {
     darkToggle.addEventListener('change', () => {
-      const theme = darkToggle.checked ? 'dark' : 'default';
+      const theme = darkToggle.checked ? 'dark' : 'light';
       applyAdminTheme(theme);
       saveThemePreference(theme);
     });
@@ -308,13 +423,17 @@ function setupAdminSettingsForm() {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const token = localStorage.getItem('token') || localStorage.getItem('access_token');
-      const theme = darkToggle && darkToggle.checked ? 'dark' : 'default';
+      const theme = darkToggle && darkToggle.checked ? 'dark' : 'light';
       const payload = {
         username: usernameInput ? usernameInput.value.trim() : '',
         theme,
         notifications: adminCurrentNotifPrefs
       };
+      // Only include the avatar if a new one was actually picked this
+      // session - omitting it tells the backend "leave it unchanged"
+      if (pendingAvatarBase64) payload.avatar = pendingAvatarBase64;
 
+      let result;
       try {
         const response = await fetch('/api/settings', {
           method: 'POST',
@@ -324,16 +443,23 @@ function setupAdminSettingsForm() {
           },
           body: JSON.stringify(payload)
         });
-        if (!response.ok) throw new Error('Save failed');
+        result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'Save failed');
+        }
       } catch (err) {
         console.error('Failed to save admin settings:', err);
-        if (typeof showToast === 'function') showToast('Failed to save settings.');
+        if (typeof showToast === 'function') showToast(err.message || 'Failed to save settings.');
         return;
       }
 
-      // Sync locally so the sidebar and this form reflect the change instantly
+      // Sync locally so the sidebar and this form reflect the change instantly.
+      // Use what the server actually stored (result.settings), not just what
+      // we sent, so e.g. Users table / Live Login feed and this form can
+      // never disagree on the username again.
+      const savedUsername = (result.settings && result.settings.username) || payload.username;
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      currentUser.username = payload.username;
+      currentUser.username = savedUsername;
       localStorage.setItem('user', JSON.stringify(currentUser));
       localStorage.setItem('theme', theme);
       if (pendingAvatarBase64) localStorage.setItem('profileAvatar', pendingAvatarBase64);
@@ -350,10 +476,12 @@ function setupAdminSettingsForm() {
    NAVIGATION & INITIALIZATION PIPELINE
    ============================================================ */
 
-// Populate the sidebar with the actual logged-in admin's name/avatar,
-// same localStorage 'user' record + 'profileAvatar' key the main
-// dashboard (app.js) already uses, so it stays in sync across the app.
-function loadAdminProfile() {
+// Populate the sidebar with the actual logged-in admin's name/avatar.
+// Both come from /api/settings (server-persisted), not just localStorage -
+// localStorage is only a fast local cache for instant re-renders, and gets
+// wiped on logout, so treating it as the source of truth meant a saved
+// username/avatar could appear to "not save" after logging back in.
+async function loadAdminProfile() {
   let currentUser = {};
   try {
     currentUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -361,11 +489,32 @@ function loadAdminProfile() {
     currentUser = {};
   }
 
-  const name = currentUser.username || currentUser.email || 'Admin';
-  const savedAvatar = localStorage.getItem('profileAvatar');
+  let displayName = currentUser.username || currentUser.email || 'Admin';
+  let avatar = localStorage.getItem('profileAvatar');
+
+  try {
+    const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+    const response = await fetch('/api/settings', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.ok && data.settings) {
+        if (data.settings.username) displayName = data.settings.username;
+        if (data.settings.avatar) {
+          avatar = data.settings.avatar;
+          localStorage.setItem('profileAvatar', avatar);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching profile settings:', err);
+  }
+
+  const savedAvatar = avatar;
 
   const nameEl = document.getElementById('sidebar-username');
-  if (nameEl) nameEl.textContent = name;
+  if (nameEl) nameEl.textContent = displayName;
 
   const avatarImg = document.getElementById('sidebar-avatar-img');
   const avatarFallback = document.getElementById('sidebar-avatar');
@@ -377,8 +526,87 @@ function loadAdminProfile() {
     } else {
       avatarImg.style.display = 'none';
       avatarFallback.style.display = 'flex';
-      avatarFallback.textContent = name.charAt(0).toUpperCase();
+      avatarFallback.textContent = displayName.charAt(0).toUpperCase();
     }
+  }
+}
+
+/* ============================================================
+   ANALYTICS TAB (also powers the Overview tab's Category
+   Breakdown, which shared the exact same "never implemented"
+   problem)
+   ============================================================ */
+
+// Renders a category breakdown list into any container - reused by both
+// the Overview tab's #categoryList and the Analytics tab's
+// #categoryListAnalytics, since they show the same data.
+function renderCategoryBreakdown(containerId, categories) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  if (!categories || categories.length === 0) {
+    container.innerHTML = '<div class="empty-state">No wardrobe items yet.</div>';
+    return;
+  }
+
+  const maxCount = Math.max(...categories.map(c => c.count));
+  container.innerHTML = categories.map(c => `
+    <div class="cat-row">
+      <span class="cat-emoji">${CATEGORY_EMOJI[c.category] || '👕'}</span>
+      <span class="cat-name">${c.category || 'Uncategorized'}</span>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:${maxCount ? Math.round((c.count / maxCount) * 100) : 0}%"></div></div>
+      <span class="cat-count">${c.count}</span>
+    </div>
+  `).join('');
+}
+
+async function loadAnalytics() {
+  // Category Breakdown - shared between Overview and Analytics tabs
+  const wardrobeStats = await apiGet('/stats/wardrobe');
+  const categories = (wardrobeStats && wardrobeStats.categories) || [];
+  renderCategoryBreakdown('categoryList', categories);
+  renderCategoryBreakdown('categoryListAnalytics', categories);
+
+  // Upcoming Calendar Events - real planned outfits across all users,
+  // next 14 days
+  const eventsList = document.getElementById('eventsList');
+  if (eventsList) {
+    eventsList.innerHTML = '<div class="empty-state">Loading…</div>';
+    const data = await apiGet('/calendar/upcoming?limit=8');
+    const events = (data && data.events) || [];
+    eventsList.innerHTML = events.length === 0
+      ? '<div class="empty-state">No outfits planned in the next two weeks.</div>'
+      : events.map(e => `
+          <div class="dropdown-row" style="cursor:default;">
+            <div class="live-avatar">${initials(e.username)}</div>
+            <div class="dropdown-row-text">
+              <div class="dropdown-row-title">${e.outfit_name || 'No outfit chosen yet'}</div>
+              <div class="dropdown-row-sub">${e.username} • ${formatDate(e.date)}</div>
+            </div>
+          </div>
+        `).join('');
+  }
+
+  // All Outfit Usage - real outfits that have actually been marked worn
+  // at least once (using the wear_count/last_worn fields), across all users
+  const allUsageBody = document.getElementById('allUsageBody');
+  if (allUsageBody) {
+    allUsageBody.innerHTML = '<tr><td colspan="4" class="empty-state">Loading…</td></tr>';
+    const data = await apiGet('/outfits?per_page=50');
+    const worn = ((data && data.outfits) || [])
+      .filter(o => (o.wear_count || 0) > 0)
+      .sort((a, b) => new Date(b.last_worn) - new Date(a.last_worn));
+
+    allUsageBody.innerHTML = worn.length === 0
+      ? '<tr><td colspan="4" class="empty-state">No outfits have been marked as worn yet.</td></tr>'
+      : worn.map(o => `
+          <tr>
+            <td>${o.name}</td>
+            <td>${o.username}</td>
+            <td>${o.description || '—'}</td>
+            <td>${o.last_worn ? formatDate(o.last_worn) : '—'}</td>
+          </tr>
+        `).join('');
   }
 }
 
@@ -400,11 +628,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load initial data
   loadAdminProfile();
   loadAdminPersonalWardrobe();
+  loadAdminOutfits();
   loadRealDashboard();
   loadLiveActivity();
   loadUsers();
   loadAdminSettingsForm();
   setupAdminSettingsForm();
+  loadAnalytics();
 
   // Keep the "live" feed and stats fresh without a manual refresh
   setInterval(loadLiveActivity, 15000);
@@ -420,12 +650,16 @@ document.addEventListener('DOMContentLoaded', () => {
       switchView(btn.dataset.view);
       if (btn.dataset.view === 'clothes') {
         loadAdminPersonalWardrobe();
+        loadAdminOutfits();
       }
       if (btn.dataset.view === 'users') {
         loadUsers();
       }
       if (btn.dataset.view === 'settings') {
         loadAdminSettingsForm();
+      }
+      if (btn.dataset.view === 'analytics') {
+        loadAnalytics();
       }
     });
   });
@@ -544,6 +778,109 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Create Outfit Modal Setup
+  const createOutfitBtn = document.getElementById('createOutfitBtn');
+  const outfitModal = document.getElementById('admin-create-outfit-modal');
+  const closeOutfitBtn = document.getElementById('close-admin-create-outfit-modal');
+  const outfitForm = document.getElementById('admin-create-outfit-form');
+  const outfitItemsContainer = document.getElementById('admin-new-outfit-items');
+
+  // Populate the item checklist from the admin's own wardrobe each time the modal opens
+  async function populateOutfitItemChecklist() {
+    if (!outfitItemsContainer) return;
+    outfitItemsContainer.innerHTML = '<div class="empty-state">Loading your wardrobe…</div>';
+
+    const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+    try {
+      const response = await fetch('/api/wardrobe', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) {
+        outfitItemsContainer.innerHTML = '<div class="empty-state">Could not load wardrobe items.</div>';
+        return;
+      }
+      const data = await response.json();
+      const items = Array.isArray(data) ? data : (data.items || []);
+
+      outfitItemsContainer.innerHTML = items.length === 0
+        ? '<div class="empty-state">Add some wardrobe items first.</div>'
+        : items.map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 0.85rem;">
+              <input type="checkbox" class="outfit-item-checkbox" value="${item.id}">
+              <span style="width: 24px; height: 24px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #fff; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(4,93,93,0.1);">
+                ${item.image_path
+                  ? `<img src="${item.image_path}" style="width: 100%; height: 100%; object-fit: cover;" alt="${item.name}">`
+                  : `<span style="font-size: 0.8rem;">${CATEGORY_EMOJI[item.category] || '👕'}</span>`
+                }
+              </span>
+              <span>${item.name} <span style="color: rgba(4,93,93,0.6);">(${item.category})</span></span>
+            </label>
+          `).join('');
+    } catch (err) {
+      console.error("Error loading items for outfit modal:", err);
+      outfitItemsContainer.innerHTML = '<div class="empty-state">Could not load wardrobe items.</div>';
+    }
+  }
+
+  if (createOutfitBtn && outfitModal) {
+    createOutfitBtn.addEventListener('click', () => {
+      outfitModal.classList.add('visible');
+      populateOutfitItemChecklist();
+    });
+  }
+
+  if (closeOutfitBtn && outfitModal) {
+    closeOutfitBtn.addEventListener('click', () => {
+      outfitModal.classList.remove('visible');
+    });
+  }
+
+  window.addEventListener('click', (e) => {
+    if (e.target === outfitModal) {
+      outfitModal.classList.remove('visible');
+    }
+  });
+
+  if (outfitForm) {
+    outfitForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const selectedIds = Array.from(
+        outfitItemsContainer.querySelectorAll('.outfit-item-checkbox:checked')
+      ).map(cb => parseInt(cb.value, 10));
+
+      const payload = {
+        name: document.getElementById('admin-new-outfit-name').value.trim(),
+        description: document.getElementById('admin-new-outfit-description').value.trim(),
+        item_ids: selectedIds
+      };
+
+      try {
+        const activeToken = localStorage.getItem('token') || localStorage.getItem('access_token');
+        const response = await fetch('/api/outfits', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${activeToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          if (typeof showToast === 'function') showToast("Outfit created!");
+          outfitModal.classList.remove('visible');
+          outfitForm.reset();
+          loadAdminOutfits();
+        } else {
+          if (typeof showToast === 'function') showToast("Failed to save outfit.");
+        }
+      } catch (err) {
+        console.error("Error saving outfit:", err);
+        if (typeof showToast === 'function') showToast("Network error saving outfit.");
+      }
+    });
+  }
 });
 
 /* ============================================================
@@ -615,7 +952,12 @@ async function runGlobalSearch(query, dropdown, input) {
     html += `<div class="search-section-label">Clothing Items</div>`;
     html += items.map(it => `
       <div class="dropdown-row" data-type="item" data-id="${it.id}">
-        <div class="live-avatar">${CATEGORY_EMOJI[it.category] || '👕'}</div>
+        <div class="live-avatar" style="overflow: hidden; background: #fff;">
+          ${it.image_path
+            ? `<img src="${it.image_path}" style="width: 100%; height: 100%; object-fit: cover;" alt="${it.name}">`
+            : (CATEGORY_EMOJI[it.category] || '👕')
+          }
+        </div>
         <div class="dropdown-row-text">
           <div class="dropdown-row-title">${it.name}</div>
           <div class="dropdown-row-sub">${it.category || ''}${it.username ? ' • ' + it.username : ''}</div>
@@ -678,21 +1020,35 @@ function setupNotificationBell() {
     dropdown.innerHTML = '<div class="dropdown-header">Recent Activity</div><div class="dropdown-empty">Loading…</div>';
     dropdown.classList.add('show');
 
-    const data = await apiGet('/activity/recent?limit=8');
+    const data = await apiGet('/activity/recent?limit=8&include_all=true');
     const activity = (data && data.recent_activity) || [];
 
     dropdown.innerHTML = '<div class="dropdown-header">Recent Activity</div>' + (
       activity.length === 0
         ? '<div class="dropdown-empty">No recent activity.</div>'
-        : activity.map(u => `
-            <div class="dropdown-row">
-              <div class="live-avatar">${initials(u.username)}</div>
-              <div class="dropdown-row-text">
-                <div class="dropdown-row-title">${u.username} logged in</div>
-                <div class="dropdown-row-sub">${timeAgo(u.last_active)}</div>
+        : activity.map(a => {
+            let title = '';
+            let sub = '';
+            if (a.type === 'item_added') {
+              title = `${a.username} added <b>${a.item_name}</b>`;
+              sub = `${a.category || 'Wardrobe item'} • ${timeAgo(a.timestamp)}`;
+            } else if (a.type === 'outfit_created') {
+              title = `${a.username} created outfit <b>${a.outfit_name}</b>`;
+              sub = `New outfit • ${timeAgo(a.timestamp)}`;
+            } else {
+              title = `${a.username} logged in`;
+              sub = timeAgo(a.timestamp || a.last_active);
+            }
+            return `
+              <div class="dropdown-row">
+                <div class="live-avatar">${initials(a.username)}</div>
+                <div class="dropdown-row-text">
+                  <div class="dropdown-row-title">${title}</div>
+                  <div class="dropdown-row-sub">${sub}</div>
+                </div>
               </div>
-            </div>
-          `).join('')
+            `;
+          }).join('')
     );
 
     // Mark as read: hide the red ping and remember when, so it won't

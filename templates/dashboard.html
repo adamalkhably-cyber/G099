@@ -80,11 +80,7 @@
       <div class="topbar-right">
         <div class="search-bar">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input
-    type="text"
-    id="dashboard-search"
-    placeholder="Search items..."
-    autocomplete="off">
+          <input type="text" id="dashboard-search-input" placeholder="Search items…">
         </div>
 
     <button class="btn-icon" id="open-filter-modal">
@@ -116,13 +112,13 @@
           <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg></div>
           <div class="stat-label">Outfits Worn</div>
           <div class="stat-value" id="outfits-worn">0</div>
-          <div class="stat-sub"><span class="down">↓ 2</span> vs last week</div>
+          <div class="stat-sub" id="outfits-worn-sub">No wear history yet</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
           <div class="stat-label">Utilization Rate</div>
           <div class="stat-value" id="utilization-rate">0%</div>
-          <div class="stat-sub"><span class="up">↑ 5%</span> from last month</div>
+          <div class="stat-sub" id="utilization-sub">of your closet used in outfits</div>
         </div>
       </div>
 
@@ -136,14 +132,15 @@
           <div class="wardrobe-grid" id="recent-additions-grid">
           </div>
         </div>
-      </div>
 
         <div class="panel">
           <div class="panel-header">
             <span class="panel-title">By Category</span>
-            <a href="insights.html" class="panel-action">Details →</a>
+            <a href="/wardrobe" class="panel-action">Details →</a>
           </div>
           <div class="category-list" id="category-breakdown-list">
+          </div>
+        </div>
       </div>
 
       <!-- Outfit Suggestions -->
@@ -182,19 +179,24 @@
   <div class="modal-content">
     <h3>Filter Closet</h3>
     <label>Category</label>
-    <select><option>All Items</option><option>Tops</option><option>Bottoms</option></select>
-    <label style="margin-top:1rem; display:block;">Condition</label>
-    <select><option>Excellent</option><option>Good</option><option>Worn</option></select>
-    <button class="btn-add" style="margin-top:1.5rem; width:100%;">Apply Filters</button>
+    <select id="filter-category-select">
+      <option value="All">All Items</option>
+      <option value="Top Wear">Top Wear</option>
+      <option value="Bottom Wear">Bottom Wear</option>
+      <option value="Outerwear">Outerwear</option>
+      <option value="Footwear">Footwear</option>
+      <option value="Accessories">Accessories</option>
+    </select>
+    <button class="btn-add" id="apply-filters-btn" style="margin-top:1.5rem; width:100%; justify-content:center;">Apply Filters</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="notif-modal">
   <div class="modal-content">
     <h3>Notifications</h3>
-    <div class="notif-item"><span>Your winter jacket is trending!</span><small>2h ago</small></div>
-    <div class="notif-item"><span>New outfit combo created.</span><small>5h ago</small></div>
-    <button class="btn-add" style="margin-top:1rem; width:100%;" onclick="document.getElementById('notif-modal').classList.remove('active')">Close</button>
+    <div id="notif-container">
+        </div>
+    <button class="btn-add" style="margin-top:1.5rem; width:100%; justify-content:center;" onclick="document.getElementById('notif-modal').classList.remove('active')">Close</button>
   </div>
 </div>
 <div class="modal-overlay" id="add-item-modal">
