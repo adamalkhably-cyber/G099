@@ -132,15 +132,6 @@ def reset_password_page():
 
     return send_from_directory("templates", "forgot-password.html")
 
-@app.route("/register")
-def register_page():
-    return send_from_directory("templates", "register.html")
-
-@app.route("/reset-password")
-def reset_password_page():
-    return send_from_directory("templates", "reset-password.html")
-
-
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(admin_bp, url_prefix="/api/admin")
