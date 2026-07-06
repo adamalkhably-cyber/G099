@@ -51,4 +51,7 @@ closet.db
 # OS files
 .DS_Store
 Thumbs.db
+<<<<<<<<< Temporary merge branch 1
+=========
 
+>>>>>>>>> Temporary merge branch 2
