@@ -560,10 +560,14 @@ def get_wardrobe_stats():
         
         brand_data = [{'brand': brand, 'count': count} for brand, count in brands]
         
-        # Average items per user
-        avg_items_per_user = db.session.query(
-            func.avg(func.count(ClothingItem.id))
-        ).select_entity_from(ClothingItem).group_by(ClothingItem.user_id).scalar() or 0
+        # Average items per user - computed safely in two steps rather than
+        # nesting func.avg(func.count(...)) with a GROUP BY, which produces
+        # one row per user and made .scalar() raise MultipleResultsFound
+        # (and take down the whole endpoint) as soon as a 2nd user existed.
+        distinct_users_with_items = db.session.query(
+            func.count(func.distinct(ClothingItem.user_id))
+        ).scalar() or 0
+        avg_items_per_user = (total_items / distinct_users_with_items) if distinct_users_with_items else 0
         
         return jsonify({
             'total_items': total_items,

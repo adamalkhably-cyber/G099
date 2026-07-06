@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import secrets
+import string
 from models import User, db, bcrypt
 
 auth_bp = Blueprint("auth", __name__)
@@ -176,32 +177,51 @@ def forgot_password():
             # Return success even if user doesn't exist (security best practice)
             return jsonify({'message': 'If email exists, reset link has been sent'}), 200
         
-        # Generate reset token
-        user.reset_token = secrets.token_urlsafe(32)
-        user.reset_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        # Generate a 6-digit verification code rather than a long token
+        # embedded in a clickable link. This is what actually verifies
+        # the person resetting the password has access to this email
+        # inbox - a link can silently break (wrong protocol/host, as it
+        # did here with a hardcoded https:// link against a plain HTTP
+        # dev server), get pre-fetched by email security scanners, or
+        # get forwarded; a code the user has to manually type back in
+        # doesn't have those problems and is a clearer "verification
+        # step" against someone who only knows the account's email.
+        code = ''.join(secrets.choice(string.digits) for _ in range(6))
+        user.reset_token = code
+        user.reset_token_expiry = datetime.utcnow() + timedelta(minutes=15)
         db.session.commit()
-        
-        # Send email
+
+        # Still build a direct link as a convenience (no secret token in
+        # it now, just the email, so it's safe to include) - and derive
+        # the host from the actual incoming request instead of a
+        # hardcoded value, so it keeps working wherever this is deployed.
+        reset_link = f"{request.host_url.rstrip('/')}/reset-password?email={user.email}"
+
         if mail:
             try:
-                reset_link = f"https://127.0.0.1:5000/reset-password?token={user.reset_token}"
-                print("PASSWORD RESET LINK:", reset_link)
+                print(f"PASSWORD RESET CODE for {user.email}: {code}")
                 msg = Message(
-                    'Password Reset Request',
+                    'Password Reset Verification Code',
                     recipients=[user.email]
                 )
-                msg.body = f'''To reset your password, visit the following link:
+                msg.body = f'''Your password reset verification code is: {code}
+
+Enter this code on the password reset page to continue:
 {reset_link}
 
-This link will expire in 1 hour.
+This code will expire in 15 minutes.
 
-If you did not request a password reset, please ignore this email.
+If you did not request a password reset, please ignore this email and your password will remain unchanged.
 '''
                 mail.send(msg)
             except Exception as email_error:
                 print(f"Email error: {email_error}")
-        
-        return jsonify({'message': 'Reset link sent to email'}), 200
+        else:
+            # No mail configured (e.g. local dev) - print the code so
+            # the flow is still testable without a real inbox.
+            print(f"PASSWORD RESET CODE for {user.email}: {code}")
+
+        return jsonify({'message': 'If that email exists, a verification code has been sent.'}), 200
     
     except Exception as e:
         db.session.rollback()
@@ -209,23 +229,36 @@ If you did not request a password reset, please ignore this email.
 
 @auth_bp.route('/reset-password', methods=['POST'])
 def reset_password():
-    """Reset password with token"""
+    """Reset password after verifying the emailed code.
+
+    Requires the code sent to the account's email, not just the email
+    address - this is the verification step that stops someone who
+    merely knows or guesses a user's email from resetting their
+    password. They would also need access to that inbox to see the code.
+    """
     try:
-        data = request.json
-        
-        if not all(k in data for k in ['token', 'new_password']):
-            return jsonify({'error': 'Missing token or new password'}), 400
-        
-        user = User.query.filter_by(reset_token=data['token']).first()
-        
-        if not user:
-            return jsonify({'error': 'Invalid reset token'}), 400
-        
-        if user.reset_token_expiry < datetime.utcnow():
-            return jsonify({'error': 'Reset token has expired'}), 400
-        
+        data = request.json or {}
+
+        if not all(k in data for k in ['email', 'code', 'new_password']):
+            return jsonify({'error': 'Missing email, code, or new password'}), 400
+
+        user = User.query.filter_by(email=data['email']).first()
+
+        # Same error either way - whether the email doesn't exist or the
+        # code is just wrong - so an attacker can't use this endpoint to
+        # figure out which accounts exist.
+        if not user or not user.reset_token or user.reset_token != data['code']:
+            return jsonify({'error': 'Invalid verification code'}), 400
+
+        if not user.reset_token_expiry or user.reset_token_expiry < datetime.utcnow():
+            return jsonify({'error': 'Verification code has expired. Please request a new one.'}), 400
+
+        new_password = data['new_password']
+        if len(new_password) < 6:
+            return jsonify({'error': 'New password must be at least 6 characters'}), 400
+
         # Set new password
-        user.set_password(data['new_password'])
+        user.set_password(new_password)
         user.reset_token = None
         user.reset_token_expiry = None
         db.session.commit()

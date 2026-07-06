@@ -590,23 +590,45 @@ async function loadAnalytics() {
   // All Outfit Usage - real outfits that have actually been marked worn
   // at least once (using the wear_count/last_worn fields), across all users
   const allUsageBody = document.getElementById('allUsageBody');
-  if (allUsageBody) {
-    allUsageBody.innerHTML = '<tr><td colspan="4" class="empty-state">Loading…</td></tr>';
+  const recentWornBody = document.getElementById('recentWornBody');
+  if (allUsageBody || recentWornBody) {
+    if (allUsageBody) allUsageBody.innerHTML = '<tr><td colspan="4" class="empty-state">Loading…</td></tr>';
+    if (recentWornBody) recentWornBody.innerHTML = '<tr><td colspan="5" class="empty-state">Loading…</td></tr>';
+
     const data = await apiGet('/outfits?per_page=50');
     const worn = ((data && data.outfits) || [])
       .filter(o => (o.wear_count || 0) > 0)
       .sort((a, b) => new Date(b.last_worn) - new Date(a.last_worn));
 
-    allUsageBody.innerHTML = worn.length === 0
-      ? '<tr><td colspan="4" class="empty-state">No outfits have been marked as worn yet.</td></tr>'
-      : worn.map(o => `
-          <tr>
-            <td>${o.name}</td>
-            <td>${o.username}</td>
-            <td>${o.description || '—'}</td>
-            <td>${o.last_worn ? formatDate(o.last_worn) : '—'}</td>
-          </tr>
-        `).join('');
+    if (allUsageBody) {
+      allUsageBody.innerHTML = worn.length === 0
+        ? '<tr><td colspan="4" class="empty-state">No outfits have been marked as worn yet.</td></tr>'
+        : worn.map(o => `
+            <tr>
+              <td>${o.name}</td>
+              <td>${o.username}</td>
+              <td>${o.description || '—'}</td>
+              <td>${o.last_worn ? formatDate(o.last_worn) : '—'}</td>
+            </tr>
+          `).join('');
+    }
+
+    // Overview tab's Recently Worn - same data, top 5, plus a Wear
+    // Frequency column that Analytics doesn't show
+    if (recentWornBody) {
+      const recent = worn.slice(0, 5);
+      recentWornBody.innerHTML = recent.length === 0
+        ? '<tr><td colspan="5" class="empty-state">No outfits have been marked as worn yet.</td></tr>'
+        : recent.map(o => `
+            <tr>
+              <td>${o.name}</td>
+              <td>${o.username}</td>
+              <td>${o.description || '—'}</td>
+              <td>${o.last_worn ? formatDate(o.last_worn) : '—'}</td>
+              <td>${o.wear_count} time${o.wear_count === 1 ? '' : 's'}</td>
+            </tr>
+          `).join('');
+    }
   }
 }
 

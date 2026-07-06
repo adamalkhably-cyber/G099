@@ -1103,6 +1103,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveLogBtn) {
         saveLogBtn.addEventListener('click', saveLoggedOutfit);
     }
+
+    const logOutfitSelect = document.getElementById('log-outfit-select');
+    if (logOutfitSelect) {
+        logOutfitSelect.addEventListener('change', (e) => renderLogOutfitPreview(e.target.value));
+    }
 });
 
 function getStartOfWeek(date) {
@@ -1167,11 +1172,27 @@ async function renderCalendar(startOfWeek) {
 
         let slotHTML;
         if (outfit) {
-            const thumb = outfit.items && outfit.items[0] && outfit.items[0].image_path;
+            const items = (outfit.items || []).slice(0, 4);
+            const extraCount = (outfit.items || []).length - items.length;
+
+            let piecesHTML;
+            if (items.length === 0) {
+                piecesHTML = `<div class="outfit-slot-piece" style="grid-column:1 / -1; grid-row:1 / -1;"><span style="font-size:0.65rem; text-align:center; padding:4px;">${outfit.name}</span></div>`;
+            } else {
+                piecesHTML = items.map((item, idx) => {
+                    const spanStyle = items.length === 1 ? 'grid-column:1 / -1; grid-row:1 / -1;' : '';
+                    const isLast = idx === items.length - 1 && extraCount > 0;
+                    const inner = item.image_path
+                        ? `<img src="${item.image_path}" alt="${item.name || ''}" title="${item.name || ''}">`
+                        : `<span title="${item.name || ''}">👕</span>`;
+                    return `<div class="outfit-slot-piece" style="${spanStyle}">${inner}${isLast ? `<span class="outfit-slot-piece-more">+${extraCount}</span>` : ''}</div>`;
+                }).join('');
+            }
+
             slotHTML = `
-                <div class="outfit-slot assigned" style="position: relative; ${thumb ? `background-image: url('${thumb}');` : 'background: var(--interior-pale); display:flex; align-items:center; justify-content:center;'}" title="${outfit.name}">
-                    ${thumb ? '' : `<span style="font-size:0.7rem; color:var(--text-main); padding:4px; text-align:center;">${outfit.name}</span>`}
-                    <button onclick="event.stopPropagation(); removePlannedOutfit('${dateStr}')" title="Remove" style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.55); border:none; color:#fff; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:0.7rem; line-height:1;">&times;</button>
+                <div class="outfit-slot assigned" style="position: relative;" title="${outfit.name}">
+                    <div class="outfit-slot-mosaic">${piecesHTML}</div>
+                    <button onclick="event.stopPropagation(); removePlannedOutfit('${dateStr}')" title="Remove" style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.55); border:none; color:#fff; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:0.7rem; line-height:1; z-index:2;">&times;</button>
                 </div>
             `;
         } else {
@@ -1191,15 +1212,35 @@ async function renderCalendar(startOfWeek) {
 // Opens the Log Outfit modal, optionally pre-filled with a specific date
 // (used when clicking "+ Plan" on a day card). No date = defaults to today,
 // which is how the topbar "+ Log Outfit" button uses it.
+let logOutfitOptionsCache = [];
+
+// Renders the selected outfit's clothing items into #log-outfit-preview.
+// Rebuilding the markup each time gives every .outfit-piece a fresh element,
+// which re-triggers the CSS slide-in animation defined in theme.css.
+function renderLogOutfitPreview(outfitId) {
+    const preview = document.getElementById('log-outfit-preview');
+    if (!preview) return;
+
+    const outfit = logOutfitOptionsCache.find(o => String(o.id) === String(outfitId));
+    const items = (outfit && outfit.items) || [];
+
+    preview.innerHTML = items.map(item => {
+        if (item.image_path) return `<div class="outfit-piece"><img src="${item.image_path}" title="${item.name}" style="width:100%; height:100%; object-fit:cover; border-radius:7px;"></div>`;
+        return `<div class="outfit-piece" title="${item.name || ''}">👕</div>`;
+    }).join('');
+}
+
 window.openLogOutfitModal = async function(presetDate) {
     const modal = document.getElementById('log-outfit-modal');
     const dateInput = document.getElementById('log-outfit-date');
     const select = document.getElementById('log-outfit-select');
+    const preview = document.getElementById('log-outfit-preview');
     if (!modal || !dateInput || !select) return;
 
     dateInput.value = presetDate || formatDateYMD(new Date());
 
     select.innerHTML = '<option>Loading…</option>';
+    if (preview) preview.innerHTML = '';
     modal.classList.add('active');
 
     try {
@@ -1207,10 +1248,14 @@ window.openLogOutfitModal = async function(presetDate) {
         const res = await fetch('/api/outfits', { headers: { Authorization: `Bearer ${token}` } });
         const outfits = res.ok ? await res.json() : [];
         const list = Array.isArray(outfits) ? outfits : [];
+        logOutfitOptionsCache = list;
 
         select.innerHTML = list.length === 0
             ? '<option value="">No saved outfits yet - create one in Outfit Planner</option>'
             : list.map(o => `<option value="${o.id}">${o.name}</option>`).join('');
+
+        // Slide in the first outfit's pieces right away
+        if (list.length > 0) renderLogOutfitPreview(list[0].id);
     } catch (err) {
         console.error('Error loading outfits for calendar:', err);
         select.innerHTML = '<option value="">Couldn\'t load outfits</option>';

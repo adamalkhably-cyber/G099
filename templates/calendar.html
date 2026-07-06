@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Outfits This Week</title>
   <link rel="stylesheet" href="/static/theme.css">
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -117,6 +117,7 @@
       <label style="display:block; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main);">Outfit</label>
       <select id="log-outfit-select" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid rgba(4,93,93,0.2);">
       </select>
+      <div id="log-outfit-preview" class="outfit-pieces" style="margin-top:0.7rem;"></div>
     </div>
 
     <button id="save-log-outfit-btn" class="btn-add" style="width:100%; justify-content:center; padding:0.75rem;">Save</button>

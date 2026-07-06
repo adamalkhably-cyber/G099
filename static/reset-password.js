@@ -1,21 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("resetPasswordForm");
   const submitBtn = form.querySelector(".submit-btn");
+  const emailLabel = document.getElementById("resetEmailLabel");
+  const resendBtn = document.getElementById("resendCodeBtn");
 
   const params = new URLSearchParams(window.location.search);
-  const token = params.get("token");
+  const email = params.get("email");
 
-  if (!token) {
-    alert("Missing reset token. Please request a new password reset link.");
+  if (!email) {
+    alert("Missing email. Please request a new password reset code.");
     window.location.href = "/forgot-password";
     return;
   }
 
+  if (emailLabel) emailLabel.textContent = `Enter the 6-digit code we sent to ${email}.`;
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    const code = document.getElementById("resetCode").value.trim();
     const newPassword = document.getElementById("newPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (!/^\d{6}$/.test(code)) {
+      alert("Enter the 6-digit code from your email.");
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match.");
@@ -32,7 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          token: token,
+          email: email,
+          code: code,
           new_password: newPassword
         })
       });
@@ -54,4 +65,26 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.textContent = "Change Password";
     }
   });
+
+  if (resendBtn) {
+    resendBtn.addEventListener("click", async () => {
+      resendBtn.disabled = true;
+      resendBtn.textContent = "Sending...";
+      try {
+        const response = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await response.json().catch(() => ({}));
+        alert(data.message || "If that email exists, a new code has been sent.");
+      } catch (err) {
+        console.error("Resend code error:", err);
+        alert("Could not reach the server.");
+      } finally {
+        resendBtn.disabled = false;
+        resendBtn.textContent = "Resend code";
+      }
+    });
+  }
 });

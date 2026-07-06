@@ -1,5 +1,7 @@
-// Change this if your Flask API runs on a different host/port
-const API_BASE_URL = "http://localhost:5000/api/auth";
+// Relative path so this keeps working regardless of host/port -
+// hardcoding http://localhost:5000 broke as soon as this was served
+// from anywhere else.
+const API_BASE_URL = "/api/auth";
 
 document.addEventListener("DOMContentLoaded", () => {
     const forgotPasswordForm = document.getElementById("forgotPasswordForm");
@@ -27,8 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            alert(data.message || "If that email exists, a reset link has been sent.");
-            forgotPasswordForm.reset();
+            alert(data.message || "If that email exists, a verification code has been sent.");
+            // Take the user straight to the code + new-password step
+            // instead of leaving them here with nothing to click.
+            window.location.href = `/reset-password?email=${encodeURIComponent(email)}`;
         } catch (err) {
             console.error("Forgot password error:", err);
             alert("Could not reach the server. Please try again.");
