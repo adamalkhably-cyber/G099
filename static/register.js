@@ -1,5 +1,5 @@
 // Change this if your Flask API runs on a different host/port
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = "/api/auth";
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("registerForm");
