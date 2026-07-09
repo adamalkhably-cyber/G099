@@ -4,7 +4,7 @@ from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import secrets
 import string
-from models import User, db, bcrypt
+from models import User, db
 
 auth_bp = Blueprint("auth", __name__)
 mail = None  # Will be initialized in app.py
@@ -34,7 +34,8 @@ def register():
         # Create new user
         user = User(
             username=data['username'],
-            email=data['email']
+            email=data['email'],
+            last_login=datetime.utcnow()
         )
         user.set_password(data['password'])
         
@@ -267,4 +268,18 @@ def reset_password():
     
     except Exception as e:
         db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@auth_bp.route('/announcement', methods=['GET'])
+@jwt_required()
+def get_announcement():
+    """Retrieve the current active system-wide announcement"""
+    try:
+        from models import SystemAnnouncement
+        announcement = SystemAnnouncement.query.filter_by(active=True).order_by(SystemAnnouncement.created_at.desc()).first()
+        if announcement:
+            return jsonify({'ok': True, 'announcement': announcement.to_dict()}), 200
+        return jsonify({'ok': True, 'announcement': None}), 200
+    except Exception as e:
         return jsonify({'error': str(e)}), 500

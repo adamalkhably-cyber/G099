@@ -86,8 +86,8 @@ html[data-theme="dark"] .panel-action {
 
 /* 1. The Form Container */
 html[data-theme="dark"] form {
-    background-color: #1e1e1e;
-    border: 1px solid #333333;
+    background-color: transparent;
+    border: none;
     color: #e0e0e0;
 }
 
@@ -1838,13 +1838,13 @@ html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
     appearance: none;
     -webkit-appearance: none;
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 10px;
+    left: 10px;
     z-index: 10;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     background-color: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.6);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
     border-radius: 50%;
     cursor: pointer;
     backdrop-filter: blur(4px);
@@ -1864,12 +1864,12 @@ html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
 .item-select:checked::after {
     content: '';
     position: absolute;
-    top: 3px;
-    left: 7px;
-    width: 5px;
-    height: 10px;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
     border: solid white;
-    border-width: 0 2.5px 2.5px 0;
+    border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
 
@@ -2030,3 +2030,924 @@ body {
     align-content: start;
 }
 }
+
+/* =====================================================
+   ANIMATION LAYER — User Panel + Admin Panel
+   ===================================================== */
+
+/* ── Page entrance fade ── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.main, main {
+  animation: pageEnter 0.45s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* ── Stat card staggered entrance ── */
+@keyframes statCardIn {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.stat-card {
+  animation: statCardIn 0.55s cubic-bezier(.22,1,.36,1) both;
+}
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.13s; }
+.stat-card:nth-child(3) { animation-delay: 0.21s; }
+.stat-card:nth-child(4) { animation-delay: 0.29s; }
+
+/* ── Stat value count-up entrance ── */
+@keyframes countBounce {
+  0%   { opacity: 0; transform: translateY(10px); }
+  60%  { opacity: 1; transform: translateY(-3px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.stat-value {
+  animation: countBounce 0.7s ease both;
+  animation-delay: inherit;
+}
+
+/* ── Panel scroll-reveal (JS adds .panel-visible) ── */
+.panel {
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.22,1,.36,1);
+}
+
+.panel-hidden {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.panel-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* ── Skeleton shimmer loader ── */
+@keyframes shimmerMove {
+  from { background-position: -600px 0; }
+  to   { background-position: 600px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--interior-pale) 25%, var(--interior-soft) 50%, var(--interior-pale) 75%);
+  background-size: 600px 100%;
+  animation: shimmerMove 1.6s infinite linear;
+  border-radius: 8px;
+}
+
+.skeleton-card {
+  height: 130px;
+  border-radius: 12px;
+}
+
+.skeleton-row {
+  height: 18px;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+/* ── Clothing card hover lift ── */
+.clothing-card {
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease !important;
+  will-change: transform;
+}
+
+.clothing-card:hover {
+  transform: translateY(-6px) scale(1.015) !important;
+  box-shadow: 0 16px 36px rgba(4,93,93,0.18) !important;
+}
+
+/* ── Category bar animated fill ── */
+.cat-bar {
+  transition: width 1.1s cubic-bezier(.22,1,.36,1) !important;
+}
+
+/* ── Nav-item hover glow slide ── */
+.nav-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--interior);
+  border-radius: 0 2px 2px 0;
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(.22,1,.36,1);
+}
+
+.nav-item.active::before,
+.nav-item:hover::before {
+  transform: scaleY(1);
+}
+
+/* ── Topbar search expand on focus ── */
+.search-bar {
+  transition: width 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.2s ease !important;
+}
+
+.search-bar:focus-within {
+  width: 280px !important;
+  box-shadow: 0 0 0 2px rgba(129,205,198,0.35) !important;
+}
+
+/* ── Notification bell shake ── */
+@keyframes bellShake {
+  0%, 100% { transform: rotate(0deg); }
+  15%       { transform: rotate(15deg); }
+  30%       { transform: rotate(-12deg); }
+  45%       { transform: rotate(8deg); }
+  60%       { transform: rotate(-5deg); }
+  75%       { transform: rotate(3deg); }
+}
+
+.bell-shake {
+  animation: bellShake 0.55s ease;
+}
+
+/* ── Admin view tab transition ── */
+@keyframes viewSlideIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes viewSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-20px); }
+}
+
+.view {
+  transition: opacity 0.25s ease;
+}
+
+.view.active {
+  animation: viewSlideIn 0.38s cubic-bezier(.22,1,.36,1) both;
+}
+
+.view.exiting {
+  animation: viewSlideOut 0.25s ease both;
+  pointer-events: none;
+}
+
+/* ── Admin live feed flash ── */
+@keyframes feedItemIn {
+  from { opacity: 0; transform: translateY(-12px); background: rgba(127,207,198,0.22); }
+  to   { opacity: 1; transform: translateY(0);     background: transparent; }
+}
+
+.live-item.new-entry {
+  animation: feedItemIn 0.7s ease both;
+}
+
+/* ── Table row hover ── */
+.recent-table tbody tr,
+.data-table tbody tr {
+  transition: background 0.15s ease;
+  cursor: default;
+}
+
+.recent-table tbody tr:hover,
+.data-table tbody tr:hover {
+  background: rgba(129,205,198,0.1) !important;
+}
+
+html[data-theme="dark"] .recent-table tbody tr:hover,
+html[data-theme="dark"] .data-table tbody tr:hover {
+  background: rgba(127,207,198,0.07) !important;
+}
+
+/* ── Admin sidebar active indicator ── */
+.sidebar-indicator {
+  position: absolute;
+  left: 0;
+  width: 3px;
+  background: var(--interior);
+  border-radius: 0 2px 2px 0;
+  transition: top 0.3s cubic-bezier(.22,1,.36,1), height 0.3s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+
+/* ── Btn-add click ripple ── */
+.btn-add {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-add::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.2);
+  opacity: 0;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.btn-add:active::after {
+  opacity: 1;
+}
+
+/* ── Toast container (user panel) ── */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* ── Outfit card hover ── */
+.outfit-card {
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease !important;
+}
+
+.outfit-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(4,93,93,0.16) !important;
+}
+
+/* ============================================================
+   LOGIN-PAGE DESIGN SYSTEM, PORTED TO THE USER DASHBOARD
+   Brings the brand-teal / shadcn-card language and motion
+   from login.html into the dashboard, on top of the existing
+   glass-card system (no structural HTML changes required).
+   ============================================================ */
+
+:root {
+    /* Same brand ramp as the Tailwind config on login.html */
+    --brand-50:  #f0fdfa;
+    --brand-100: #ccfbf1;
+    --brand-500: #14b8a6;
+    --brand-600: #0d9488;
+    --brand-700: #0f766e;
+    --brand-800: #115e59;
+    --brand-900: #134e4a;
+    --dash-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Typography: adopt Inter for all interactive/UI text, the
+   way login.html does, while keeping Playfair for the display
+   headings that already define this app's identity. --- */
+.nav-item,
+.sidebar-section,
+.brand-sub,
+.topbar-right,
+.search-bar input,
+.btn-add,
+.btn-icon,
+.stat-label,
+.stat-sub,
+.stat-value,
+.panel-action,
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.modal-content label,
+.recent-table th,
+.recent-table td,
+.profile-name {
+    font-family: 'Inter', 'DM Sans', sans-serif !important;
+}
+
+/* --- Page entrance animation, mirroring login.css's fadeIn --- */
+@keyframes dashFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dashFadeInScale {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.sidebar {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+}
+
+.topbar {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+
+/* Stat cards, panels, wardrobe cards and outfit cards all get a
+   soft staggered rise-in on load, same easing family as the
+   login card's animate-in utility. */
+.stats-row .stat-card,
+.two-col .panel,
+.panel {
+    animation: dashFadeIn 0.4s var(--dash-ease) both;
+}
+
+.stats-row .stat-card:nth-child(1) { animation-delay: 0.02s; }
+.stats-row .stat-card:nth-child(2) { animation-delay: 0.08s; }
+.stats-row .stat-card:nth-child(3) { animation-delay: 0.14s; }
+.stats-row .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+.two-col .panel:nth-child(1) { animation-delay: 0.1s; }
+.two-col .panel:nth-child(2) { animation-delay: 0.16s; }
+
+#recent-additions-grid .clothing-card,
+#outfit-suggestions-row .outfit-card {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+}
+#recent-additions-grid .clothing-card:nth-child(1),
+#outfit-suggestions-row .outfit-card:nth-child(1) { animation-delay: 0.06s; }
+#recent-additions-grid .clothing-card:nth-child(2),
+#outfit-suggestions-row .outfit-card:nth-child(2) { animation-delay: 0.11s; }
+#recent-additions-grid .clothing-card:nth-child(3),
+#outfit-suggestions-row .outfit-card:nth-child(3) { animation-delay: 0.16s; }
+#recent-additions-grid .clothing-card:nth-child(4),
+#outfit-suggestions-row .outfit-card:nth-child(4) { animation-delay: 0.21s; }
+#recent-additions-grid .clothing-card:nth-child(n+5),
+#outfit-suggestions-row .outfit-card:nth-child(n+5) { animation-delay: 0.26s; }
+
+.recent-table tbody tr {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+.recent-table tbody tr:nth-child(1) { animation-delay: 0.04s; }
+.recent-table tbody tr:nth-child(2) { animation-delay: 0.08s; }
+.recent-table tbody tr:nth-child(3) { animation-delay: 0.12s; }
+.recent-table tbody tr:nth-child(4) { animation-delay: 0.16s; }
+.recent-table tbody tr:nth-child(n+5) { animation-delay: 0.2s; }
+
+/* --- Sidebar nav items: shadcn-style active accent bar + smooth
+   slide, replacing the flat background swap --- */
+.nav-item {
+    position: relative;
+    transition: background 0.18s var(--dash-ease), color 0.18s var(--dash-ease), transform 0.18s var(--dash-ease);
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%) scaleY(0);
+    width: 3px;
+    height: 60%;
+    border-radius: 0 4px 4px 0;
+    background: var(--brand-600);
+    transition: transform 0.2s var(--dash-ease);
+}
+
+.nav-item:hover {
+    transform: translateX(2px);
+}
+
+.nav-item.active::before {
+    transform: translateY(-50%) scaleY(1);
+}
+
+.brand-icon {
+    transition: transform 0.25s var(--dash-ease);
+}
+.sidebar-brand:hover .brand-icon {
+    transform: scale(1.06) rotate(-2deg);
+}
+
+/* --- Buttons: match login.html's rounded-md / shadow-sm /
+   focus-visible ring / active press --- */
+.btn-add,
+.btn-icon,
+.btn-close,
+.logout-btn {
+    transition: background 0.15s var(--dash-ease), color 0.15s var(--dash-ease),
+                box-shadow 0.15s var(--dash-ease), transform 0.1s var(--dash-ease);
+}
+
+.btn-add {
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(4, 93, 93, 0.08);
+}
+
+.btn-add:hover {
+    box-shadow: 0 4px 10px rgba(4, 93, 93, 0.18);
+}
+
+.btn-add:active,
+.btn-icon:active,
+.save-btn:active {
+    transform: scale(0.96);
+}
+
+.btn-add:focus-visible,
+.btn-icon:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--brand-600);
+    outline-offset: 2px;
+}
+
+/* --- Inputs: brand-600 focus ring like login.html's
+   focus:ring-2 focus:ring-brand-600, replacing the flat
+   border-only focus state --- */
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.search-bar,
+#filter-category-select {
+    transition: border-color 0.15s var(--dash-ease), box-shadow 0.15s var(--dash-ease);
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    border-color: var(--brand-600) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+
+.search-bar:focus-within {
+    border-color: var(--brand-600);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+/* --- Modal: fade + scale entrance instead of an instant pop,
+   same feel as login.css's .animate-in --- */
+.modal-overlay.active .modal-content {
+    animation: dashFadeInScale 0.22s var(--dash-ease) both;
+}
+
+/* --- Stat cards: slightly livelier hover, matching the
+   login card's crisp, quick transitions --- */
+.stat-card,
+.panel,
+.clothing-card,
+.outfit-card {
+    transition: transform 0.25s var(--dash-ease), box-shadow 0.25s var(--dash-ease) !important;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px var(--shadow-deep);
+}
+
+/* --- Sidebar profile avatar: subtle ring on hover, echoing the
+   login page's soft interactive affordances --- */
+.avatar-container {
+    transition: box-shadow 0.2s var(--dash-ease), transform 0.2s var(--dash-ease);
+}
+.sidebar-profile:hover .avatar-container {
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
+}
+
+/* --- Reusable alert/toast, matching login.js's markup classes
+   so the same JS-driven alert can be reused on the dashboard --- */
+.dash-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+    animation: dashFadeIn 0.2s ease-out both;
+}
+.dash-alert.error   { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.dash-alert.success { background: var(--brand-50); color: var(--brand-800); border-color: var(--brand-100); }
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar, .topbar, .stat-card, .panel, .clothing-card, .outfit-card,
+    .nav-item, .recent-table tbody tr, .modal-overlay.active .modal-content {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   LOGIN-PAGE DESIGN SYSTEM — EXTENDED TO WARDROBE, OUTFITS,
+   FAVORITES, CALENDAR & SETTINGS
+   Covers plain-page inputs/buttons that live outside .modal-content
+   (e.g. settings.html's raw <form> fields, wardrobe's filter chips,
+   outfits.html's name field) so every page picks up the same
+   brand-teal focus rings, Inter type and motion as the dashboard.
+   ============================================================ */
+
+/* --- Generic inputs/selects/textareas anywhere in .content,
+   not just inside .modal-content --- */
+.content input[type="text"],
+.content input[type="email"],
+.content input[type="password"],
+.content input[type="date"],
+.content select,
+.content textarea,
+#username, #email, #current-password, #password, #theme,
+#outfit-name-input {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    transition: border-color 0.15s var(--dash-ease), box-shadow 0.15s var(--dash-ease);
+}
+
+.content input[type="text"]:focus,
+.content input[type="email"]:focus,
+.content input[type="password"]:focus,
+.content input[type="date"]:focus,
+.content select:focus,
+.content textarea:focus {
+    border-color: var(--brand-600) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+
+/* Checkboxes get the same brand accent as everything else */
+.content input[type="checkbox"] {
+    accent-color: var(--brand-600);
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+/* --- Settings/Privacy panels: fade the two stacked panels in
+   with the same stagger as the dashboard's two-col layout --- */
+#settings-page .panel {
+    animation: dashFadeIn 0.4s var(--dash-ease) both;
+}
+#settings-page .content > .panel:nth-of-type(1),
+#settings-page .content .panel { animation-delay: 0.04s; }
+#settings-page .content > .content .panel { animation-delay: 0.12s; }
+
+/* --- Wardrobe filter chips: pill-shaped, active state, and a
+   quick press animation instead of a flat hover swap --- */
+.filter-controls {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+.filter-controls button {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-main);
+    transition: background 0.15s var(--dash-ease), border-color 0.15s var(--dash-ease),
+                color 0.15s var(--dash-ease), transform 0.1s var(--dash-ease);
+}
+.filter-controls button:hover {
+    border-color: var(--brand-600);
+    transform: translateY(-1px);
+}
+.filter-controls button:active {
+    transform: scale(0.96);
+}
+.filter-controls button.active {
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+    color: #fff;
+}
+
+/* Dark mode: --text-main is bright and reads fine on --bg-surface,
+   but give the active pill's white text a touch more contrast
+   against the brand-600 fill for consistency. */
+html[data-theme="dark"] .filter-controls button.active {
+    color: #ffffff;
+}
+
+/* --- Wardrobe / planner / favorites grids: staggered card
+   rise-in, same treatment as the dashboard's recent-additions --- */
+#wardrobe-grid .clothing-card,
+#planner-wardrobe-grid .clothing-card,
+#planner-grid .outfit-card,
+#favorites-grid .outfit-card {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+}
+#wardrobe-grid .clothing-card:nth-child(1), #planner-wardrobe-grid .clothing-card:nth-child(1),
+#planner-grid .outfit-card:nth-child(1), #favorites-grid .outfit-card:nth-child(1) { animation-delay: 0.04s; }
+#wardrobe-grid .clothing-card:nth-child(2), #planner-wardrobe-grid .clothing-card:nth-child(2),
+#planner-grid .outfit-card:nth-child(2), #favorites-grid .outfit-card:nth-child(2) { animation-delay: 0.08s; }
+#wardrobe-grid .clothing-card:nth-child(3), #planner-wardrobe-grid .clothing-card:nth-child(3),
+#planner-grid .outfit-card:nth-child(3), #favorites-grid .outfit-card:nth-child(3) { animation-delay: 0.12s; }
+#wardrobe-grid .clothing-card:nth-child(4), #planner-wardrobe-grid .clothing-card:nth-child(4),
+#planner-grid .outfit-card:nth-child(4), #favorites-grid .outfit-card:nth-child(4) { animation-delay: 0.16s; }
+#wardrobe-grid .clothing-card:nth-child(n+5), #planner-wardrobe-grid .clothing-card:nth-child(n+5),
+#planner-grid .outfit-card:nth-child(n+5), #favorites-grid .outfit-card:nth-child(n+5) { animation-delay: 0.2s; }
+
+/* --- Calendar: day cards rise in left-to-right like a week
+   unfolding, and today's card gets a soft brand pulse --- */
+.calendar-grid {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+.calendar-day-card {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+    transition: transform 0.2s var(--dash-ease), box-shadow 0.2s var(--dash-ease);
+}
+.calendar-day-card:nth-child(1) { animation-delay: 0.02s; }
+.calendar-day-card:nth-child(2) { animation-delay: 0.06s; }
+.calendar-day-card:nth-child(3) { animation-delay: 0.1s; }
+.calendar-day-card:nth-child(4) { animation-delay: 0.14s; }
+.calendar-day-card:nth-child(5) { animation-delay: 0.18s; }
+.calendar-day-card:nth-child(6) { animation-delay: 0.22s; }
+.calendar-day-card:nth-child(7) { animation-delay: 0.26s; }
+.calendar-day-card:hover {
+    transform: translateY(-3px);
+}
+.calendar-day-card.today {
+    box-shadow: 0 0 0 2px var(--brand-600);
+}
+
+/* --- Outfit builder: name field + save button match the
+   login-style focus ring and press feedback --- */
+.outfit-builder input {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    transition: border-color 0.15s var(--dash-ease), box-shadow 0.15s var(--dash-ease);
+}
+.outfit-builder input:focus {
+    border-color: var(--brand-600) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+.save-btn,
+.outfit-builder .save-btn {
+    transition: background 0.15s var(--dash-ease), transform 0.1s var(--dash-ease),
+                box-shadow 0.15s var(--dash-ease) !important;
+}
+.save-btn:active,
+.outfit-builder .save-btn:active {
+    transform: scale(0.96) !important;
+}
+
+/* ============================================================
+   MORE MOTION — WARDROBE, OUTFIT PLANNER & FAVORITES
+   ============================================================ */
+
+/* --- Wardrobe: image zoom on hover --- */
+.clothing-img img {
+    transition: transform 0.4s var(--dash-ease);
+}
+.clothing-card:hover .clothing-img img {
+    transform: scale(1.08);
+}
+
+/* --- Wardrobe: remove button recedes until the card is hovered,
+   so the grid reads cleaner and the action feels intentional --- */
+.clothing-card .btn-danger {
+    opacity: 0.55;
+    transform: translateY(2px);
+    transition: opacity 0.2s var(--dash-ease), transform 0.2s var(--dash-ease), background 0.2s var(--dash-ease);
+}
+.clothing-card:hover .btn-danger {
+    opacity: 1;
+    transform: translateY(0);
+}
+.clothing-card .btn-danger:active {
+    transform: scale(0.94);
+}
+
+/* --- Wardrobe: checkbox pops when checked (outfit builder grid) --- */
+@keyframes checkPop {
+    0%   { transform: scale(0.85); }
+    50%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+.item-select:checked {
+    animation: checkPop 0.25s var(--dash-ease);
+}
+
+/* --- Outfit cards: banner gets a soft moving shimmer on hover
+   instead of sitting flat --- */
+.outfit-banner {
+    background-size: 200% 100%;
+    transition: background-position 0.6s var(--dash-ease);
+}
+.outfit-banner.warm { background-image: linear-gradient(90deg, #c9a84c, #e0c574, #c9a84c); }
+.outfit-banner.cool { background-image: linear-gradient(90deg, var(--interior), var(--interior-light), var(--interior)); }
+.outfit-banner.mono { background-image: linear-gradient(90deg, #555, #7a7a7a, #555); }
+.outfit-card:hover .outfit-banner {
+    background-position: 100% 0;
+}
+
+/* --- Outfit cards: gallery thumbnails lift slightly on hover --- */
+.outfit-item-img {
+    transition: transform 0.2s var(--dash-ease), border-color 0.2s var(--dash-ease);
+}
+.outfit-item-img:hover {
+    transform: translateY(-3px) scale(1.06);
+    border-color: var(--brand-600);
+}
+
+/* --- Outfit cards: action row (Mark as Worn / Delete) settles in
+   only once the card is engaged, matching the wardrobe pattern --- */
+.outfit-body > div[style*="display:flex"] {
+    opacity: 0.85;
+    transition: opacity 0.2s var(--dash-ease);
+}
+.outfit-card:hover .outfit-body > div[style*="display:flex"] {
+    opacity: 1;
+}
+.aesthetic-remove-btn:active {
+    transform: scale(0.94);
+}
+
+/* --- Favorite heart: hover/press feedback for every heart --- */
+.favorite-btn svg {
+    transition: transform 0.15s var(--dash-ease);
+}
+.favorite-btn:hover svg {
+    animation-play-state: paused;
+    transform: scale(1.15);
+}
+.favorite-btn:active svg {
+    transform: scale(0.9);
+}
+
+/* Already-favorited hearts get a slow, subtle heartbeat so the
+   Favorites page feels alive without being distracting */
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+}
+.favorite-btn.favorited svg {
+    animation: heartBeat 2.6s ease-in-out infinite;
+}
+
+/* Immediate pop feedback the instant a heart is clicked, applied
+   via JS right before the grid re-renders with the server result */
+@keyframes favPop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.4); }
+    60%  { transform: scale(0.92); }
+    100% { transform: scale(1); }
+}
+.favorite-btn.fav-pop svg {
+    animation: favPop 0.35s var(--dash-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .clothing-img img, .outfit-banner, .outfit-item-img, .favorite-btn svg,
+    .item-select, .clothing-card .btn-danger {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS — animated replacement for native alert()
+   ============================================================ */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    pointer-events: none;
+}
+
+.dash-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    box-shadow: 0 8px 22px rgba(4, 93, 93, 0.16);
+    max-width: 260px;
+    opacity: 0;
+    transform: translateX(24px);
+    pointer-events: auto;
+}
+
+.dash-toast.success { background: var(--brand-50); color: var(--brand-800); border-color: var(--brand-100); }
+.dash-toast.error   { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.dash-toast svg { flex-shrink: 0; }
+
+.dash-toast.show {
+    animation: toastIn 0.3s var(--dash-ease) forwards;
+}
+.dash-toast.hide {
+    animation: toastOut 0.25s var(--dash-ease) forwards;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(24px); }
+}
+
+html[data-theme="dark"] .dash-toast.success { background: #0e3a34; color: #7fcfc6; border-color: rgba(127, 207, 198, 0.25); }
+html[data-theme="dark"] .dash-toast.error   { background: #3a1414; color: #ffb4b4; border-color: rgba(255, 100, 100, 0.25); }
+
+/* ============================================================
+   BUG FIXES: checkbox & filter animation state
+   ============================================================ */
+
+/* All checkboxes get the same pop-on-check feedback the outfit
+   builder's item-select had — previously only .item-select was
+   covered, so Settings' notification checkboxes had no feedback
+   at all beyond a static accent-color swap. */
+input[type="checkbox"] {
+    transition: transform 0.15s var(--dash-ease);
+}
+input[type="checkbox"]:checked {
+    animation: checkPop 0.25s var(--dash-ease);
+}
+input[type="checkbox"]:hover {
+    transform: scale(1.08);
+}
+
+/* .item-select is a custom absolutely-positioned checkbox that
+   already defines its own hover transform (scale 1.1) — let that
+   more specific rule win instead of the generic one above fighting it. */
+.item-select:hover {
+    transform: scale(1.1) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #toast-container .dash-toast,
+    input[type="checkbox"] {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   SYSTEM ANNOUNCEMENT BANNER
+   ============================================================ */
+.system-announcement-banner {
+  background: rgba(254, 243, 199, 0.95);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+  color: #78350f;
+  padding: 0.75rem 1.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  z-index: 50;
+  animation: slideDown 0.3s cubic-bezier(.22,1,.36,1) both;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+html[data-theme="dark"] .system-announcement-banner {
+  background: rgba(30, 27, 22, 0.95);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+  color: #fef3c7;
+}
+
+.system-announcement-banner.fade-out {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.system-announcement-banner .banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.system-announcement-banner .banner-badge {
+  background: #f59e0b;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+html[data-theme="dark"] .system-announcement-banner .banner-badge {
+  background: #d97706;
+}
+
+.system-announcement-banner .banner-text {
+  flex: 1;
+}
+
+.system-announcement-banner .banner-close {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.system-announcement-banner .banner-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}

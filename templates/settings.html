@@ -1,18 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Settings</title>
+  <title>Settings | Digital Closet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Anti-flicker theme script -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
+
   <link rel="stylesheet" href="/static/theme.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['attribute', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            teal: {
+              50:  '#e4f5f3',
+              100: '#c2e9e6',
+              200: '#81cdc6',
+              300: '#4f9f98',
+              400: '#7fcfc6',
+              500: '#056b6b',
+              600: '#045D5D',
+              700: '#033f3f',
+              800: '#0b2f2f',
+              900: '#041b1b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #cbd5e1;
+      transition: .3s cubic-bezier(.22,1,.36,1);
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute; content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .3s cubic-bezier(.22,1,.36,1);
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input:checked + .slider { background-color: #056b6b; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* ═══════════════════════════════════════════════
+       DARK MODE — Full settings page dark theme
+       Uses html[data-theme="dark"] to beat theme.css
+       ═══════════════════════════════════════════════ */
+
+    /* Toggles */
+    html[data-theme="dark"] .slider { background-color: #334155; }
+    html[data-theme="dark"] input:checked + .slider { background-color: #81cdc6; }
+    html[data-theme="dark"] input:checked + .slider:before { background-color: #033f3f; }
+
+    /* Page background */
+    html[data-theme="dark"] #settings-page {
+      background: linear-gradient(135deg, #041b1b 0%, #0b2f2f 100%) !important;
+    }
+
+    /* Top bar */
+    html[data-theme="dark"] .settings-topbar {
+      background: rgba(4, 27, 27, 0.85) !important;
+      border-color: rgba(79,159,152,0.15) !important;
+      backdrop-filter: blur(12px);
+    }
+    html[data-theme="dark"] .settings-topbar h1 { color: #c2e9e6 !important; }
+
+    /* Card panels */
+    html[data-theme="dark"] .settings-card {
+      background-color: #052626 !important;
+      border-color: rgba(79,159,152,0.15) !important;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    /* Card headers */
+    html[data-theme="dark"] .settings-card-header {
+      background-color: rgba(4,27,27,0.5) !important;
+      border-color: rgba(79,159,152,0.12) !important;
+    }
+    html[data-theme="dark"] .settings-card-header span { color: #81cdc6 !important; }
+
+    /* Forms inside cards - transparent */
+    html[data-theme="dark"] .settings-card form {
+      background: transparent !important;
+      border: none !important;
+      color: #e0e0e0 !important;
+    }
+
+    /* Section labels */
+    html[data-theme="dark"] .settings-label { color: #81cdc6 !important; }
+
+    /* Notification toggle labels + descriptions */
+    html[data-theme="dark"] .notif-label { color: #e6f7f5 !important; }
+    html[data-theme="dark"] .notif-desc { color: rgba(129,205,198,0.8) !important; }
+
+    /* File helper text */
+    html[data-theme="dark"] .helper-text { color: #81cdc6 !important; }
+    html[data-theme="dark"] .helper-text-dim { color: rgba(129,205,198,0.6) !important; }
+
+    /* Inputs, selects */
+    html[data-theme="dark"] .settings-card input,
+    html[data-theme="dark"] .settings-card select,
+    html[data-theme="dark"] .settings-card textarea {
+      background-color: #031c1c !important;
+      color: #ffffff !important;
+      border-color: rgba(79,159,152,0.35) !important;
+    }
+    html[data-theme="dark"] .settings-card input:focus,
+    html[data-theme="dark"] .settings-card select:focus {
+      border-color: #7fcfc6 !important;
+      box-shadow: 0 0 0 2px rgba(127,207,198,0.15) !important;
+    }
+    html[data-theme="dark"] .settings-card input::placeholder {
+      color: #5a8a85 !important;
+    }
+
+    /* Dividers inside cards */
+    html[data-theme="dark"] .settings-divider {
+      border-color: rgba(79,159,152,0.12) !important;
+    }
+
+    /* Avatar preview */
+    html[data-theme="dark"] .avatar-preview-box {
+      background-color: #031c1c !important;
+      border-color: rgba(79,159,152,0.3) !important;
+    }
+    html[data-theme="dark"] .avatar-fallback { color: #81cdc6 !important; }
+
+    /* Save / Update buttons */
+    html[data-theme="dark"] .btn-save {
+      background-color: #056b6b !important;
+    }
+    html[data-theme="dark"] .btn-save:hover {
+      background-color: #4f9f98 !important;
+    }
+  </style>
 </head>
-<script src="/static/app.js"></script>
-<body>
+
+<body class="bg-[#f4f9f9] dark:bg-[#041b1b] text-[#033f3f] dark:text-teal-100 font-sans antialiased">
   <div class="layout">
+    
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-brand">
         <div class="brand-icon">
-          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/><path d="M8 6V4a2 2 0 0 1 4 0v2"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" /><path d="M8 6V4a2 2 0 0 1 4 0v2" /></svg>
         </div>
         <div class="brand-name">Wardrobe</div>
         <div class="brand-sub">Digital Closet</div>
@@ -21,145 +185,276 @@
       <div class="sidebar-section">Main</div>
 
       <a class="nav-item" href="/dashboard">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></svg>
         Dashboard
       </a>
 
       <a class="nav-item" href="/wardrobe">
-        <svg viewBox="0 0 24 24"><path d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5z"/><path d="M14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5z"/><path d="M4 17a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2z"/><path d="M14 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5z" /><path d="M14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5z" /><path d="M4 17a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2z" /><path d="M14 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6z" /></svg>
         My Wardrobe
       </a>
 
       <a class="nav-item" href="/outfits">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></svg>
         Outfit Planner
       </a>
 
       <a class="nav-item" href="/favorites">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
         Favorites
       </a>
 
       <div class="sidebar-section">Insights</div>
 
       <a class="nav-item" href="/calendar">
-        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-4 4"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M3 3v18h18" /><path d="M18 9l-5 5-4-4-4 4" /></svg>
         Outfits Worn This Week
       </a>
 
       <div class="sidebar-section">Settings</div>
 
       <a class="nav-item active" href="/settings">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6.1A10 10 0 0 0 2.05 14"/><path d="M5.08 19.14A10 10 0 0 0 12 22c1.39 0 2.72-.28 3.93-.79"/><path d="M19.07 19.07A10 10 0 0 0 22 12a10 10 0 0 0-.08-1.32"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34" /><path d="M4 6.1A10 10 0 0 0 2.05 14" /><path d="M5.08 19.14A10 10 0 0 0 12 22c1.39 0 2.72-.28 3.93-.79" /><path d="M19.07 19.07A10 10 0 0 0 22 12a10 10 0 0 0-.08-1.32" /></svg>
         Settings
       </a>
 
       <div class="sidebar-spacer"></div>
 
       <div class="sidebar-profile">
-    <div class="sidebar-profile-left">
-        <div class="avatar-container">
+        <div class="sidebar-profile-left">
+          <div class="avatar-container">
             <img id="sidebar-avatar-img" src="" alt="Profile" style="display: none;">
             <div class="avatar" id="sidebar-avatar">H</div>
-        </div>
-        <div class="profile-info">
+          </div>
+          <div class="profile-info">
             <span class="profile-name" id="sidebar-username"></span>
+          </div>
         </div>
-    </div>
-    <button type="button" id="logout-btn" class="logout-btn" title="Log out">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    </button>
-</div>
+        <button type="button" id="logout-btn" class="logout-btn" title="Log out">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+        </button>
+      </div>
     </aside>
 
-    <main class="main" id="settings-page">
-      <header class="topbar">
-        <div class="topbar-title">Settings</div>
+    <!-- MAIN CONTENT -->
+    <main class="main bg-[#f4f9f9] dark:bg-[#041b1b] transition-colors duration-300" id="settings-page">
+      <header class="settings-topbar topbar border-b border-teal-100 bg-white/70 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+        <h1 class="text-xl font-semibold tracking-tight text-teal-900">Settings</h1>
       </header>
 
-      <div class="content">
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">User Preferences</span>
+      <div class="content p-6 max-w-4xl mx-auto space-y-6">
+        
+        <!-- PANEL: User Preferences -->
+        <div class="settings-card bg-white rounded-2xl shadow-sm border border-teal-50 overflow-hidden transition-all duration-300">
+          <div class="settings-card-header px-6 py-4 border-b border-teal-50 bg-teal-50/20 flex items-center justify-between">
+            <span class="text-sm font-semibold uppercase tracking-wider text-teal-700">User Preferences</span>
           </div>
-          <div style="padding:1.25rem;">
-            <form>
-              <div style="margin-bottom:1rem;">
-                <label for="username" style="display:block; font-size:0.85rem; color:#033f3f; margin-bottom:0.4rem;">Change Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" style="width:100%; padding:0.5rem; border:1px solid rgba(4,93,93,0.2); border-radius:6px;">
-              </div>
-
-              <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:0.85rem; color:#e6f7f5; margin-bottom:0.4rem;">Profile Picture</label>
+          
+          <div class="p-6 space-y-6">
+            <form id="preferencesForm">
+              
+              <!-- Avatar upload with preview -->
+              <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 settings-divider border-b border-teal-50">
+                <div class="avatar-preview-box relative w-20 h-20 rounded-2xl overflow-hidden bg-teal-50 border border-teal-100 flex items-center justify-center shadow-inner">
+                  <img id="profile-preview-img" src="" alt="Profile Preview" class="w-full h-full object-cover hidden">
+                  <div id="profile-preview-fallback" class="avatar-fallback text-2xl font-bold text-teal-600">?</div>
+                </div>
                 
-                <div class="file-upload-wrapper">
-                    <input type="file" id="profile-upload" accept="image/png, image/jpeg, image/jpg" class="hidden-file-input">
-                    
-                    <label for="profile-upload" class="custom-file-button">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        Upload Image
+                <div class="flex-1 text-center sm:text-left space-y-2.5">
+                  <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <label for="profile-upload" class="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-4 py-2.5 shadow-sm transition-all">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" class="shrink-0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                      Change Photo
                     </label>
-                    
-                    <span id="file-chosen" class="file-chosen-text">No file chosen</span>
+                    <input type="file" id="profile-upload" accept="image/png, image/jpeg, image/jpg, image/gif" class="hidden">
+                    <span id="file-chosen" class="helper-text text-xs text-teal-600/70 font-medium">No file chosen</span>
+                  </div>
+                  <p class="helper-text-dim text-xs text-teal-600/50">Accepts PNG, JPG, JPEG or GIF (animated). Max 5MB.</p>
                 </div>
               </div>
 
-              <div style="margin-bottom:1rem;">
-                <label for="theme" style="display:block; font-size:0.85rem; color:#033f3f; margin-bottom:0.4rem;">Theme</label>
-                <select id="theme" name="theme" style="width:100%; padding:0.5rem; border:1px solid rgba(4,93,93,0.2); border-radius:6px;">
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                <!-- Change Username -->
+                <div class="space-y-1.5">
+                  <label for="username" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Username</label>
+                  <input type="text" id="username" name="username" placeholder="Enter your username"
+                         class="w-full px-3.5 py-2 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 placeholder-teal-300 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
+                </div>
+
+                <!-- Theme Selection -->
+                <div class="space-y-1.5">
+                  <label for="theme" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Theme</label>
+                  <select id="theme" name="theme"
+                          class="w-full px-3.5 py-2.5 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
               </div>
 
-              <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:0.85rem; color:#033f3f; margin-bottom:0.4rem;">Notifications</label>
-                <div>
-                  <input type="checkbox" id="emailNotif" name="notifications" value="email">
-                  <label for="emailNotif"> Email Alerts</label>
-                </div>
-                <div>
-                  <input type="checkbox" id="pushNotif" name="notifications" value="push">
-                  <label for="pushNotif"> Push Notifications</label>
+              <!-- Notifications Toggles -->
+              <div class="settings-divider pt-6 border-t border-teal-50 mt-6 space-y-4">
+                <label class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Notifications</label>
+                
+                <div class="space-y-3.5 max-w-md">
+                  <div class="flex items-center justify-between py-1">
+                    <div>
+                      <span class="notif-label text-sm font-semibold text-teal-900">Email Alerts</span>
+                      <p class="notif-desc text-xs text-teal-600/60 mt-0.5">Receive email notifications when clothes or outfits are added.</p>
+                    </div>
+                    <label class="switch shrink-0">
+                      <input type="checkbox" id="emailNotif" name="notifications" value="email">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex items-center justify-between py-1">
+                    <div>
+                      <span class="notif-label text-sm font-semibold text-teal-900">Push Notifications</span>
+                      <p class="notif-desc text-xs text-teal-600/60 mt-0.5">Show browser dashboard toast alerts on system events.</p>
+                    </div>
+                    <label class="switch shrink-0">
+                      <input type="checkbox" id="pushNotif" name="notifications" value="push">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
-              <button type="submit" class="btn-add">Save Settings</button>
+              <div class="settings-divider pt-6 mt-6 border-t border-teal-50 flex justify-end">
+                <button type="submit" class="btn-save btn-add inline-flex items-center gap-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm px-6 py-2.5 shadow-md active:scale-95 transition-all">
+                  Save Preferences
+                </button>
+              </div>
+
             </form>
           </div>
         </div>
 
-        <div class="content" style="margin-top:2rem; padding: 0;">
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">Privacy & Security</span>
-            </div>
-            <div style="padding:1.25rem;">
-              <form>
+        <!-- PANEL: Privacy & Security -->
+        <div class="settings-card bg-white dark:bg-[#052626] rounded-2xl shadow-sm border border-teal-50 dark:border-teal-900/20 overflow-hidden transition-all duration-300">
+          <div class="settings-card-header px-6 py-4 border-b border-teal-50 dark:border-teal-900/20 bg-teal-50/20 dark:bg-teal-950/20 flex items-center justify-between">
+            <span class="settings-label text-sm font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-300">Privacy & Security</span>
+          </div>
+          
+          <div class="p-6">
+            <form id="securityForm" class="space-y-6">
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Email Address -->
+                <div class="space-y-1.5">
+                  <label for="email" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Email Address</label>
+                  <input type="email" id="email" name="email" placeholder="Enter your email"
+                         class="w-full px-3.5 py-2 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
+                </div>
+
+                <!-- Current Password -->
+                <div class="space-y-1.5">
+                  <label for="current-password" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Current Password</label>
+                  <input type="password" id="current-password" name="current-password" placeholder="••••••••"
+                         class="w-full px-3.5 py-2 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
+                </div>
+              </div>
+
+              <!-- New Password change -->
+              <div class="settings-divider grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-teal-50">
+                <div class="space-y-1.5">
+                  <label for="password" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">New Password</label>
+                  <input type="password" id="password" name="password" placeholder="Enter new password"
+                         class="w-full px-3.5 py-2 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
+                </div>
                 
-                <div style="margin-bottom:1rem;">
-                  <label for="email" style="display:block; font-size:0.85rem; color:#033f3f; margin-bottom:0.4rem;">Email Address</label>
-                  <input type="email" id="email" name="email" placeholder="Enter your email" style="width:100%; padding:0.5rem; border:1px solid rgba(4,93,93,0.2); border-radius:6px;">
+                <div class="space-y-1.5 relative">
+                  <label for="confirm-new-password" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Confirm New Password</label>
+                  <input type="password" id="confirm-new-password" placeholder="Confirm new password"
+                         class="w-full px-3.5 py-2 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
+                  <span id="pass-match-indicator" class="absolute right-3.5 bottom-2.5 text-xs font-bold hidden"></span>
                 </div>
+              </div>
 
-                <div style="margin-bottom:1rem;">
-                  <label for="current-password" style="display:block; font-size:0.85rem; color:#033f3f; margin-bottom:0.4rem;">Current Password</label>
-                  <input type="password" id="current-password" name="current-password" placeholder="Enter your current password" style="width:100%; padding:0.5rem; border:1px solid rgba(4,93,93,0.2); border-radius:6px;">
-                </div>
+              <div class="settings-divider pt-6 border-t border-teal-50 flex justify-end">
+                <button type="submit" class="btn-save btn-add inline-flex items-center gap-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm px-6 py-2.5 shadow-md active:scale-95 transition-all">
+                  Update Account
+                </button>
+              </div>
 
-                <div style="margin-bottom:1rem;">
-                  <label for="password" style="display:block; font-size:0.85rem; color:#033f3f; margin-bottom:0.4rem;">Change Password</label>
-                  <input type="password" id="password" name="password" placeholder="New Password" style="width:100%; padding:0.5rem; border:1px solid rgba(4,93,93,0.2); border-radius:6px;">
-                </div>
-
-                
-                <button type="submit" class="btn-add">Update Account</button>
-              </form>
-            </div>
+            </form>
           </div>
         </div>
+
       </div>
     </main>
   </div>
+
+  <script>
+    // Live avatar preview in browser setting panel
+    document.getElementById('profile-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const previewImg = document.getElementById('profile-preview-img');
+      const previewFallback = document.getElementById('profile-preview-fallback');
+      
+      if (file) {
+        document.getElementById('file-chosen').textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          previewImg.src = event.target.result;
+          previewImg.classList.remove('hidden');
+          previewFallback.classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        document.getElementById('file-chosen').textContent = 'No file chosen';
+        previewImg.classList.add('hidden');
+        previewFallback.classList.remove('hidden');
+      }
+    });
+
+    // Password confirm sync matching checks
+    const pwdInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirm-new-password');
+    const matchInd = document.getElementById('pass-match-indicator');
+
+    function checkMatch() {
+      const pwd = pwdInput.value;
+      const conf = confirmInput.value;
+      if (!conf) {
+        matchInd.classList.add('hidden');
+        return;
+      }
+      matchInd.classList.remove('hidden');
+      if (pwd === conf) {
+        matchInd.textContent = '✓ Matches';
+        matchInd.className = 'absolute right-3.5 bottom-2.5 text-xs font-bold text-emerald-500';
+      } else {
+        matchInd.textContent = '✗ Differs';
+        matchInd.className = 'absolute right-3.5 bottom-2.5 text-xs font-bold text-red-400';
+      }
+    }
+    
+    if (pwdInput && confirmInput) {
+      pwdInput.addEventListener('input', checkMatch);
+      confirmInput.addEventListener('input', checkMatch);
+    }
+
+    // Auto-update profile preview on server-load event
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const savedAvatar = localStorage.getItem('profileAvatar');
+        const username = localStorage.getItem('username') || 'U';
+        const previewImg = document.getElementById('profile-preview-img');
+        const previewFallback = document.getElementById('profile-preview-fallback');
+        
+        if (savedAvatar && previewImg && previewFallback) {
+          previewImg.src = savedAvatar;
+          previewImg.classList.remove('hidden');
+          previewFallback.classList.add('hidden');
+        } else if (previewFallback) {
+          previewFallback.textContent = username.charAt(0).toUpperCase();
+        }
+      }, 500); // short delay to ensure app.js settings run first
+    });
+  </script>
+  <script src="/static/app.js" defer></script>
 </body>
+
 </html>

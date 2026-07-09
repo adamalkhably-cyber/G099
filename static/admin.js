@@ -60,22 +60,29 @@ async function loadAdminPersonalWardrobe() {
 
 // Action handler to delete an item out of your personal workspace
 window.deleteAdminItem = async function(itemId) {
-  if (!confirm("Remove this item from your personal wardrobe?")) return;
-  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
-  
-  try {
-    const response = await fetch(`/api/wardrobe/${itemId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (response.ok) {
-      showToast("Item removed from your wardrobe.");
-      loadAdminPersonalWardrobe();
-      if (typeof loadRealDashboard === 'function') loadRealDashboard();
+  adminConfirm(
+    'Remove Item',
+    'Remove this item from your personal wardrobe?',
+    async () => {
+      const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+      try {
+        const response = await fetch(`/api/wardrobe/${itemId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          showAdminToast('Item removed from your wardrobe.');
+          loadAdminPersonalWardrobe();
+          if (typeof loadRealDashboard === 'function') loadRealDashboard();
+        } else {
+          showAdminToast('Failed to remove item.', 'error');
+        }
+      } catch (err) {
+        console.error('Error deleting personal item:', err);
+        showAdminToast('Network error.', 'error');
+      }
     }
-  } catch (err) {
-    console.error("Error deleting personal item:", err);
-  }
+  );
 };
 
 /* ============================================================
@@ -161,23 +168,28 @@ async function loadAdminOutfits() {
 
 // Action handler to delete one of your own outfits
 window.deleteAdminOutfit = async function(outfitId) {
-  if (!confirm("Delete this outfit? This won't delete the individual clothing items.")) return;
-  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
-
-  try {
-    const response = await fetch(`/api/outfits/${outfitId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (response.ok) {
-      showToast("Outfit deleted.");
-      loadAdminOutfits();
-    } else {
-      showToast("Failed to delete outfit.");
+  adminConfirm(
+    'Delete Outfit',
+    "Delete this outfit? This won't delete the individual clothing items.",
+    async () => {
+      const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+      try {
+        const response = await fetch(`/api/outfits/${outfitId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          showAdminToast('Outfit deleted.');
+          loadAdminOutfits();
+        } else {
+          showAdminToast('Failed to delete outfit.', 'error');
+        }
+      } catch (err) {
+        console.error('Error deleting outfit:', err);
+        showAdminToast('Network error.', 'error');
+      }
     }
-  } catch (err) {
-    console.error("Error deleting outfit:", err);
-  }
+  );
 };
 
 // Fetch and display global counters on the overview tab
@@ -185,28 +197,63 @@ async function loadRealDashboard() {
     const dashboardData = await apiGet('/dashboard');
     if (dashboardData && dashboardData.summary) {
         const s = dashboardData.summary;
-        document.getElementById('statTotalUsers').textContent = s.total_users;
-        document.getElementById('statTotalClothes').textContent = s.total_wardrobe_items;
-        document.getElementById('statLiveSessions').textContent = s.active_users;
 
-        const signupsThisWeek = s.signups_this_week ?? 0;
+        const totalUsersEl   = document.getElementById('statTotalUsers');
+        const totalClothesEl = document.getElementById('statTotalClothes');
+        const liveSessionsEl = document.getElementById('statLiveSessions');
+        const newSignupsEl   = document.getElementById('statNewSignups');
+        const engagementEl   = document.getElementById('statEngagementScore');
+
+        if (totalUsersEl) {
+            totalUsersEl.textContent = s.total_users;
+            animateCountUp(totalUsersEl, s.total_users);
+        }
+        if (totalClothesEl) {
+            totalClothesEl.textContent = s.total_wardrobe_items;
+            animateCountUp(totalClothesEl, s.total_wardrobe_items);
+        }
+        if (liveSessionsEl) {
+            liveSessionsEl.textContent = s.active_users;
+            animateCountUp(liveSessionsEl, s.active_users);
+        }
+        if (engagementEl) {
+            engagementEl.textContent = `${s.engagement_score || 0}%`;
+            animateCountUp(engagementEl, `${s.engagement_score || 0}%`);
+        }
+
+        const signupsThisWeek  = s.signups_this_week  ?? 0;
         const signupsPriorWeek = s.signups_prior_week ?? 0;
-        const itemsThisWeek = s.items_added_this_week ?? 0;
-        const signupsDelta = signupsThisWeek - signupsPriorWeek;
+        const itemsThisWeek    = s.items_added_this_week ?? 0;
+        const signupsDelta     = signupsThisWeek - signupsPriorWeek;
 
-        const statNewSignups = document.getElementById('statNewSignups');
-        if (statNewSignups) statNewSignups.textContent = signupsThisWeek;
+        if (newSignupsEl) {
+            newSignupsEl.textContent = signupsThisWeek;
+            animateCountUp(newSignupsEl, signupsThisWeek);
+        }
 
-        // "+2 this week" under Total Users - real count of accounts created
-        // in the last 7 days, not a hardcoded placeholder
         renderTrendSpan(document.getElementById('statUsersTrend'), signupsThisWeek, '');
-
-        // "+8 added this week" under Total Clothes - real item count
         renderTrendSpan(document.getElementById('statClothesTrend'), itemsThisWeek, '');
-
-        // "vs -1 prior week" under Sign-ups (7d) - real week-over-week delta
         renderTrendSpan(document.getElementById('statSignupsTrend'), signupsDelta, '');
     }
+}
+
+
+/**
+ * Shared animated counter — used by both admin and user panels.
+ * Animates el.textContent from 0 to target (number or '%' string).
+ */
+function animateCountUp(el, target, duration = 900) {
+    if (!el) return;
+    const isPercent = typeof target === 'string' && target.endsWith('%');
+    const end = parseInt(target, 10) || 0;
+    if (end === 0) return;
+    const startTime = performance.now();
+    (function tick(now) {
+        const t = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = isPercent ? `${Math.round(eased * end)}%` : Math.round(eased * end);
+        if (t < 1) requestAnimationFrame(tick);
+    })(performance.now());
 }
 
 // Render a trend number with the correct sign and up/down color.
@@ -248,13 +295,22 @@ async function loadLiveActivity() {
     if (activity.length === 0) {
       feed.innerHTML = '<div class="empty-state">No recent activity yet.</div>';
     } else {
-      feed.innerHTML = activity.map(u => `
-        <div class="live-item">
-          <div class="live-avatar">${initials(u.username)}</div>
-          <div class="live-text"><b>${u.username}</b> logged in</div>
-          <div class="live-time">${timeAgo(u.last_active)}</div>
-        </div>
-      `).join('');
+      // Track which users we've already seen to highlight new entries
+      const prevUsers = new Set(
+        Array.from(feed.querySelectorAll('.live-item')).map(el => el.dataset.user)
+      );
+      feed.innerHTML = activity.map((u, i) => {
+        const avatarHtml = u.avatar
+          ? `<img src="${u.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`
+          : initials(u.username);
+        return `
+          <div class="live-item${!prevUsers.has(u.username) ? ' new-entry' : ''}" data-user="${u.username}" style="animation-delay:${i * 0.06}s">
+            <div class="live-avatar" style="display:flex; align-items:center; justify-content:center; overflow:hidden;">${avatarHtml}</div>
+            <div class="live-text"><b>${u.username}</b> logged in</div>
+            <div class="live-time">${timeAgo(u.last_active)}</div>
+          </div>
+        `;
+      }).join('');
     }
   }
 
@@ -309,9 +365,23 @@ async function loadAdminSettingsForm() {
       }
 
       if (s.avatar) {
-        localStorage.setItem('profileAvatar', s.avatar);
+        try {
+          localStorage.setItem('profileAvatar', s.avatar);
+        } catch (storageError) {
+          console.warn('Could not cache avatar locally (likely too large for localStorage):', storageError);
+        }
       } else {
         localStorage.removeItem('profileAvatar');
+      }
+
+      if (s.banner) {
+        try {
+          localStorage.setItem('profileBanner', s.banner);
+        } catch (e) {
+          console.warn(e);
+        }
+      } else {
+        localStorage.removeItem('profileBanner');
       }
 
       usernameInput.value = currentUser.username || '';
@@ -319,6 +389,59 @@ async function loadAdminSettingsForm() {
 
       const darkToggle = document.getElementById('admin-dark-mode-toggle');
       if (darkToggle) darkToggle.checked = s.theme === 'dark';
+
+      // Set input fields for border customization
+      const borderStyleSelect = document.getElementById('admin-border-style');
+      const borderColorInput = document.getElementById('admin-border-color');
+      const borderWidthSlider = document.getElementById('admin-border-width');
+      const borderWidthValLabel = document.getElementById('border-width-val');
+
+      if (s.border_style && borderStyleSelect) borderStyleSelect.value = s.border_style;
+      if (s.border_color && borderColorInput) borderColorInput.value = s.border_color;
+      if (borderWidthSlider) {
+        const parsedWidth = parseInt(s.border_width, 10) || 0;
+        borderWidthSlider.value = parsedWidth;
+        if (borderWidthValLabel) borderWidthValLabel.textContent = `${parsedWidth}px`;
+      }
+
+      // Sync settings page profile card preview avatar
+      const previewAvatarImg = document.getElementById('preview-avatar-img');
+      const previewAvatarFallback = document.getElementById('preview-avatar-fallback');
+      const name = currentUser.username || currentUser.email || 'Admin';
+      const activeAvatar = s.avatar || localStorage.getItem('profileAvatar');
+
+      if (activeAvatar) {
+        if (previewAvatarImg) {
+          previewAvatarImg.src = activeAvatar;
+          previewAvatarImg.style.display = 'block';
+        }
+        if (previewAvatarFallback) previewAvatarFallback.style.display = 'none';
+      } else {
+        if (previewAvatarImg) previewAvatarImg.style.display = 'none';
+        if (previewAvatarFallback) {
+          previewAvatarFallback.style.display = 'flex';
+          previewAvatarFallback.textContent = name.charAt(0).toUpperCase();
+        }
+      }
+
+      // Sync settings page profile card preview username
+      const previewUsername = document.getElementById('preview-username');
+      if (previewUsername) {
+        previewUsername.textContent = name;
+      }
+
+      // Sync settings page profile card preview banner
+      const bannerPreview = document.getElementById('settings-banner-preview');
+      if (bannerPreview) {
+        if (s.banner) {
+          bannerPreview.style.backgroundImage = `url(${s.banner})`;
+        } else {
+          bannerPreview.style.backgroundImage = '';
+        }
+      }
+
+      // Update the live border preview
+      if (typeof updateBorderPreview === 'function') updateBorderPreview();
     }
   } catch (err) {
     console.error('Failed to load admin settings:', err);
@@ -375,6 +498,48 @@ async function saveThemePreference(theme) {
   }
 }
 
+// Global scope helper for live border preview updates
+window.updateBorderPreview = function() {
+  const borderStyleSelect = document.getElementById('admin-border-style');
+  const borderColorInput = document.getElementById('admin-border-color');
+  const borderWidthSlider = document.getElementById('admin-border-width');
+  const borderWidthValLabel = document.getElementById('border-width-val');
+
+  const style = borderStyleSelect ? borderStyleSelect.value : 'solid';
+  const color = borderColorInput ? borderColorInput.value : '#81cdc6';
+  const width = borderWidthSlider ? parseInt(borderWidthSlider.value, 10) : 0;
+
+  if (borderWidthValLabel) {
+    borderWidthValLabel.textContent = `${width}px`;
+  }
+
+  const avatarWrap = document.getElementById('preview-avatar-wrap');
+  if (avatarWrap) {
+    // Remove only border animation classes — keep profile-preview-avatar-wrap intact
+    avatarWrap.classList.remove('avatar-container', 'border-glowing', 'border-neon-wave');
+    avatarWrap.style.borderStyle = '';
+    avatarWrap.style.borderWidth = '';
+    avatarWrap.style.borderColor = '';
+    avatarWrap.style.setProperty('--glow-color', '');
+
+    if (width > 0 && style !== 'none') {
+      if (style === 'glowing') {
+        avatarWrap.classList.add('border-glowing');
+        avatarWrap.style.border = `${width}px solid ${color}`;
+        avatarWrap.style.setProperty('--glow-color', color);
+      } else if (style === 'neon-wave') {
+        avatarWrap.classList.add('border-neon-wave');
+        avatarWrap.style.border = `${width}px solid #81cdc6`;
+      } else {
+        avatarWrap.style.border = `${width}px ${style} ${color}`;
+      }
+    } else {
+      // Default overlap border style for card contrast
+      avatarWrap.style.border = '3px solid #092323';
+    }
+  }
+};
+
 function setupAdminSettingsForm() {
   const form = document.getElementById('admin-settings-form');
   const usernameInput = document.getElementById('admin-settings-username');
@@ -382,12 +547,30 @@ function setupAdminSettingsForm() {
   const filenameLabel = document.getElementById('admin-profile-filename');
   const darkToggle = document.getElementById('admin-dark-mode-toggle');
 
+  const bannerInput = document.getElementById('admin-banner-upload');
+  const bannerFilenameLabel = document.getElementById('admin-banner-filename');
+  
+  const borderStyleSelect = document.getElementById('admin-border-style');
+  const borderColorInput = document.getElementById('admin-border-color');
+  const borderWidthSlider = document.getElementById('admin-border-width');
+
   let pendingAvatarBase64 = null;
+  let pendingBannerBase64 = null;
+  const MAX_AVATAR_BYTES = 1.5 * 1024 * 1024; // 1.5MB
+  const MAX_BANNER_BYTES = 2.5 * 1024 * 1024; // 2.5MB (allows slightly larger GIFs)
 
   if (uploadInput) {
     uploadInput.addEventListener('change', () => {
       const file = uploadInput.files && uploadInput.files[0];
       if (!file) {
+        if (filenameLabel) filenameLabel.textContent = 'No file chosen';
+        return;
+      }
+      if (file.size > MAX_AVATAR_BYTES) {
+        if (typeof showToast === 'function') {
+          showToast(`That image is ${(file.size / 1024 / 1024).toFixed(1)}MB — please use one under 1.5MB so it can be saved.`);
+        }
+        uploadInput.value = '';
         if (filenameLabel) filenameLabel.textContent = 'No file chosen';
         return;
       }
@@ -402,15 +585,64 @@ function setupAdminSettingsForm() {
           avatarImg.style.display = 'block';
           avatarFallback.style.display = 'none';
         }
+
+        // Live preview sync
+        const previewAvatarImg = document.getElementById('preview-avatar-img');
+        const previewAvatarFallback = document.getElementById('preview-avatar-fallback');
+        if (previewAvatarImg && previewAvatarFallback) {
+          previewAvatarImg.src = pendingAvatarBase64;
+          previewAvatarImg.style.display = 'block';
+          previewAvatarFallback.style.display = 'none';
+        }
       };
       reader.readAsDataURL(file);
     });
   }
 
-  // Dark mode applies immediately on toggle AND saves right away - if it
-  // only updated the DOM, navigating away before hitting "Save Profile"
-  // would leave the page dark while the toggle itself reset to "off" the
-  // next time settings were fetched from the server.
+  // Handle banner upload
+  if (bannerInput) {
+    bannerInput.addEventListener('change', () => {
+      const file = bannerInput.files && bannerInput.files[0];
+      if (!file) {
+        if (bannerFilenameLabel) bannerFilenameLabel.textContent = 'No file chosen';
+        return;
+      }
+      if (file.size > MAX_BANNER_BYTES) {
+        if (typeof showToast === 'function') {
+          showToast(`That banner is ${(file.size / 1024 / 1024).toFixed(1)}MB — please use one under 2.5MB.`);
+        }
+        bannerInput.value = '';
+        if (bannerFilenameLabel) bannerFilenameLabel.textContent = 'No file chosen';
+        return;
+      }
+      if (bannerFilenameLabel) bannerFilenameLabel.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        pendingBannerBase64 = e.target.result;
+        const bannerPreview = document.getElementById('settings-banner-preview');
+        if (bannerPreview) {
+          bannerPreview.style.backgroundImage = `url(${pendingBannerBase64})`;
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Real-time border customization events
+  if (borderStyleSelect) borderStyleSelect.addEventListener('change', window.updateBorderPreview);
+  if (borderColorInput) borderColorInput.addEventListener('input', window.updateBorderPreview);
+  if (borderWidthSlider) borderWidthSlider.addEventListener('input', window.updateBorderPreview);
+
+  // Sync Username in Preview Card as user types
+  if (usernameInput) {
+    usernameInput.addEventListener('input', () => {
+      const previewUsername = document.getElementById('preview-username');
+      if (previewUsername) {
+        previewUsername.textContent = usernameInput.value.trim() || 'Admin';
+      }
+    });
+  }
+
   if (darkToggle) {
     darkToggle.addEventListener('change', () => {
       const theme = darkToggle.checked ? 'dark' : 'light';
@@ -427,11 +659,13 @@ function setupAdminSettingsForm() {
       const payload = {
         username: usernameInput ? usernameInput.value.trim() : '',
         theme,
+        border_color: borderColorInput ? borderColorInput.value : '#81cdc6',
+        border_width: borderWidthSlider ? borderWidthSlider.value + 'px' : '0px',
+        border_style: borderStyleSelect ? borderStyleSelect.value : 'solid',
         notifications: adminCurrentNotifPrefs
       };
-      // Only include the avatar if a new one was actually picked this
-      // session - omitting it tells the backend "leave it unchanged"
       if (pendingAvatarBase64) payload.avatar = pendingAvatarBase64;
+      if (pendingBannerBase64) payload.banner = pendingBannerBase64;
 
       let result;
       try {
@@ -453,20 +687,40 @@ function setupAdminSettingsForm() {
         return;
       }
 
-      // Sync locally so the sidebar and this form reflect the change instantly.
-      // Use what the server actually stored (result.settings), not just what
-      // we sent, so e.g. Users table / Live Login feed and this form can
-      // never disagree on the username again.
       const savedUsername = (result.settings && result.settings.username) || payload.username;
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       currentUser.username = savedUsername;
       localStorage.setItem('user', JSON.stringify(currentUser));
       localStorage.setItem('theme', theme);
-      if (pendingAvatarBase64) localStorage.setItem('profileAvatar', pendingAvatarBase64);
+
+      // Save custom fields locally for cache sync
+      const s = result.settings || {};
+      localStorage.setItem('borderColor', s.border_color || '#81cdc6');
+      localStorage.setItem('borderWidth', s.border_width || '0px');
+      localStorage.setItem('borderStyle', s.border_style || 'solid');
+
+      if (pendingAvatarBase64) {
+        try {
+          localStorage.setItem('profileAvatar', pendingAvatarBase64);
+        } catch (storageError) {
+          console.warn('Could not cache avatar locally (likely too large for localStorage):', storageError);
+        }
+      }
+      if (s.banner) {
+        try {
+          localStorage.setItem('profileBanner', s.banner);
+        } catch (storageError) {
+          console.warn(storageError);
+        }
+      }
 
       applyAdminTheme(theme);
       loadAdminProfile();
       refreshSettingsAvatarPreview();
+      
+      pendingAvatarBase64 = null;
+      pendingBannerBase64 = null;
+      
       if (typeof showToast === 'function') showToast('Settings saved.');
     });
   }
@@ -491,6 +745,10 @@ async function loadAdminProfile() {
 
   let displayName = currentUser.username || currentUser.email || 'Admin';
   let avatar = localStorage.getItem('profileAvatar');
+  let banner = localStorage.getItem('profileBanner');
+  let borderColor = localStorage.getItem('borderColor') || '#81cdc6';
+  let borderWidth = localStorage.getItem('borderWidth') || '0px';
+  let borderStyle = localStorage.getItem('borderStyle') || 'solid';
 
   try {
     const token = localStorage.getItem('token') || localStorage.getItem('access_token');
@@ -500,11 +758,33 @@ async function loadAdminProfile() {
     if (response.ok) {
       const data = await response.json();
       if (data && data.ok && data.settings) {
-        if (data.settings.username) displayName = data.settings.username;
-        if (data.settings.avatar) {
-          avatar = data.settings.avatar;
-          localStorage.setItem('profileAvatar', avatar);
+        const s = data.settings;
+        if (s.username) displayName = s.username;
+        if (s.avatar) {
+          avatar = s.avatar;
+          try {
+            localStorage.setItem('profileAvatar', avatar);
+          } catch (storageError) {
+            console.warn('Could not cache avatar locally (likely too large for localStorage):', storageError);
+          }
         }
+        if (s.banner) {
+          banner = s.banner;
+          try {
+            localStorage.setItem('profileBanner', banner);
+          } catch (e) {
+            console.warn(e);
+          }
+        } else {
+          banner = null;
+          localStorage.removeItem('profileBanner');
+        }
+        borderColor = s.border_color || '#81cdc6';
+        borderWidth = s.border_width || '0px';
+        borderStyle = s.border_style || 'solid';
+        localStorage.setItem('borderColor', borderColor);
+        localStorage.setItem('borderWidth', borderWidth);
+        localStorage.setItem('borderStyle', borderStyle);
       }
     }
   } catch (err) {
@@ -527,6 +807,42 @@ async function loadAdminProfile() {
       avatarImg.style.display = 'none';
       avatarFallback.style.display = 'flex';
       avatarFallback.textContent = displayName.charAt(0).toUpperCase();
+    }
+  }
+
+  // Apply banner background to sidebar profile card
+  const sidebarProfile = document.querySelector('.sidebar-profile');
+  if (sidebarProfile) {
+    if (banner) {
+      sidebarProfile.style.backgroundImage = `url(${banner})`;
+    } else {
+      sidebarProfile.style.backgroundImage = '';
+    }
+  }
+
+  // Apply custom border to sidebar avatar container
+  const sidebarAvatarWrap = document.querySelector('.sidebar-profile-left .avatar-container');
+  if (sidebarAvatarWrap) {
+    const widthVal = parseInt(borderWidth, 10) || 0;
+    sidebarAvatarWrap.className = 'avatar-container';
+    sidebarAvatarWrap.style.borderStyle = '';
+    sidebarAvatarWrap.style.borderWidth = '';
+    sidebarAvatarWrap.style.borderColor = '';
+    sidebarAvatarWrap.style.setProperty('--glow-color', '');
+
+    if (widthVal > 0 && borderStyle !== 'none') {
+      if (borderStyle === 'glowing') {
+        sidebarAvatarWrap.classList.add('border-glowing');
+        sidebarAvatarWrap.style.border = `${widthVal}px solid ${borderColor}`;
+        sidebarAvatarWrap.style.setProperty('--glow-color', borderColor);
+      } else if (borderStyle === 'neon-wave') {
+        sidebarAvatarWrap.classList.add('border-neon-wave');
+        sidebarAvatarWrap.style.border = `${widthVal}px solid #81cdc6`;
+      } else {
+        sidebarAvatarWrap.style.border = `${widthVal}px ${borderStyle} ${borderColor}`;
+      }
+    } else {
+      sidebarAvatarWrap.style.border = '';
     }
   }
 }
@@ -633,19 +949,51 @@ async function loadAnalytics() {
 }
 
 function switchView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const targetView = document.getElementById('view-' + name);
-  if (targetView) targetView.classList.add('active');
-  
+  // Animate outgoing view
+  const currentActive = document.querySelector('.view.active');
+  if (currentActive && currentActive.id !== 'view-' + name) {
+    currentActive.classList.add('exiting');
+    currentActive.addEventListener('animationend', () => {
+      currentActive.classList.remove('active', 'exiting');
+    }, { once: true });
+  }
+
+  // Animate incoming view (slight delay so outgoing exits first)
+  setTimeout(() => {
+    const targetView = document.getElementById('view-' + name);
+    if (targetView) {
+      targetView.classList.add('active');
+    }
+  }, 80);
+
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('active', n.dataset.view === name));
   const titles = { overview: 'Overview', users: 'Users', clothes: 'Clothes', analytics: 'Analytics', settings: 'System Settings' };
   const topbar = document.getElementById('topbarTitle');
-  if (topbar) topbar.textContent = titles[name] || 'Overview';
+  if (topbar) {
+    // Animate topbar title
+    topbar.style.opacity = '0';
+    topbar.style.transform = 'translateY(-6px)';
+    topbar.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    setTimeout(() => {
+      topbar.textContent = titles[name] || 'Overview';
+      topbar.style.opacity = '1';
+      topbar.style.transform = 'translateY(0)';
+    }, 120);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Auth Guard: redirect to login if not authenticated
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+  if (!token) {
+    localStorage.clear();
+    window.location.href = '/';
+    return;
+  }
+
   // Apply the admin's saved theme immediately, before anything else renders
   applyAdminTheme(localStorage.getItem('theme'));
+
 
   // Load initial data
   loadAdminProfile();
@@ -657,6 +1005,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAdminSettingsForm();
   setupAdminSettingsForm();
   loadAnalytics();
+  loadCurrentAnnouncement();
+
 
   // Keep the "live" feed and stats fresh without a manual refresh
   setInterval(loadLiveActivity, 15000);
@@ -1176,6 +1526,16 @@ async function loadUsers() {
   const data = await apiGet('/users?per_page=100');
   const users = (data && data.users) || [];
 
+  // Determine current admin's own user ID from JWT so we can mark that row
+  let currentUserId = null;
+  try {
+    const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      currentUserId = parseInt(payload.sub || payload.identity || payload.user_id, 10);
+    }
+  } catch(e) {}
+
   if (users.length === 0) {
     tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No users found.</td></tr>`;
     return;
@@ -1188,6 +1548,7 @@ async function loadUsers() {
     // sessions); fall back to last_login for users who haven't triggered a heartbeat yet.
     const lastActive = u.last_seen || u.last_login;
     const isOnline = isEnabled && lastActive && (Date.now() - new Date(lastActive).getTime() < ONLINE_WINDOW_MS);
+    const isSelf = currentUserId && u.id === currentUserId;
 
     let statusClass, statusLabel;
     if (!isEnabled) {
@@ -1201,11 +1562,26 @@ async function loadUsers() {
       statusLabel = 'Offline';
     }
 
+    const avatarHtml = u.avatar
+      ? `<img src="${u.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`
+      : initials(u.username || u.email || '?');
+
+    const actionsHtml = isSelf
+      ? `<span style="font-size:0.75rem; color:rgba(4,93,93,0.4); font-style:italic;">You</span>`
+      : `<button class="row-action" title="${isEnabled ? 'Disable user' : 'Enable user'}" onclick="toggleUserActive(${u.id}, this)">
+              <svg viewBox="0 0 24 24">${isEnabled
+                ? '<circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line>'
+                : '<circle cx="12" cy="12" r="10"></circle><polyline points="9 12 12 15 16 10"></polyline>'}</svg>
+            </button>
+            <button class="row-action del" title="Delete user" onclick="deleteUserAdmin(${u.id}, '${(u.username || '').replace(/'/g, "\\'")}')">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+            </button>`;
+
     return `
-      <tr data-user-id="${u.id}">
+      <tr data-user-id="${u.id}"${isSelf ? ' style="opacity:0.75;"' : ''}>
         <td>
           <div class="item-cell">
-            <div class="live-avatar">${initials(u.username || u.email || '?')}</div>
+            <div class="live-avatar" style="display:flex; align-items:center; justify-content:center; overflow:hidden;">${avatarHtml}</div>
             <div>
               <div style="font-weight:500;">${u.username || '—'}${u.is_admin ? ' <span class="nav-badge" style="margin-left:6px;">admin</span>' : ''}</div>
               <div style="font-size:0.75rem; color:rgba(4,93,93,0.5);">${u.email || ''}</div>
@@ -1218,14 +1594,7 @@ async function loadUsers() {
         <td>${u.last_login ? timeAgo(u.last_login) : 'Never'}</td>
         <td>
           <div class="row-actions">
-            <button class="row-action" title="${isEnabled ? 'Disable user' : 'Enable user'}" onclick="toggleUserActive(${u.id}, this)">
-              <svg viewBox="0 0 24 24">${isEnabled
-                ? '<circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line>'
-                : '<circle cx="12" cy="12" r="10"></circle><polyline points="9 12 12 15 16 10"></polyline>'}</svg>
-            </button>
-            <button class="row-action del" title="Delete user" onclick="deleteUserAdmin(${u.id}, '${(u.username || '').replace(/'/g, "\\'")}')">
-              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
-            </button>
+            ${actionsHtml}
           </div>
         </td>
       </tr>
@@ -1233,32 +1602,151 @@ async function loadUsers() {
   }).join('');
 }
 
+
 // Enable/disable a user account
 window.toggleUserActive = async function(userId, btnEl) {
   if (btnEl) btnEl.disabled = true;
   const result = await apiMutate(`/users/${userId}/toggle-active`, 'POST');
   if (result && result.ok) {
-    if (typeof showToast === 'function') {
-      showToast(result.data.is_active ? "User enabled." : "User disabled.");
-    }
+    showAdminToast(result.data.is_active ? 'User enabled.' : 'User disabled.');
     loadUsers();
   } else {
     const msg = (result && result.data && result.data.error) || "Couldn't update user.";
-    if (typeof showToast === 'function') showToast(msg);
+    showAdminToast(msg, 'error');
     if (btnEl) btnEl.disabled = false;
   }
 };
 
 // Delete a user and all their data
 window.deleteUserAdmin = async function(userId, username) {
-  if (!confirm(`Delete ${username || 'this user'} and all their data? This can't be undone.`)) return;
-  const result = await apiMutate(`/users/${userId}/delete`, 'DELETE');
-  if (result && result.ok) {
-    if (typeof showToast === 'function') showToast("User deleted.");
-    loadUsers();
-    loadRealDashboard();
-  } else {
-    const msg = (result && result.data && result.data.error) || "Couldn't delete user.";
-    if (typeof showToast === 'function') showToast(msg);
-  }
+  adminConfirm(
+    'Delete User',
+    `Delete <strong>${username || 'this user'}</strong> and all their data? This cannot be undone.`,
+    async () => {
+      const result = await apiMutate(`/users/${userId}/delete`, 'DELETE');
+      if (result && result.ok) {
+        showAdminToast('User deleted.');
+        loadUsers();
+        loadRealDashboard();
+      } else {
+        const msg = (result && result.data && result.data.error) || "Couldn't delete user.";
+        showAdminToast(msg, 'error');
+      }
+    }
+  );
 };
+
+// ==========================================
+// ADMIN ANNOUNCEMENT BROADCASTER
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  const announcementForm = document.getElementById('admin-announcement-form');
+  const announcementClearBtn = document.getElementById('admin-announcement-clear-btn');
+  const announcementInput = document.getElementById('admin-announcement-msg');
+
+  if (announcementForm) {
+    announcementForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = announcementInput.value.trim();
+      if (!message) return;
+      
+      const res = await apiMutate('/announcement', 'POST', { message });
+      if (res && res.ok) {
+        if (typeof showToast === 'function') showToast('Announcement published successfully.');
+      } else {
+        const errorMsg = (res && res.data && res.data.error) || 'Failed to publish announcement.';
+        if (typeof showToast === 'function') showToast(errorMsg);
+      }
+    });
+  }
+
+  if (announcementClearBtn) {
+    announcementClearBtn.addEventListener('click', async () => {
+      const res = await apiMutate('/announcement/clear', 'POST');
+      if (res && res.ok) {
+        if (typeof showToast === 'function') showToast('Announcement cleared.');
+        if (announcementInput) announcementInput.value = '';
+      } else {
+        if (typeof showToast === 'function') showToast('Failed to clear announcement.');
+      }
+    });
+  }
+});
+
+async function loadCurrentAnnouncement() {
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+  try {
+    const res = await fetch('/api/auth/announcement', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (data.ok && data.announcement) {
+      const input = document.getElementById('admin-announcement-msg');
+      if (input) input.value = data.announcement.message;
+    }
+  } catch (err) {
+    console.error('Error fetching current announcement:', err);
+  }
+}
+window.loadCurrentAnnouncement = loadCurrentAnnouncement;
+
+/* ============================================================
+   ADMIN TOAST & CONFIRM MODAL
+   ============================================================ */
+
+let _toastTimer = null;
+
+function showAdminToast(message, type = 'success') {
+  // Also feed window.showToast so any other caller works too
+  let el = document.getElementById('admin-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'admin-toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  el.className = type === 'error' ? 'error show' : 'show';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { el.className = el.className.replace(' show', '').replace('show', '').trim(); }, 3200);
+}
+
+// Make it available as the global showToast used throughout the file
+window.showToast = showAdminToast;
+
+let _confirmCallback = null;
+
+function adminConfirm(title, body, onConfirm) {
+  const overlay = document.getElementById('admin-confirm-overlay');
+  const titleEl = document.getElementById('admin-confirm-title');
+  const bodyEl  = document.getElementById('admin-confirm-body');
+  if (!overlay || !titleEl || !bodyEl) {
+    // Fallback if modal HTML missing
+    if (confirm(title + '\n' + body.replace(/<[^>]+>/g, ''))) onConfirm();
+    return;
+  }
+  titleEl.textContent = title;
+  bodyEl.innerHTML = body;
+  _confirmCallback = onConfirm;
+  overlay.classList.add('show');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay   = document.getElementById('admin-confirm-overlay');
+  const cancelBtn = document.getElementById('admin-confirm-cancel');
+  const okBtn     = document.getElementById('admin-confirm-ok');
+
+  function closeConfirm() {
+    if (overlay) overlay.classList.remove('show');
+    _confirmCallback = null;
+  }
+
+  if (cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
+  if (overlay)   overlay.addEventListener('click', e => { if (e.target === overlay) closeConfirm(); });
+  if (okBtn) {
+    okBtn.addEventListener('click', () => {
+      const callback = _confirmCallback;
+      closeConfirm();
+      if (typeof callback === 'function') callback();
+    });
+  }
+});

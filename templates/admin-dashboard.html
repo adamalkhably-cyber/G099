@@ -4,9 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin Dashboard</title>
+<!-- Anti-flicker: apply theme before first paint -->
+<script>(function(){var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}());</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/admin.css">
 <script src="/static/admin.js" defer></script>
+<!-- Tailwind CSS with custom teal config -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: ['attribute', '[data-theme="dark"]'],
+    theme: {
+      extend: {
+        colors: {
+          teal: {
+            50:  '#e4f5f3',
+            100: '#c2e9e6',
+            200: '#81cdc6',
+            300: '#4f9f98',
+            400: '#7fcfc6',
+            500: '#056b6b',
+            600: '#045D5D',
+            700: '#033f3f',
+            800: '#0b2f2f',
+            900: '#041b1b',
+          }
+        },
+        fontFamily: {
+          sans: ['DM Sans', 'system-ui', 'sans-serif'],
+          serif: ['Playfair Display', 'serif'],
+        },
+        keyframes: {
+          fadeUp:     { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          fadeIn:     { '0%': { opacity: '0' },   '100%': { opacity: '1' } },
+          slideInRight:{ '0%': { opacity: '0', transform: 'translateX(32px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+          slideInLeft: { '0%': { opacity: '0', transform: 'translateX(-32px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+          countUp:    { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          feedFlash:  { '0%,100%': { background: 'transparent' }, '40%': { background: 'rgba(127,207,198,0.18)' } },
+          shimmer:    { '0%': { backgroundPosition: '-400px 0' }, '100%': { backgroundPosition: '400px 0' } },
+          spin:       { '100%': { transform: 'rotate(360deg)' } },
+        },
+        animation: {
+          'fade-up':      'fadeUp 0.5s ease both',
+          'fade-in':      'fadeIn 0.4s ease both',
+          'slide-right':  'slideInRight 0.4s cubic-bezier(.22,1,.36,1) both',
+          'slide-left':   'slideInLeft 0.4s cubic-bezier(.22,1,.36,1) both',
+          'count-up':     'countUp 0.6s ease both',
+          'feed-flash':   'feedFlash 0.9s ease',
+          'shimmer':      'shimmer 1.6s infinite linear',
+          'spin-slow':    'spin 1s linear infinite',
+        }
+      }
+    }
+  }
+</script>
 </head>
 <body>
 
@@ -101,7 +152,14 @@
             <div class="stat-sub"><span class="live-dot"></span> updating in real time</div>
             <div class="stat-icon pulse"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
           </div>
+          <div class="stat-card">
+            <div class="stat-label">Engagement Score</div>
+            <div class="stat-value" id="statEngagementScore">0%</div>
+            <div class="stat-sub">Users with active wardrobe</div>
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+          </div>
         </div>
+
 
         <div class="two-col">
           <div class="panel">
@@ -209,28 +267,117 @@
 
         <div class="panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
           <div class="panel-title" style="margin-bottom: 1.25rem;">Profile Settings</div>
-          <form id="admin-settings-form">
-            <div style="display:flex; align-items:center; gap:1.25rem; margin-bottom:1.5rem;">
-              <div class="avatar-container" style="width:64px; height:64px;">
-                <img id="settings-avatar-img" src="" alt="Profile" style="display:none;">
-                <div class="avatar" id="settings-avatar-fallback" style="font-size:1.3rem;">A</div>
+
+          <div class="settings-grid">
+            <!-- Form Column -->
+            <form id="admin-settings-form" style="display: flex; flex-direction: column; gap: 1.25rem; margin: 0;">
+              <div class="settings-photo-row">
+                <div class="avatar-container settings-avatar-lg">
+                  <img id="settings-avatar-img" src="" alt="Profile" style="display:none; width:100%; height:100%; object-fit:cover;">
+                  <div class="avatar" id="settings-avatar-fallback">A</div>
+                </div>
+                <div>
+                  <label for="admin-profile-upload" class="custom-file-button" style="cursor:pointer;">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M8 7l4-4 4 4"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg>
+                    Change Photo
+                  </label>
+                  <input type="file" id="admin-profile-upload" accept="image/*" style="display:none;">
+                  <div class="settings-file-hint" id="admin-profile-filename">No file chosen</div>
+                </div>
               </div>
-              <div>
-                <label for="admin-profile-upload" class="custom-file-button" style="cursor:pointer;">
-                  <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M8 7l4-4 4 4"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg>
-                  Change Photo
-                </label>
-                <input type="file" id="admin-profile-upload" accept="image/*" style="display:none;">
-                <div style="font-size:0.75rem; color:rgba(4,93,93,0.5); margin-top:6px;" id="admin-profile-filename">No file chosen</div>
+
+              <div class="form-group" style="max-width:340px; margin: 0;">
+                <label>Username</label>
+                <input type="text" id="admin-settings-username" placeholder="Your username">
+              </div>
+
+              <!-- Banner Upload -->
+              <div class="form-group" style="margin: 0;">
+                <label>Profile Banner (PNG/GIF)</label>
+                <div class="file-upload-wrapper" style="margin: 8px 0 0; display: flex; align-items: center; gap: 0.75rem;">
+                  <label for="admin-banner-upload" class="custom-file-button" style="cursor:pointer;">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M8 7l4-4 4 4"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg>
+                    Choose Banner
+                  </label>
+                  <input type="file" id="admin-banner-upload" accept="image/*" style="display:none;">
+                  <span id="admin-banner-filename" class="settings-file-hint" style="margin-top:0;">No file chosen</span>
+                </div>
+              </div>
+
+              <!-- Avatar Border customization -->
+              <div class="settings-subcard">
+                <div class="settings-subcard-label">Avatar Border Customization</div>
+
+                <div class="settings-subcard-row">
+                  <!-- Border Style -->
+                  <div class="form-group settings-field">
+                    <label>Style</label>
+                    <select id="admin-border-style">
+                      <option value="none">None</option>
+                      <option value="solid">Solid</option>
+                      <option value="dashed">Dashed</option>
+                      <option value="dotted">Dotted</option>
+                      <option value="double">Double</option>
+                      <option value="glowing">Glowing Glow</option>
+                      <option value="neon-wave">Neon Wave</option>
+                    </select>
+                  </div>
+
+                  <!-- Border Color -->
+                  <div class="form-group settings-field color-field">
+                    <label>Color</label>
+                    <input type="color" id="admin-border-color" value="#81cdc6" class="settings-color-swatch">
+                  </div>
+
+                  <!-- Border Width -->
+                  <div class="form-group settings-field width-field">
+                    <label>Width: <span id="border-width-val">0px</span></label>
+                    <input type="range" id="admin-border-width" min="0" max="8" value="0" class="settings-range">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-add" style="margin-top:0.5rem; align-self: flex-start;">Save Profile</button>
+            </form>
+
+            <!-- Live Profile Card Preview Column -->
+            <div>
+              <div class="settings-preview-label"><span class="live-dot"></span>Live Card Preview</div>
+              <div class="profile-preview-card" id="settings-preview-card">
+                <!-- Banner Container -->
+                <div id="settings-banner-preview" class="profile-preview-banner">
+                  <!-- Avatar overlapping the banner -->
+                  <div class="profile-preview-avatar-wrap" id="preview-avatar-wrap">
+                    <img id="preview-avatar-img" src="" alt="Profile" style="display:none; width:100%; height:100%; object-fit:cover;">
+                    <div class="avatar" id="preview-avatar-fallback">A</div>
+                  </div>
+                </div>
+                <!-- Card Details -->
+                <div class="profile-preview-body">
+                  <div id="preview-username" class="profile-preview-name">Admin</div>
+                  <div class="profile-preview-role">Admin Panel</div>
+                  <div class="profile-preview-divider"></div>
+                  <div class="profile-preview-meta">
+                    <div class="profile-preview-meta-label">Customized Profile</div>
+                    <p class="profile-preview-meta-text">Custom profile banner and styled borders active!</p>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div class="form-group" style="max-width:340px;">
-              <label>Username</label>
-              <input type="text" id="admin-settings-username" placeholder="Your username">
+        <div class="panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+          <div class="panel-title" style="margin-bottom: 1.25rem;">System-wide Announcement</div>
+          <p style="font-size: 0.78rem; color: rgba(4,93,93,0.6); margin-bottom: 1rem;">Publish an announcement banner visible to all registered users on their dashboards.</p>
+          <form id="admin-announcement-form">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <input type="text" id="admin-announcement-msg" placeholder="e.g., Scheduled server maintenance on Sunday at 2 AM GMT." required style="width: 100%; max-width: 500px; padding: 0.5rem; border: 1px solid rgba(4,93,93,0.2); border-radius: 6px;">
             </div>
-
-            <button type="submit" class="btn-add" style="margin-top:0.5rem;">Save Profile</button>
+            <div style="display: flex; gap: 0.75rem;">
+              <button type="submit" class="btn-add">Publish Announcement</button>
+              <button type="button" id="admin-announcement-clear-btn" class="btn-add ghost" style="background: transparent; border: 1px solid var(--exterior); color: var(--exterior);">Clear</button>
+            </div>
           </form>
         </div>
 
@@ -247,6 +394,7 @@
             </label>
           </div>
         </div>
+
 
         <div class="panel" style="padding: 1.5rem;">
           <div class="panel-title" style="margin-bottom: 0.75rem;">Security Notice</div>
@@ -356,5 +504,21 @@
         </form>
     </div>
 </div>
+
+<!-- Admin Toast Notification -->
+<div id="admin-toast"></div>
+
+<!-- Admin Confirm Modal -->
+<div id="admin-confirm-overlay">
+  <div id="admin-confirm-box">
+    <p id="admin-confirm-title">Confirm Action</p>
+    <p id="admin-confirm-body">Are you sure?</p>
+    <div class="admin-confirm-actions">
+      <button id="admin-confirm-cancel">Cancel</button>
+      <button id="admin-confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

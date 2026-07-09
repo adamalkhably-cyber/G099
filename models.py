@@ -49,7 +49,8 @@ class User(db.Model):
             'created_at': self.created_at.isoformat() + 'Z' if self.created_at else None,
             'updated_at': self.updated_at.isoformat() + 'Z' if self.updated_at else None,
             'last_login': self.last_login.isoformat() + 'Z' if self.last_login else None,
-            'last_seen': self.last_seen.isoformat() + 'Z' if self.last_seen else None
+            'last_seen': self.last_seen.isoformat() + 'Z' if self.last_seen else None,
+            'avatar': self.settings.avatar if self.settings else None
         }
     
     def __repr__(self):
@@ -175,6 +176,10 @@ class UserSettings(db.Model):
     display_name = db.Column(db.String(100), default='')
     theme = db.Column(db.String(20), default='light')
     avatar = db.Column(db.Text, nullable=True)  # base64 image data, same pattern as ClothingItem.image_path
+    banner = db.Column(db.Text, nullable=True)  # base64 banner image/gif data
+    border_color = db.Column(db.String(50), default='#81cdc6')
+    border_width = db.Column(db.String(20), default='0px')
+    border_style = db.Column(db.String(30), default='solid')
     email_notifications = db.Column(db.Boolean, default=False)
     push_notifications = db.Column(db.Boolean, default=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -184,6 +189,10 @@ class UserSettings(db.Model):
             'username': self.display_name or '',
             'theme': self.theme if self.theme in ('light', 'dark') else 'light',
             'avatar': self.avatar,
+            'banner': self.banner,
+            'border_color': self.border_color or '#81cdc6',
+            'border_width': self.border_width or '0px',
+            'border_style': self.border_style or 'solid',
             'notifications': {
                 'email': bool(self.email_notifications),
                 'push': bool(self.push_notifications)
@@ -215,3 +224,21 @@ class Favorite(db.Model):
     
     def __repr__(self):
         return f'<Favorite {self.outfit_id}>'
+
+
+class SystemAnnouncement(db.Model):
+    """System-wide announcement created by the admin"""
+    __tablename__ = 'system_announcement'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    active = db.Column(db.Boolean, default=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'message': self.message,
+            'created_at': self.created_at.isoformat() + 'Z' if self.created_at else None,
+            'active': self.active
+        }
