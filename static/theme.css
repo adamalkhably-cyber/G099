@@ -17,14 +17,15 @@
   --text-muted: #056b6b;      /* Slightly lighter for secondary text */
   --bg-base: #f4f9f9;         /* Soft off-white for the main app background */
   --bg-surface: #ffffff;      /* Pure white for panels and cards */
+  --border-color: rgba(4, 93, 93, 0.12); /* Default light border */
 }
 
 html {
     background: #f4f9f9;
 }
 
-/* Dark theme: switch variables when html[data-theme="dark"] is present */
-html[data-theme="dark"]{
+/* Dark theme: switch variables when html[data-theme*="dark"] is present */
+html[data-theme*="dark"]{
     background: #041b1b;
   --exterior: #0b2f2f;
   --exterior-dark: #041b1b;
@@ -43,40 +44,42 @@ html[data-theme="dark"]{
   
   --bg-base: #041b1b;         /* Deep dark background */
   --bg-surface: #0b2f2f;      /* Slightly lighter dark panels */
+  --border-color: rgba(127, 207, 198, 0.15); /* Default dark border */
+  --bg-surface-trans: rgba(11, 47, 47, 0.45); /* Default dark translucent panel bg */
 }
 
-html[data-theme="dark"] .sidebar, 
-html[data-theme="dark"] .topbar, 
-html[data-theme="dark"] .panel, 
-html[data-theme="dark"] .stat-card, 
-html[data-theme="dark"] .clothing-card, 
-html[data-theme="dark"] .outfit-card {
-    background: rgba(11, 47, 47, 0.45) !important; /* Semi-transparent dark cyan */
-    border: 1px solid rgba(127, 207, 198, 0.15) !important;
+html[data-theme*="dark"] .sidebar, 
+html[data-theme*="dark"] .topbar, 
+html[data-theme*="dark"] .panel, 
+html[data-theme*="dark"] .stat-card, 
+html[data-theme*="dark"] .clothing-card, 
+html[data-theme*="dark"] .outfit-card {
+    background: var(--bg-surface-trans) !important;
+    border: 1px solid var(--border-color) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
-html[data-theme="dark"] .stat-label,
-html[data-theme="dark"] .panel-title,
-html[data-theme="dark"] .cat-name,
-html[data-theme="dark"] .cat-count,
-html[data-theme="dark"] .stat-value {
+html[data-theme*="dark"] .stat-label,
+html[data-theme*="dark"] .panel-title,
+html[data-theme*="dark"] .cat-name,
+html[data-theme*="dark"] .cat-count,
+html[data-theme*="dark"] .stat-value {
     color: var(--text-main); 
 }
 
 /* Make clothing card text a bright green/cyan in dark mode */
-html[data-theme="dark"] .clothing-name,
-html[data-theme="dark"] .clothing-cat,
-html[data-theme="dark"] .stat-sub {
+html[data-theme*="dark"] .clothing-name,
+html[data-theme*="dark"] .clothing-cat,
+html[data-theme*="dark"] .stat-sub {
     color: var(--interior-light);
 }
 
-html[data-theme="dark"] .search-bar, 
-html[data-theme="dark"] .modal-content input, 
-html[data-theme="dark"] .modal-content select {
+html[data-theme*="dark"] .search-bar, 
+html[data-theme*="dark"] .modal-content input, 
+html[data-theme*="dark"] .modal-content select {
     background: rgba(0, 0, 0, 0.2) !important;
 }
 
-html[data-theme="dark"] .panel-action {
+html[data-theme*="dark"] .panel-action {
     color: var(--text-main) !important;
 }
 
@@ -85,38 +88,38 @@ html[data-theme="dark"] .panel-action {
    ========================================= */
 
 /* 1. The Form Container */
-html[data-theme="dark"] form {
+html[data-theme*="dark"] form {
     background-color: transparent;
     border: none;
     color: #e0e0e0;
 }
 
 /* 2. Input Fields, Dropdowns, and Textareas */
-html[data-theme="dark"] input,
-html[data-theme="dark"] select,
-html[data-theme="dark"] textarea {
-    background-color: #1a2626 !important;
-    color: #ffffff !important;
-    border: 1px solid #4f9f98 !important;
+html[data-theme*="dark"] input,
+html[data-theme*="dark"] select,
+html[data-theme*="dark"] textarea {
+    background-color: var(--bg-base) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
     border-radius: 6px !important;
 }
 
 /* 3. When clicking into the input (Active Focus State) */
-html[data-theme="dark"] input:focus,
-html[data-theme="dark"] select:focus,
-html[data-theme="dark"] textarea:focus {
-    border-color: #7fcfc6 !important;
+html[data-theme*="dark"] input:focus,
+html[data-theme*="dark"] select:focus,
+html[data-theme*="dark"] textarea:focus {
+    border-color: var(--interior-light) !important;
     outline: none !important;
 }
 
 /* 4. Label Text Fix */
-html[data-theme="dark"] form label {
-    color: #e6f7f5 !important;
+html[data-theme*="dark"] form label {
+    color: var(--text-main) !important;
 }
 
 /* 5. Placeholder Text */
-html[data-theme="dark"] input::placeholder,
-html[data-theme="dark"] textarea::placeholder {
+html[data-theme*="dark"] input::placeholder,
+html[data-theme*="dark"] textarea::placeholder {
     color: #999999; 
     opacity: 1;
 }
@@ -153,8 +156,8 @@ body::before {
     z-index: 0;
 }
 
-html[data-theme="dark"] body {
-    background: linear-gradient(135deg, #041b1b 0%, #0b2f2f 100%);
+html[data-theme*="dark"] body {
+    background: linear-gradient(135deg, var(--bg-base) 0%, var(--exterior-dark) 100%) !important;
 }
 
 /* =========================================
@@ -333,16 +336,16 @@ html[data-theme="dark"] body {
     font-style: italic;
 }
 
-html[data-theme="dark"] .photo-preview {
+html[data-theme*="dark"] .photo-preview {
     border-color: #4f9f98;
     background: #1a2626;
 }
 
-html[data-theme="dark"] .photo-preview-icon {
+html[data-theme*="dark"] .photo-preview-icon {
     stroke: #7fcfc6;
 }
 
-html[data-theme="dark"] .custom-file-button {
+html[data-theme*="dark"] .custom-file-button {
     display: inline-flex;
     align-items: center;
     padding: 8px 16px;
@@ -356,12 +359,12 @@ html[data-theme="dark"] .custom-file-button {
     transition: all 0.2s ease;
 }
 
-html[data-theme="dark"] .custom-file-button:hover {
+html[data-theme*="dark"] .custom-file-button:hover {
     background-color: #4f9f98; 
     color: #ffffff;
 }
 
-html[data-theme="dark"] .file-chosen-text {
+html[data-theme*="dark"] .file-chosen-text {
     font-size: 0.85rem;
     color: #8ab4b4;
     font-style: italic;
@@ -460,19 +463,19 @@ h1, h2, h3, h4, .settings-title, .section-title {
     max-width: 400px;
 }
 
-html[data-theme="dark"] .modal-content h2,
-html[data-theme="dark"] .modal-content h3,
-html[data-theme="dark"] .modal-content label,
-html[data-theme="dark"] .modal-content strong,
-html[data-theme="dark"] .modal-content p,
-html[data-theme="dark"] #close-modal {
+html[data-theme*="dark"] .modal-content h2,
+html[data-theme*="dark"] .modal-content h3,
+html[data-theme*="dark"] .modal-content label,
+html[data-theme*="dark"] .modal-content strong,
+html[data-theme*="dark"] .modal-content p,
+html[data-theme*="dark"] #close-modal {
     color: #e6f7f5 !important;
 }
 
 /* Modal box itself needs to switch to the dark surface color,
    otherwise it stays hard-coded white while its children (form,
    inputs) pick up dark styling, producing a mismatched box-in-a-box. */
-html[data-theme="dark"] .modal-content {
+html[data-theme*="dark"] .modal-content {
     background: var(--bg-surface) !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
@@ -480,7 +483,7 @@ html[data-theme="dark"] .modal-content {
 /* The generic `form` rule below adds its own dark background/border,
    which (now that the modal itself is dark) creates a redundant
    nested rectangle. Let it inherit the modal's background instead. */
-html[data-theme="dark"] .modal-content form {
+html[data-theme*="dark"] .modal-content form {
     background-color: transparent;
     border: none;
 }
@@ -490,24 +493,24 @@ html[data-theme="dark"] .modal-content form {
    input rule, so on dark mode it was winning by source order and
    turning inputs frosted/blurred instead of solid dark. Use a more
    specific selector so dark mode always wins here. */
-html[data-theme="dark"] .modal-content input,
-html[data-theme="dark"] .modal-content select,
-html[data-theme="dark"] .modal-content textarea {
+html[data-theme*="dark"] .modal-content input,
+html[data-theme*="dark"] .modal-content select,
+html[data-theme*="dark"] .modal-content textarea {
     background-color: #1a2626 !important;
     color: #ffffff !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
 
-html[data-theme="dark"] .modal-content select {
+html[data-theme*="dark"] .modal-content select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237fcfc6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: right 15px center !important;
     background-size: 16px !important;
 }
 
-html[data-theme="dark"] .modal-content input::placeholder,
-html[data-theme="dark"] .modal-content textarea::placeholder {
+html[data-theme*="dark"] .modal-content input::placeholder,
+html[data-theme*="dark"] .modal-content textarea::placeholder {
     color: #999999 !important;
     opacity: 1;
 }
@@ -535,11 +538,11 @@ html[data-theme="dark"] .modal-content textarea::placeholder {
     background: var(--interior-pale);
 }
 
-html[data-theme="dark"] .btn-close {
+html[data-theme*="dark"] .btn-close {
     color: #e6f7f5 !important;
 }
 
-html[data-theme="dark"] .btn-close:hover {
+html[data-theme*="dark"] .btn-close:hover {
     background: rgba(127, 207, 198, 0.15) !important;
 }
 
@@ -547,12 +550,12 @@ html[data-theme="dark"] .btn-close:hover {
    .btn-add (background: var(--exterior)) was blending invisibly into
    the modal's background. Give the modal's submit button its own
    visible dark-mode color. */
-html[data-theme="dark"] .modal-content .btn-add {
+html[data-theme*="dark"] .modal-content .btn-add {
     background: #4f9f98 !important;
     color: #0b1f1f !important;
 }
 
-html[data-theme="dark"] .modal-content .btn-add:hover {
+html[data-theme*="dark"] .modal-content .btn-add:hover {
     background: #7fcfc6 !important;
 }
 
@@ -723,14 +726,14 @@ html[data-theme="dark"] .modal-content .btn-add:hover {
 }
 
 /* Perfect adaptation layout contrast for dark mode explicitly */
-html[data-theme="dark"] .nav-item:hover {
-    background: rgba(127, 207, 198, 0.1);
-    color: var(--interior-light);
+html[data-theme*="dark"] .nav-item:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--interior-light) !important;
 }
 
-html[data-theme="dark"] .nav-item.active {
-    background: rgba(127, 207, 198, 0.15);
-    color: var(--text-main);
+html[data-theme*="dark"] .nav-item.active {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: var(--text-main) !important;
 }
 
 .nav-item svg {
@@ -817,7 +820,7 @@ html[data-theme="dark"] .nav-item.active {
     color: var(--exterior);
 }
 
-html[data-theme="dark"] .topbar-title {
+html[data-theme*="dark"] .topbar-title {
     color: var(--interior-light);
 }
 
@@ -928,14 +931,14 @@ html[data-theme="dark"] .topbar-title {
 }
 
 /* Fix for nested box issue in dark mode search bar */
-html[data-theme="dark"] .search-bar input {
+html[data-theme*="dark"] .search-bar input {
     background-color: transparent !important;
     border: none !important;
     color: #ffffff !important;
     box-shadow: none !important;
 }
 
-html[data-theme="dark"] .search-bar input:focus {
+html[data-theme*="dark"] .search-bar input:focus {
     border: none !important;
 }
 
@@ -949,7 +952,7 @@ html[data-theme="dark"] .search-bar input:focus {
     color: var(--exterior);
 }
   
-html[data-theme="dark"] .btn-icon {
+html[data-theme*="dark"] .btn-icon {
     color: var(--interior-light);
 }
 
@@ -1044,7 +1047,7 @@ html[data-theme="dark"] .btn-icon {
 .calendar-grid::-webkit-scrollbar-thumb:hover {
     background: var(--interior-light);
 }
-html[data-theme="dark"] .calendar-grid::-webkit-scrollbar-track {
+html[data-theme*="dark"] .calendar-grid::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.3) !important;
 }
 .calendar-day-card {
@@ -1059,14 +1062,14 @@ html[data-theme="dark"] .calendar-grid::-webkit-scrollbar-track {
     border: 1px solid rgba(4, 93, 93, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-html[data-theme="dark"] .calendar-day-card {
+html[data-theme*="dark"] .calendar-day-card {
     background: rgba(0, 0, 0, 0.2);
-    border-color: rgba(127, 207, 198, 0.15);
+    border-color: var(--border-color);
 }
 .calendar-day-card.today {
-    background: linear-gradient(135deg, rgba(127, 207, 198, 0.3), rgba(4, 93, 93, 0.1));
-    border: 1px solid rgba(4, 93, 93, 0.4);
-    box-shadow: 0 4px 15px rgba(4, 93, 93, 0.1);
+    background: linear-gradient(135deg, var(--interior-pale), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--interior);
+    box-shadow: 0 4px 15px var(--shadow-subtle);
 }
 .day-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; color: var(--text-main); }
 .day-number { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
@@ -1074,7 +1077,7 @@ html[data-theme="dark"] .calendar-day-card {
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 8px;
-    border: 2px dashed rgba(4, 93, 93, 0.2);
+    border: 2px dashed var(--border-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1085,9 +1088,9 @@ html[data-theme="dark"] .calendar-day-card {
     color: var(--text-muted);
     transition: all 0.2s ease;
 }
-.outfit-slot:hover { background: rgba(4, 93, 93, 0.05); border-color: rgba(4, 93, 93, 0.5); color: var(--text-main); }
-html[data-theme="dark"] .outfit-slot { border-color: rgba(127, 207, 198, 0.2); }
-html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1); border-color: rgba(127, 207, 198, 0.5); }
+.outfit-slot:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--interior); color: var(--text-main); }
+html[data-theme*="dark"] .outfit-slot { border-color: var(--border-color); }
+html[data-theme*="dark"] .outfit-slot:hover { background: rgba(255, 255, 255, 0.06) !important; border-color: var(--interior) !important; }
 .outfit-slot.assigned { border: none; background-size: cover; background-position: center; }
 
 .outfit-slot-mosaic {
@@ -1168,7 +1171,7 @@ html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1
     animation: outfitItemSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-html[data-theme="dark"] .outfit-preview-item {
+html[data-theme*="dark"] .outfit-preview-item {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(127, 207, 198, 0.2);
 }
@@ -1425,12 +1428,12 @@ html[data-theme="dark"] .outfit-preview-item {
     height: 56px;
 }
 
-html[data-theme="dark"] .clothing-img,
-html[data-theme="dark"] .modal-item-image {
+html[data-theme*="dark"] .clothing-img,
+html[data-theme*="dark"] .modal-item-image {
     background: linear-gradient(135deg, #123232, #0f1f1f);
 }
 
-html[data-theme="dark"] .clothing-img-placeholder {
+html[data-theme*="dark"] .clothing-img-placeholder {
     stroke: #7fcfc6;
 }
 
@@ -1444,7 +1447,7 @@ html[data-theme="dark"] .clothing-img-placeholder {
     box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
 }
 
-html[data-theme="dark"] .clothing-info {
+html[data-theme*="dark"] .clothing-info {
     background: rgba(0, 0, 0, 0.2) !important;
     border-color: rgba(127, 207, 198, 0.1) !important;
 }
@@ -1587,7 +1590,7 @@ html[data-theme="dark"] .clothing-info {
     margin-bottom: 1rem;
 }
 
-html[data-theme="dark"] .outfit-builder {
+html[data-theme*="dark"] .outfit-builder {
     background: rgba(0, 0, 0, 0.2) !important;
     border-color: rgba(127, 207, 198, 0.15) !important;
 }
@@ -1762,7 +1765,7 @@ html[data-theme="dark"] .outfit-builder {
     background: var(--interior-light);
 }
 
-html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
+html[data-theme*="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.3) !important;
 }
 
@@ -2218,8 +2221,8 @@ body {
   background: rgba(129,205,198,0.1) !important;
 }
 
-html[data-theme="dark"] .recent-table tbody tr:hover,
-html[data-theme="dark"] .data-table tbody tr:hover {
+html[data-theme*="dark"] .recent-table tbody tr:hover,
+html[data-theme*="dark"] .data-table tbody tr:hover {
   background: rgba(127,207,198,0.07) !important;
 }
 
@@ -2606,7 +2609,7 @@ textarea:focus-visible {
 /* Dark mode: --text-main is bright and reads fine on --bg-surface,
    but give the active pill's white text a touch more contrast
    against the brand-600 fill for consistency. */
-html[data-theme="dark"] .filter-controls button.active {
+html[data-theme*="dark"] .filter-controls button.active {
     color: #ffffff;
 }
 
@@ -2838,8 +2841,8 @@ html[data-theme="dark"] .filter-controls button.active {
     to   { opacity: 0; transform: translateX(24px); }
 }
 
-html[data-theme="dark"] .dash-toast.success { background: #0e3a34; color: #7fcfc6; border-color: rgba(127, 207, 198, 0.25); }
-html[data-theme="dark"] .dash-toast.error   { background: #3a1414; color: #ffb4b4; border-color: rgba(255, 100, 100, 0.25); }
+html[data-theme*="dark"] .dash-toast.success { background: #0e3a34; color: #7fcfc6; border-color: rgba(127, 207, 198, 0.25); }
+html[data-theme*="dark"] .dash-toast.error   { background: #3a1414; color: #ffb4b4; border-color: rgba(255, 100, 100, 0.25); }
 
 /* ============================================================
    BUG FIXES: checkbox & filter animation state
@@ -2891,7 +2894,7 @@ input[type="checkbox"]:hover {
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-html[data-theme="dark"] .system-announcement-banner {
+html[data-theme*="dark"] .system-announcement-banner {
   background: rgba(30, 27, 22, 0.95);
   border-bottom: 1px solid rgba(245, 158, 11, 0.2);
   color: #fef3c7;
@@ -2922,7 +2925,7 @@ html[data-theme="dark"] .system-announcement-banner {
   flex-shrink: 0;
 }
 
-html[data-theme="dark"] .system-announcement-banner .banner-badge {
+html[data-theme*="dark"] .system-announcement-banner .banner-badge {
   background: #d97706;
 }
 
@@ -2950,4 +2953,176 @@ html[data-theme="dark"] .system-announcement-banner .banner-badge {
 @keyframes slideDown {
   from { transform: translateY(-100%); }
   to { transform: translateY(0); }
+}
+
+/* ============================================================
+   COLOR VARIANT THEMES
+   ============================================================ */
+
+/* --- 1. Blue Theme --- */
+html[data-theme="light-blue"] {
+  --exterior: #1e40af;
+  --exterior-dark: #1e3a8a;
+  --exterior-light: #3b82f6;
+  --interior: #60a5fa;
+  --interior-light: #93c5fd;
+  --interior-pale: #eff6ff;
+  --interior-soft: #dbeafe;
+  --text-on-exterior: #eff6ff;
+  --text-on-interior: #1e3a8a;
+  --white: #ffffff;
+  --shadow-deep: rgba(30,64,175,0.15);
+  --shadow-subtle: rgba(30,64,175,0.06);
+  --text-main: #1e3a8a;
+  --text-muted: #3b82f6;
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --border-color: rgba(30, 64, 175, 0.12);
+}
+
+html[data-theme="dark-blue"] {
+  --exterior: #1e293b;
+  --exterior-dark: #0f172a;
+  --exterior-light: #1e3a8a;
+  --interior: #3b82f6;
+  --interior-light: #93c5fd;
+  --interior-pale: #020617;
+  --interior-soft: #0f172a;
+  --text-on-exterior: #f1f5f9;
+  --text-on-interior: #f1f5f9;
+  --white: #020617;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #f1f5f9;
+  --text-muted: #93c5fd;
+  --bg-base: #020617;
+  --bg-surface: #0f172a;
+  --border-color: rgba(147, 197, 253, 0.15);
+  --bg-surface-trans: rgba(15, 23, 42, 0.45);
+}
+
+/* --- 2. Purple Theme --- */
+html[data-theme="light-purple"] {
+  --exterior: #6b21a8;
+  --exterior-dark: #581c87;
+  --exterior-light: #a855f7;
+  --interior: #c084fc;
+  --interior-light: #d8b4fe;
+  --interior-pale: #faf5ff;
+  --interior-soft: #f3e8ff;
+  --text-on-exterior: #faf5ff;
+  --text-on-interior: #581c87;
+  --white: #ffffff;
+  --shadow-deep: rgba(107,33,168,0.15);
+  --shadow-subtle: rgba(107,33,168,0.06);
+  --text-main: #581c87;
+  --text-muted: #a855f7;
+  --bg-base: #fafaf9;
+  --bg-surface: #ffffff;
+  --border-color: rgba(107, 33, 168, 0.12);
+}
+
+html[data-theme="dark-purple"] {
+  --exterior: #2e1065;
+  --exterior-dark: #0f052d;
+  --exterior-light: #4c1d95;
+  --interior: #8b5cf6;
+  --interior-light: #c084fc;
+  --interior-pale: #09021a;
+  --interior-soft: #1e1145;
+  --text-on-exterior: #f5f3ff;
+  --text-on-interior: #f5f3ff;
+  --white: #09021a;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #f5f3ff;
+  --text-muted: #c084fc;
+  --bg-base: #09021a;
+  --bg-surface: #1e1145;
+  --border-color: rgba(192, 132, 252, 0.15);
+  --bg-surface-trans: rgba(30, 17, 69, 0.45);
+}
+
+/* --- 3. Crimson Theme --- */
+html[data-theme="light-crimson"] {
+  --exterior: #991b1b;
+  --exterior-dark: #7f1d1d;
+  --exterior-light: #ef4444;
+  --interior: #f87171;
+  --interior-light: #fca5a5;
+  --interior-pale: #fef2f2;
+  --interior-soft: #fee2e2;
+  --text-on-exterior: #fef2f2;
+  --text-on-interior: #7f1d1d;
+  --white: #ffffff;
+  --shadow-deep: rgba(153,27,27,0.15);
+  --shadow-subtle: rgba(153,27,27,0.06);
+  --text-main: #7f1d1d;
+  --text-muted: #ef4444;
+  --bg-base: #fffafb;
+  --bg-surface: #ffffff;
+  --border-color: rgba(153, 27, 27, 0.12);
+}
+
+html[data-theme="dark-crimson"] {
+  --exterior: #450a0a;
+  --exterior-dark: #1a0505;
+  --exterior-light: #7f1d1d;
+  --interior: #ef4444;
+  --interior-light: #fca5a5;
+  --interior-pale: #100202;
+  --interior-soft: #2d0b0b;
+  --text-on-exterior: #fef2f2;
+  --text-on-interior: #fef2f2;
+  --white: #100202;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #fef2f2;
+  --text-muted: #fca5a5;
+  --bg-base: #100202;
+  --bg-surface: #2d0b0b;
+  --border-color: rgba(252, 165, 165, 0.15);
+  --bg-surface-trans: rgba(45, 11, 11, 0.45);
+}
+
+/* --- 4. Amber Theme --- */
+html[data-theme="light-amber"] {
+  --exterior: #9a3412;
+  --exterior-dark: #7c2d12;
+  --exterior-light: #f97316;
+  --interior: #fb923c;
+  --interior-light: #fdba74;
+  --interior-pale: #fff7ed;
+  --interior-soft: #ffedd5;
+  --text-on-exterior: #fff7ed;
+  --text-on-interior: #7c2d12;
+  --white: #ffffff;
+  --shadow-deep: rgba(154,52,18,0.15);
+  --shadow-subtle: rgba(154,52,18,0.06);
+  --text-main: #7c2d12;
+  --text-muted: #f97316;
+  --bg-base: #fffbf7;
+  --bg-surface: #ffffff;
+  --border-color: rgba(154, 52, 18, 0.12);
+}
+
+html[data-theme="dark-amber"] {
+  --exterior: #431407;
+  --exterior-dark: #1c0804;
+  --exterior-light: #7c2d12;
+  --interior: #f97316;
+  --interior-light: #fdba74;
+  --interior-pale: #120402;
+  --interior-soft: #2c0e08;
+  --text-on-exterior: #fff7ed;
+  --text-on-interior: #fff7ed;
+  --white: #120402;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #fff7ed;
+  --text-muted: #fdba74;
+  --bg-base: #120402;
+  --bg-surface: #2c0e08;
+  --border-color: rgba(253, 186, 116, 0.15);
+  --bg-surface-trans: rgba(44, 14, 8, 0.45);
 }

@@ -10,7 +10,7 @@
   <script>
     (function () {
       var t = localStorage.getItem('theme');
-      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      if (t && t !== 'light') document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
 
@@ -21,7 +21,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: ['attribute', '[data-theme="dark"]'],
+      darkMode: ['attribute', '[data-theme*="dark"]'],
       theme: {
         extend: {
           colors: {
@@ -77,99 +77,100 @@
 
     /* ═══════════════════════════════════════════════
        DARK MODE — Full settings page dark theme
-       Uses html[data-theme="dark"] to beat theme.css
+       Uses html[data-theme*="dark"] to beat theme.css
        ═══════════════════════════════════════════════ */
 
     /* Toggles */
-    html[data-theme="dark"] .slider { background-color: #334155; }
-    html[data-theme="dark"] input:checked + .slider { background-color: #81cdc6; }
-    html[data-theme="dark"] input:checked + .slider:before { background-color: #033f3f; }
-
+    html[data-theme*="dark"] .slider { background-color: #334155; }
+    html[data-theme*="dark"] input:checked + .slider { background-color: var(--interior); }
+    html[data-theme*="dark"] input:checked + .slider:before { background-color: var(--exterior-dark); }
+ 
     /* Page background */
-    html[data-theme="dark"] #settings-page {
-      background: linear-gradient(135deg, #041b1b 0%, #0b2f2f 100%) !important;
+    html[data-theme*="dark"] #settings-page {
+      background: linear-gradient(135deg, var(--bg-base) 0%, var(--exterior-dark) 100%) !important;
     }
-
+ 
     /* Top bar */
-    html[data-theme="dark"] .settings-topbar {
-      background: rgba(4, 27, 27, 0.85) !important;
-      border-color: rgba(79,159,152,0.15) !important;
+    html[data-theme*="dark"] .settings-topbar {
+      background: var(--bg-surface-trans) !important;
+      border-color: var(--border-color) !important;
       backdrop-filter: blur(12px);
     }
-    html[data-theme="dark"] .settings-topbar h1 { color: #c2e9e6 !important; }
-
+    html[data-theme*="dark"] .settings-topbar h1 { color: var(--text-main) !important; }
+ 
     /* Card panels */
-    html[data-theme="dark"] .settings-card {
-      background-color: #052626 !important;
-      border-color: rgba(79,159,152,0.15) !important;
+    html[data-theme*="dark"] .settings-card {
+      background-color: var(--bg-surface-trans) !important;
+      border-color: var(--border-color) !important;
       box-shadow: 0 4px 24px rgba(0,0,0,0.3);
     }
-
+ 
     /* Card headers */
-    html[data-theme="dark"] .settings-card-header {
-      background-color: rgba(4,27,27,0.5) !important;
-      border-color: rgba(79,159,152,0.12) !important;
+    html[data-theme*="dark"] .settings-card-header {
+      background-color: rgba(0, 0, 0, 0.15) !important;
+      border-color: var(--border-color) !important;
     }
-    html[data-theme="dark"] .settings-card-header span { color: #81cdc6 !important; }
-
+    html[data-theme*="dark"] .settings-card-header span { color: var(--interior-light) !important; }
+ 
     /* Forms inside cards - transparent */
-    html[data-theme="dark"] .settings-card form {
+    html[data-theme*="dark"] .settings-card form {
       background: transparent !important;
       border: none !important;
-      color: #e0e0e0 !important;
+      color: var(--text-main) !important;
     }
-
+ 
     /* Section labels */
-    html[data-theme="dark"] .settings-label { color: #81cdc6 !important; }
-
+    html[data-theme*="dark"] .settings-label { color: var(--interior-light) !important; }
+ 
     /* Notification toggle labels + descriptions */
-    html[data-theme="dark"] .notif-label { color: #e6f7f5 !important; }
-    html[data-theme="dark"] .notif-desc { color: rgba(129,205,198,0.8) !important; }
-
+    html[data-theme*="dark"] .notif-label { color: var(--text-main) !important; }
+    html[data-theme*="dark"] .notif-desc { color: var(--text-muted) !important; }
+ 
     /* File helper text */
-    html[data-theme="dark"] .helper-text { color: #81cdc6 !important; }
-    html[data-theme="dark"] .helper-text-dim { color: rgba(129,205,198,0.6) !important; }
-
+    html[data-theme*="dark"] .helper-text { color: var(--interior-light) !important; }
+    html[data-theme*="dark"] .helper-text-dim { color: var(--text-muted) !important; }
+ 
     /* Inputs, selects */
-    html[data-theme="dark"] .settings-card input,
-    html[data-theme="dark"] .settings-card select,
-    html[data-theme="dark"] .settings-card textarea {
-      background-color: #031c1c !important;
-      color: #ffffff !important;
-      border-color: rgba(79,159,152,0.35) !important;
+    html[data-theme*="dark"] .settings-card input,
+    html[data-theme*="dark"] .settings-card select,
+    html[data-theme*="dark"] .settings-card textarea {
+      background-color: var(--bg-base) !important;
+      color: var(--text-main) !important;
+      border-color: var(--border-color) !important;
     }
-    html[data-theme="dark"] .settings-card input:focus,
-    html[data-theme="dark"] .settings-card select:focus {
-      border-color: #7fcfc6 !important;
-      box-shadow: 0 0 0 2px rgba(127,207,198,0.15) !important;
+    html[data-theme*="dark"] .settings-card input:focus,
+    html[data-theme*="dark"] .settings-card select:focus {
+      border-color: var(--interior-light) !important;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08) !important;
     }
-    html[data-theme="dark"] .settings-card input::placeholder {
-      color: #5a8a85 !important;
+    html[data-theme*="dark"] .settings-card input::placeholder {
+      color: var(--text-muted) !important;
+      opacity: 0.65 !important;
     }
-
+ 
     /* Dividers inside cards */
-    html[data-theme="dark"] .settings-divider {
-      border-color: rgba(79,159,152,0.12) !important;
+    html[data-theme*="dark"] .settings-divider {
+      border-color: var(--border-color) !important;
     }
-
+ 
     /* Avatar preview */
-    html[data-theme="dark"] .avatar-preview-box {
-      background-color: #031c1c !important;
-      border-color: rgba(79,159,152,0.3) !important;
+    html[data-theme*="dark"] .avatar-preview-box {
+      background-color: var(--bg-base) !important;
+      border-color: var(--border-color) !important;
     }
-    html[data-theme="dark"] .avatar-fallback { color: #81cdc6 !important; }
-
+    html[data-theme*="dark"] .avatar-fallback { color: var(--interior-light) !important; }
+ 
     /* Save / Update buttons */
-    html[data-theme="dark"] .btn-save {
-      background-color: #056b6b !important;
+    html[data-theme*="dark"] .btn-save {
+      background-color: var(--exterior) !important;
     }
-    html[data-theme="dark"] .btn-save:hover {
-      background-color: #4f9f98 !important;
+    html[data-theme*="dark"] .btn-save:hover {
+      background-color: var(--exterior-light) !important;
     }
   </style>
 </head>
 
-<body class="bg-[#f4f9f9] dark:bg-[#041b1b] text-[#033f3f] dark:text-teal-100 font-sans antialiased">
+<body class="font-sans antialiased">
   <div class="layout">
     
     <!-- SIDEBAR -->
@@ -286,8 +287,16 @@
                   <label for="theme" class="settings-label block text-xs font-semibold uppercase tracking-wider text-teal-700">Theme</label>
                   <select id="theme" name="theme"
                           class="w-full px-3.5 py-2.5 rounded-lg border border-teal-100 dark:border-teal-900/40 bg-white dark:bg-[#031c1c] text-teal-950 dark:text-teal-100 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all text-sm">
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
+                    <option value="light">Teal Light</option>
+                    <option value="dark">Teal Dark</option>
+                    <option value="light-blue">Blue Light</option>
+                    <option value="dark-blue">Blue Dark</option>
+                    <option value="light-purple">Purple Light</option>
+                    <option value="dark-purple">Purple Dark</option>
+                    <option value="light-crimson">Crimson Light</option>
+                    <option value="dark-crimson">Crimson Dark</option>
+                    <option value="light-amber">Amber Light</option>
+                    <option value="dark-amber">Amber Dark</option>
                   </select>
                 </div>
               </div>

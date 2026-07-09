@@ -331,8 +331,8 @@ async function loadLiveActivity() {
 // Apply (or remove) the dark theme attribute on <html>, same convention
 // the main dashboard (app.js) uses, so both apps stay visually in sync.
 function applyAdminTheme(theme) {
-  if (theme === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
+  if (theme && theme !== 'light') {
+    document.documentElement.setAttribute('data-theme', theme);
   } else {
     document.documentElement.removeAttribute('data-theme');
   }
@@ -387,8 +387,8 @@ async function loadAdminSettingsForm() {
       usernameInput.value = currentUser.username || '';
       adminCurrentNotifPrefs = s.notifications || { email: false, push: false };
 
-      const darkToggle = document.getElementById('admin-dark-mode-toggle');
-      if (darkToggle) darkToggle.checked = s.theme === 'dark';
+      const themeSelect = document.getElementById('admin-theme-select');
+      if (themeSelect) themeSelect.value = s.theme || 'light';
 
       // Set input fields for border customization
       const borderStyleSelect = document.getElementById('admin-border-style');
@@ -545,7 +545,7 @@ function setupAdminSettingsForm() {
   const usernameInput = document.getElementById('admin-settings-username');
   const uploadInput = document.getElementById('admin-profile-upload');
   const filenameLabel = document.getElementById('admin-profile-filename');
-  const darkToggle = document.getElementById('admin-dark-mode-toggle');
+  const themeSelect = document.getElementById('admin-theme-select');
 
   const bannerInput = document.getElementById('admin-banner-upload');
   const bannerFilenameLabel = document.getElementById('admin-banner-filename');
@@ -643,9 +643,9 @@ function setupAdminSettingsForm() {
     });
   }
 
-  if (darkToggle) {
-    darkToggle.addEventListener('change', () => {
-      const theme = darkToggle.checked ? 'dark' : 'light';
+  if (themeSelect) {
+    themeSelect.addEventListener('change', () => {
+      const theme = themeSelect.value;
       applyAdminTheme(theme);
       saveThemePreference(theme);
     });
@@ -655,7 +655,7 @@ function setupAdminSettingsForm() {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const token = localStorage.getItem('token') || localStorage.getItem('access_token');
-      const theme = darkToggle && darkToggle.checked ? 'dark' : 'light';
+      const theme = themeSelect ? themeSelect.value : 'light';
       const payload = {
         username: usernameInput ? usernameInput.value.trim() : '',
         theme,
@@ -815,8 +815,10 @@ async function loadAdminProfile() {
   if (sidebarProfile) {
     if (banner) {
       sidebarProfile.style.backgroundImage = `url(${banner})`;
+      sidebarProfile.classList.add('has-banner');
     } else {
       sidebarProfile.style.backgroundImage = '';
+      sidebarProfile.classList.remove('has-banner');
     }
   }
 

@@ -185,9 +185,16 @@ class UserSettings(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def to_dict(self):
+        allowed_themes = (
+            'light', 'dark',
+            'light-blue', 'dark-blue',
+            'light-purple', 'dark-purple',
+            'light-crimson', 'dark-crimson',
+            'light-amber', 'dark-amber'
+        )
         return {
             'username': self.display_name or '',
-            'theme': self.theme if self.theme in ('light', 'dark') else 'light',
+            'theme': self.theme if self.theme in allowed_themes else 'light',
             'avatar': self.avatar,
             'banner': self.banner,
             'border_color': self.border_color or '#81cdc6',

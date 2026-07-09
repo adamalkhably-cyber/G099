@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin Dashboard</title>
 <!-- Anti-flicker: apply theme before first paint -->
-<script>(function(){var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}());</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t && t!=='light')document.documentElement.setAttribute('data-theme',t);}());</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/theme.css">
 <link rel="stylesheet" href="/static/admin.css">
 <script src="/static/admin.js" defer></script>
 <!-- Tailwind CSS with custom teal config -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
-    darkMode: ['attribute', '[data-theme="dark"]'],
+    darkMode: ['attribute', '[data-theme*="dark"]'],
     theme: {
       extend: {
         colors: {
@@ -212,7 +213,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
       <div>
         <div class="panel-title" style="margin: 0;">My Admin Wardrobe</div>
-        <p style="font-size: 0.8rem; color: rgba(4,93,93,0.6); margin: 4px 0 0;">Your personal clothing collection database</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0;">Your personal clothing collection database</p>
       </div>
       <button id="addClothingBtn" class="btn-add">
         <svg viewBox="0 0 24 24" style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -228,7 +229,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
       <div>
         <div class="panel-title" style="margin: 0;">My Outfits</div>
-        <p style="font-size: 0.8rem; color: rgba(4,93,93,0.6); margin: 4px 0 0;">Combinations you've put together from your wardrobe</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0;">Combinations you've put together from your wardrobe</p>
       </div>
       <button id="createOutfitBtn" class="btn-add">
         <svg viewBox="0 0 24 24" style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -345,12 +346,11 @@
               <div class="settings-preview-label"><span class="live-dot"></span>Live Card Preview</div>
               <div class="profile-preview-card" id="settings-preview-card">
                 <!-- Banner Container -->
-                <div id="settings-banner-preview" class="profile-preview-banner">
-                  <!-- Avatar overlapping the banner -->
-                  <div class="profile-preview-avatar-wrap" id="preview-avatar-wrap">
-                    <img id="preview-avatar-img" src="" alt="Profile" style="display:none; width:100%; height:100%; object-fit:cover;">
-                    <div class="avatar" id="preview-avatar-fallback">A</div>
-                  </div>
+                <div id="settings-banner-preview" class="profile-preview-banner"></div>
+                <!-- Avatar overlapping the banner -->
+                <div class="profile-preview-avatar-wrap" id="preview-avatar-wrap">
+                  <img id="preview-avatar-img" src="" alt="Profile" style="display:none; width:100%; height:100%; object-fit:cover;">
+                  <div class="avatar" id="preview-avatar-fallback">A</div>
                 </div>
                 <!-- Card Details -->
                 <div class="profile-preview-body">
@@ -369,42 +369,52 @@
 
         <div class="panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
           <div class="panel-title" style="margin-bottom: 1.25rem;">System-wide Announcement</div>
-          <p style="font-size: 0.78rem; color: rgba(4,93,93,0.6); margin-bottom: 1rem;">Publish an announcement banner visible to all registered users on their dashboards.</p>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Publish an announcement banner visible to all registered users on their dashboards.</p>
           <form id="admin-announcement-form">
             <div class="form-group" style="margin-bottom: 1rem;">
-              <input type="text" id="admin-announcement-msg" placeholder="e.g., Scheduled server maintenance on Sunday at 2 AM GMT." required style="width: 100%; max-width: 500px; padding: 0.5rem; border: 1px solid rgba(4,93,93,0.2); border-radius: 6px;">
+              <input type="text" id="admin-announcement-msg" placeholder="e.g., Scheduled server maintenance on Sunday at 2 AM GMT." required style="width: 100%; max-width: 500px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px;">
             </div>
             <div style="display: flex; gap: 0.75rem;">
               <button type="submit" class="btn-add">Publish Announcement</button>
-              <button type="button" id="admin-announcement-clear-btn" class="btn-add ghost" style="background: transparent; border: 1px solid var(--exterior); color: var(--exterior);">Clear</button>
+              <button type="button" id="admin-announcement-clear-btn" class="btn-add ghost">Clear</button>
             </div>
           </form>
         </div>
 
         <div class="panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
           <div class="panel-title" style="margin-bottom: 1.25rem;">Appearance</div>
-          <div style="display:flex; align-items:center; justify-content:space-between; max-width:420px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; max-width:420px; gap: 20px;">
             <div>
-              <div style="font-weight:500; color:var(--exterior); font-size:0.9rem;">Dark Mode</div>
-              <div style="font-size:0.78rem; color:rgba(4,93,93,0.6); margin-top:2px;">Switch the admin panel to a darker color scheme.</div>
+              <div style="font-weight:500; color:var(--exterior); font-size:0.9rem;">Theme</div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Select the color scheme for the admin panel.</div>
             </div>
-            <label class="theme-toggle-switch">
-              <input type="checkbox" id="admin-dark-mode-toggle">
-              <span class="theme-toggle-slider"></span>
-            </label>
+            <div>
+              <select id="admin-theme-select" style="padding: 0.5rem 1.5rem 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-family: inherit; outline: none; cursor: pointer; min-width: 140px;">
+                <option value="light">Teal Light</option>
+                <option value="dark">Teal Dark</option>
+                <option value="light-blue">Blue Light</option>
+                <option value="dark-blue">Blue Dark</option>
+                <option value="light-purple">Purple Light</option>
+                <option value="dark-purple">Purple Dark</option>
+                <option value="light-crimson">Crimson Light</option>
+                <option value="dark-crimson">Crimson Dark</option>
+                <option value="light-amber">Amber Light</option>
+                <option value="dark-amber">Amber Dark</option>
+              </select>
+            </div>
           </div>
         </div>
 
 
         <div class="panel" style="padding: 1.5rem;">
           <div class="panel-title" style="margin-bottom: 0.75rem;">Security Notice</div>
-          <p style="font-size: 0.85rem; color: rgba(4,93,93,0.7); line-height: 1.6; margin: 0 0 0.75rem;">
+          <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 0 0 0.75rem;">
             This dashboard currently checks the admin username and password directly in the page's JavaScript, which
             means anyone can view the source and read the credentials. Before this goes live, move login checks to a
             server endpoint that verifies against the <code>admin_users</code> table's hashed password, and issue a
             session token instead of trusting the browser.
           </p>
-          <p style="font-size: 0.85rem; color: rgba(4,93,93,0.7); line-height: 1.6; margin: 0;">
+          <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 0;">
             The "live" login feed on this page is simulated in the browser for demo purposes. To make it real, have your
             backend write a row to <code>login_log</code> on every user login, and either poll that table every few
             seconds or push new rows to the dashboard over a WebSocket.
@@ -495,7 +505,7 @@
 
             <div class="form-group">
                 <label>Items</label>
-                <div id="admin-new-outfit-items" style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(4,93,93,0.15); border-radius: 8px; padding: 10px; margin-top: 6px;">
+                <div id="admin-new-outfit-items" style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-top: 6px;">
                     <div class="empty-state">Loading your wardrobe…</div>
                 </div>
             </div>

@@ -896,8 +896,8 @@ function applyGlobalSettings() {
     const savedTheme = localStorage.getItem('theme') || 'light';
 
     // Apply Global Dark/Light Theme Settings Configuration
-    if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
+    if (savedTheme && savedTheme !== 'light') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
     } else {
         document.documentElement.removeAttribute('data-theme');
     }

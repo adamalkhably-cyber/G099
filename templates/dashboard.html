@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Digital Closet</title>
 <!-- Anti-flicker: apply theme before first paint to prevent white flash -->
-<script>(function(){var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}());</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t && t!=='light')document.documentElement.setAttribute('data-theme',t);}());</script>
 <link rel="stylesheet" href="/static/theme.css">
 <script src="/static/app.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
-    darkMode: ['attribute', '[data-theme="dark"]'],
+    darkMode: ['attribute', '[data-theme*="dark"]'],
     theme: {
       extend: {
         colors: {

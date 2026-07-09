@@ -65,7 +65,14 @@ def api_save_settings():
         return jsonify({"ok": False, "error": "Username too long"}), 400
 
     theme = payload.get("theme", "light")
-    if theme not in ("light", "dark"):
+    allowed_themes = (
+        "light", "dark",
+        "light-blue", "dark-blue",
+        "light-purple", "dark-purple",
+        "light-crimson", "dark-crimson",
+        "light-amber", "dark-amber"
+    )
+    if theme not in allowed_themes:
         theme = "light"
 
     notifications = payload.get("notifications", {}) or {}
