@@ -3,9 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Outfits This Week</title>
+  <script>
+  (function(){
+    var t = localStorage.getItem('theme');
+    if (t && t !== 'light') document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+
   <link rel="stylesheet" href="/static/theme.css">
   <script src="/static/app.js" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="layout">

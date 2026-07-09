@@ -58,11 +58,29 @@ def create_wardrobe_item():
         
         db.session.add(item)
         db.session.commit()
+
+        # Send notification email if user has email alerts enabled
+        user = User.query.get(user_id)
+        if user and user.settings and user.settings.email_notifications:
+            from routes.auth import mail
+            from flask_mail import Message
+            if mail:
+                try:
+                    print(f"SENDING EMAIL ALERT to {user.email} for item {item.name}")
+                    msg = Message(
+                        'Wardrobe Planner: New Item Added!',
+                        recipients=[user.email]
+                    )
+                    msg.body = f"Hi {user.username},\n\nYou successfully added '{item.name}' ({item.category}) to your digital wardrobe closet!\n\nHappy Styling!\nDigital Wardrobe Team"
+                    mail.send(msg)
+                except Exception as mail_err:
+                    print("Mail send error:", mail_err)
         
         return jsonify({
             'message': 'Item added to wardrobe',
             'item': item.to_dict()
         }), 201
+
     
     except Exception as e:
         db.session.rollback()

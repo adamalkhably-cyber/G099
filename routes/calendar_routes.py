@@ -11,7 +11,7 @@ calendar_bp = Blueprint('calendar', __name__, url_prefix='/api/calendar')
 def get_calendar():
     """Get all planned outfits for authenticated user"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         planned = PlannedOutfit.query.filter_by(user_id=user_id).all()
         return jsonify([item.to_dict() for item in planned]), 200
     except Exception as e:
@@ -23,7 +23,7 @@ def get_calendar():
 def get_month_calendar(year, month):
     """Get planned outfits for specific month"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         
         # Get first and last day of month
         first_day = datetime(year, month, 1).date()
@@ -48,7 +48,7 @@ def get_month_calendar(year, month):
 def get_date_outfit(date_str):
     """Get planned outfit for specific date (YYYY-MM-DD format)"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
         
         planned = PlannedOutfit.query.filter_by(
@@ -71,7 +71,7 @@ def get_date_outfit(date_str):
 def plan_outfit():
     """Plan outfit for specific date"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         data = request.json
         
         # Validate required fields
@@ -132,7 +132,7 @@ def plan_outfit():
 def update_planned_outfit(date_str):
     """Update planned outfit for specific date"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
         
         planned = PlannedOutfit.query.filter_by(user_id=user_id, date=date).first()
@@ -175,7 +175,7 @@ def update_planned_outfit(date_str):
 def delete_planned_outfit(date_str):
     """Delete planned outfit for specific date"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
         
         planned = PlannedOutfit.query.filter_by(user_id=user_id, date=date).first()
@@ -200,7 +200,7 @@ def delete_planned_outfit(date_str):
 def get_upcoming_outfits():
     """Get upcoming planned outfits"""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         today = datetime.utcnow().date()
         
         # Get next 7 days

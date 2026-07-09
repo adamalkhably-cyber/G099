@@ -4,9 +4,54 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Digital Closet</title>
+<!-- Anti-flicker: apply theme before first paint to prevent white flash -->
+<script>(function(){var t=localStorage.getItem('theme');if(t && t!=='light')document.documentElement.setAttribute('data-theme',t);}());</script>
 <link rel="stylesheet" href="/static/theme.css">
-<script src="/static/app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="/static/app.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Tailwind CSS with custom teal config -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: ['attribute', '[data-theme*="dark"]'],
+    theme: {
+      extend: {
+        colors: {
+          teal: {
+            50:  '#e4f5f3',
+            100: '#c2e9e6',
+            200: '#81cdc6',
+            300: '#4f9f98',
+            400: '#7fcfc6',
+            500: '#056b6b',
+            600: '#045D5D',
+            700: '#033f3f',
+            800: '#0b2f2f',
+            900: '#041b1b',
+          }
+        },
+        fontFamily: {
+          sans: ['DM Sans', 'system-ui', 'sans-serif'],
+          serif: ['Playfair Display', 'serif'],
+        },
+        keyframes: {
+          fadeUp:  { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          fadeIn:  { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+          slideRight: { '0%': { opacity: '0', transform: 'translateX(32px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+          shimmer: { '0%': { backgroundPosition: '-400px 0' }, '100%': { backgroundPosition: '400px 0' } },
+          countUp: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+        },
+        animation: {
+          'fade-up':    'fadeUp 0.5s ease both',
+          'fade-in':    'fadeIn 0.4s ease both',
+          'slide-right':'slideRight 0.45s cubic-bezier(.22,1,.36,1) both',
+          'shimmer':    'shimmer 1.6s infinite linear',
+          'count-up':   'countUp 0.6s ease both',
+        }
+      }
+    }
+  }
+</script>
 </head>
 <body>
 

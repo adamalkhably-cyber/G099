@@ -1,6 +1,6 @@
-from flask import Blueprint, app, request, jsonify
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import Outfit, ClothingItem, Favorite, db
+from models import Outfit, ClothingItem, User, db
 
 outfits_bp = Blueprint('outfits', __name__, url_prefix='/api/outfits')
 
@@ -66,11 +66,30 @@ def create_outfit():
         
         db.session.add(outfit)
         db.session.commit()
+
+        # Send notification email if user has email alerts enabled
+        user = User.query.get(user_id)
+        if user and user.settings and user.settings.email_notifications:
+            from routes.auth import mail
+            from flask_mail import Message
+            if mail:
+                try:
+                    print(f"SENDING EMAIL ALERT to {user.email} for outfit {outfit.name}")
+                    msg = Message(
+                        'Wardrobe Planner: New Outfit Created!',
+                        recipients=[user.email]
+                    )
+                    items_list = ", ".join([item.name for item in outfit.items]) or "No items linked"
+                    msg.body = f"Hi {user.username},\n\nYou successfully created a new outfit '{outfit.name}'!\nLinked items: {items_list}\n\nHappy Styling!\nDigital Wardrobe Team"
+                    mail.send(msg)
+                except Exception as mail_err:
+                    print("Mail send error:", mail_err)
         
         return jsonify({
             'message': 'Outfit created',
             'outfit': outfit.to_dict()
         }), 201
+
     
     except Exception as e:
         db.session.rollback()

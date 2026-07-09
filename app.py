@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, redirect
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import config
@@ -11,8 +11,7 @@ from routes.settings import settings_bp
 from routes.calendar_routes import calendar_bp
 
 
-app = Flask(__name__, static_folder="static", static_url_path="/static")
-app = Flask(__name__, template_folder="templates", static_folder="static")
+app = Flask(__name__, template_folder="templates", static_folder="static", static_url_path="/static")
 CORS(app)
 app.config.from_object(config["development"])
 
@@ -39,6 +38,7 @@ with app.app_context():
         print("Default admin account created.")
     else:
         admin.is_admin = True
+        admin.is_active = True
         db.session.commit()
         print("Admin account already exists.")
 
@@ -106,6 +106,11 @@ def register_page():
 @app.route("/reset-password")
 def reset_password_page():
     return send_from_directory("templates", "reset-password.html")
+
+@app.route("/announcement")
+def announcement_redirect_page():
+    return redirect("/dashboard")
+
 
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")

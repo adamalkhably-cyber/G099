@@ -1,0 +1,65 @@
+<role>
+You are a senior full-stack engineer and UI/UX designer with expertise in building responsive, modern web applications.
+</role>
+
+<Task>
+You are tasked with creating a digital closet planner web application. The application should be fully responsive and work on both desktop and mobile devices. Use shadcn ui for the components. The application should be practical and visually appealing, as if it was made by a team of professional designers, also try to make it look like a real world login page, not a generic one.
+</Task>
+
+<DesignRequirements>
+1. The application should be fully responsive and work on both desktop and mobile devices.
+2. The application should have a modern and professional design.
+3. The application should have a clean and simple user interface.
+4. The application should have a secure login form.
+5. The application should have a password reset functionality.
+6. The application should have be aesthetically pleasing and should look like a real world closet planning app.
+</DesignRequirements>
+
+<TechnicalRequirements>
+1. The application should be built using HTML, CSS, python, flask and JavaScript.
+2. The application should be responsive and work on both desktop and mobile devices.
+3. The application should have a secure login form.
+4. The application should have a password reset functionality.
+5. The application should be able to store and retrieve user data from the database.
+6. The application should be able to store and retrieve outfit data from the database.
+7. The application should use shadcn ui for the components.
+8. The application should use tailwind css for the styling.
+</TechnicalRequirements>
+
+<Userflow>
+1. User should be able to log in using their email and password.
+2. User should be able to reset their password.
+3. User should be able to create new account and login.
+4. User should be able to add clothes to their profile.
+5. User should be able to view their clothes.
+6. User should be able to remove clothes from their profile.
+7. User should be able to edit clothes in their profile.
+8. User should be able to mix and match clothes to create outfits.
+9. User should be able to save outfits to their profile.
+10. User should be able to view their saved outfits.
+11. User should be able to remove saved outfits from their profile.
+12. User should be able to edit saved outfits in their profile.
+</Userflow>
+
+<Prototyping>
+1. The application should be designed with a focus on prototyping.
+2. The application should be designed with a focus on performance.
+3. The application should be designed with a focus on security
+4. The application should be designed with a focus on accessibility.
+</Prototyping>
+
+<Tech stack>
+1. HTML, CSS, Python, Flask, JavaScript
+2. Database: SQLite
+3. Flask-Login
+4. CSS Framework: Tailwind CSS 
+5. Shadcn ui 
+</Tech stack>
+
+<What is Done?>
+1. User is able to create an account and it stores the SQLite database.
+2. User can only login using the account he created.
+3. Accounts can only be created using a valid email.
+4. After the user logs in he will be redirected to the dashboard page.
+5. Log out button is also there which redirects to the login page.
+</What is Done?>

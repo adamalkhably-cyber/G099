@@ -17,14 +17,15 @@
   --text-muted: #056b6b;      /* Slightly lighter for secondary text */
   --bg-base: #f4f9f9;         /* Soft off-white for the main app background */
   --bg-surface: #ffffff;      /* Pure white for panels and cards */
+  --border-color: rgba(4, 93, 93, 0.12); /* Default light border */
 }
 
 html {
     background: #f4f9f9;
 }
 
-/* Dark theme: switch variables when html[data-theme="dark"] is present */
-html[data-theme="dark"]{
+/* Dark theme: switch variables when html[data-theme*="dark"] is present */
+html[data-theme*="dark"]{
     background: #041b1b;
   --exterior: #0b2f2f;
   --exterior-dark: #041b1b;
@@ -43,40 +44,42 @@ html[data-theme="dark"]{
   
   --bg-base: #041b1b;         /* Deep dark background */
   --bg-surface: #0b2f2f;      /* Slightly lighter dark panels */
+  --border-color: rgba(127, 207, 198, 0.15); /* Default dark border */
+  --bg-surface-trans: rgba(11, 47, 47, 0.45); /* Default dark translucent panel bg */
 }
 
-html[data-theme="dark"] .sidebar, 
-html[data-theme="dark"] .topbar, 
-html[data-theme="dark"] .panel, 
-html[data-theme="dark"] .stat-card, 
-html[data-theme="dark"] .clothing-card, 
-html[data-theme="dark"] .outfit-card {
-    background: rgba(11, 47, 47, 0.45) !important; /* Semi-transparent dark cyan */
-    border: 1px solid rgba(127, 207, 198, 0.15) !important;
+html[data-theme*="dark"] .sidebar, 
+html[data-theme*="dark"] .topbar, 
+html[data-theme*="dark"] .panel, 
+html[data-theme*="dark"] .stat-card, 
+html[data-theme*="dark"] .clothing-card, 
+html[data-theme*="dark"] .outfit-card {
+    background: var(--bg-surface-trans) !important;
+    border: 1px solid var(--border-color) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
-html[data-theme="dark"] .stat-label,
-html[data-theme="dark"] .panel-title,
-html[data-theme="dark"] .cat-name,
-html[data-theme="dark"] .cat-count,
-html[data-theme="dark"] .stat-value {
+html[data-theme*="dark"] .stat-label,
+html[data-theme*="dark"] .panel-title,
+html[data-theme*="dark"] .cat-name,
+html[data-theme*="dark"] .cat-count,
+html[data-theme*="dark"] .stat-value {
     color: var(--text-main); 
 }
 
 /* Make clothing card text a bright green/cyan in dark mode */
-html[data-theme="dark"] .clothing-name,
-html[data-theme="dark"] .clothing-cat,
-html[data-theme="dark"] .stat-sub {
+html[data-theme*="dark"] .clothing-name,
+html[data-theme*="dark"] .clothing-cat,
+html[data-theme*="dark"] .stat-sub {
     color: var(--interior-light);
 }
 
-html[data-theme="dark"] .search-bar, 
-html[data-theme="dark"] .modal-content input, 
-html[data-theme="dark"] .modal-content select {
+html[data-theme*="dark"] .search-bar, 
+html[data-theme*="dark"] .modal-content input, 
+html[data-theme*="dark"] .modal-content select {
     background: rgba(0, 0, 0, 0.2) !important;
 }
 
-html[data-theme="dark"] .panel-action {
+html[data-theme*="dark"] .panel-action {
     color: var(--text-main) !important;
 }
 
@@ -85,38 +88,38 @@ html[data-theme="dark"] .panel-action {
    ========================================= */
 
 /* 1. The Form Container */
-html[data-theme="dark"] form {
-    background-color: #1e1e1e;
-    border: 1px solid #333333;
+html[data-theme*="dark"] form {
+    background-color: transparent;
+    border: none;
     color: #e0e0e0;
 }
 
 /* 2. Input Fields, Dropdowns, and Textareas */
-html[data-theme="dark"] input,
-html[data-theme="dark"] select,
-html[data-theme="dark"] textarea {
-    background-color: #1a2626 !important;
-    color: #ffffff !important;
-    border: 1px solid #4f9f98 !important;
+html[data-theme*="dark"] input,
+html[data-theme*="dark"] select,
+html[data-theme*="dark"] textarea {
+    background-color: var(--bg-base) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
     border-radius: 6px !important;
 }
 
 /* 3. When clicking into the input (Active Focus State) */
-html[data-theme="dark"] input:focus,
-html[data-theme="dark"] select:focus,
-html[data-theme="dark"] textarea:focus {
-    border-color: #7fcfc6 !important;
+html[data-theme*="dark"] input:focus,
+html[data-theme*="dark"] select:focus,
+html[data-theme*="dark"] textarea:focus {
+    border-color: var(--interior-light) !important;
     outline: none !important;
 }
 
 /* 4. Label Text Fix */
-html[data-theme="dark"] form label {
-    color: #e6f7f5 !important;
+html[data-theme*="dark"] form label {
+    color: var(--text-main) !important;
 }
 
 /* 5. Placeholder Text */
-html[data-theme="dark"] input::placeholder,
-html[data-theme="dark"] textarea::placeholder {
+html[data-theme*="dark"] input::placeholder,
+html[data-theme*="dark"] textarea::placeholder {
     color: #999999; 
     opacity: 1;
 }
@@ -153,8 +156,8 @@ body::before {
     z-index: 0;
 }
 
-html[data-theme="dark"] body {
-    background: linear-gradient(135deg, #041b1b 0%, #0b2f2f 100%);
+html[data-theme*="dark"] body {
+    background: linear-gradient(135deg, var(--bg-base) 0%, var(--exterior-dark) 100%) !important;
 }
 
 /* =========================================
@@ -333,16 +336,16 @@ html[data-theme="dark"] body {
     font-style: italic;
 }
 
-html[data-theme="dark"] .photo-preview {
+html[data-theme*="dark"] .photo-preview {
     border-color: #4f9f98;
     background: #1a2626;
 }
 
-html[data-theme="dark"] .photo-preview-icon {
+html[data-theme*="dark"] .photo-preview-icon {
     stroke: #7fcfc6;
 }
 
-html[data-theme="dark"] .custom-file-button {
+html[data-theme*="dark"] .custom-file-button {
     display: inline-flex;
     align-items: center;
     padding: 8px 16px;
@@ -356,12 +359,12 @@ html[data-theme="dark"] .custom-file-button {
     transition: all 0.2s ease;
 }
 
-html[data-theme="dark"] .custom-file-button:hover {
+html[data-theme*="dark"] .custom-file-button:hover {
     background-color: #4f9f98; 
     color: #ffffff;
 }
 
-html[data-theme="dark"] .file-chosen-text {
+html[data-theme*="dark"] .file-chosen-text {
     font-size: 0.85rem;
     color: #8ab4b4;
     font-style: italic;
@@ -460,19 +463,19 @@ h1, h2, h3, h4, .settings-title, .section-title {
     max-width: 400px;
 }
 
-html[data-theme="dark"] .modal-content h2,
-html[data-theme="dark"] .modal-content h3,
-html[data-theme="dark"] .modal-content label,
-html[data-theme="dark"] .modal-content strong,
-html[data-theme="dark"] .modal-content p,
-html[data-theme="dark"] #close-modal {
+html[data-theme*="dark"] .modal-content h2,
+html[data-theme*="dark"] .modal-content h3,
+html[data-theme*="dark"] .modal-content label,
+html[data-theme*="dark"] .modal-content strong,
+html[data-theme*="dark"] .modal-content p,
+html[data-theme*="dark"] #close-modal {
     color: #e6f7f5 !important;
 }
 
 /* Modal box itself needs to switch to the dark surface color,
    otherwise it stays hard-coded white while its children (form,
    inputs) pick up dark styling, producing a mismatched box-in-a-box. */
-html[data-theme="dark"] .modal-content {
+html[data-theme*="dark"] .modal-content {
     background: var(--bg-surface) !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
@@ -480,7 +483,7 @@ html[data-theme="dark"] .modal-content {
 /* The generic `form` rule below adds its own dark background/border,
    which (now that the modal itself is dark) creates a redundant
    nested rectangle. Let it inherit the modal's background instead. */
-html[data-theme="dark"] .modal-content form {
+html[data-theme*="dark"] .modal-content form {
     background-color: transparent;
     border: none;
 }
@@ -490,24 +493,24 @@ html[data-theme="dark"] .modal-content form {
    input rule, so on dark mode it was winning by source order and
    turning inputs frosted/blurred instead of solid dark. Use a more
    specific selector so dark mode always wins here. */
-html[data-theme="dark"] .modal-content input,
-html[data-theme="dark"] .modal-content select,
-html[data-theme="dark"] .modal-content textarea {
+html[data-theme*="dark"] .modal-content input,
+html[data-theme*="dark"] .modal-content select,
+html[data-theme*="dark"] .modal-content textarea {
     background-color: #1a2626 !important;
     color: #ffffff !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
 
-html[data-theme="dark"] .modal-content select {
+html[data-theme*="dark"] .modal-content select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237fcfc6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: right 15px center !important;
     background-size: 16px !important;
 }
 
-html[data-theme="dark"] .modal-content input::placeholder,
-html[data-theme="dark"] .modal-content textarea::placeholder {
+html[data-theme*="dark"] .modal-content input::placeholder,
+html[data-theme*="dark"] .modal-content textarea::placeholder {
     color: #999999 !important;
     opacity: 1;
 }
@@ -535,11 +538,11 @@ html[data-theme="dark"] .modal-content textarea::placeholder {
     background: var(--interior-pale);
 }
 
-html[data-theme="dark"] .btn-close {
+html[data-theme*="dark"] .btn-close {
     color: #e6f7f5 !important;
 }
 
-html[data-theme="dark"] .btn-close:hover {
+html[data-theme*="dark"] .btn-close:hover {
     background: rgba(127, 207, 198, 0.15) !important;
 }
 
@@ -547,12 +550,12 @@ html[data-theme="dark"] .btn-close:hover {
    .btn-add (background: var(--exterior)) was blending invisibly into
    the modal's background. Give the modal's submit button its own
    visible dark-mode color. */
-html[data-theme="dark"] .modal-content .btn-add {
+html[data-theme*="dark"] .modal-content .btn-add {
     background: #4f9f98 !important;
     color: #0b1f1f !important;
 }
 
-html[data-theme="dark"] .modal-content .btn-add:hover {
+html[data-theme*="dark"] .modal-content .btn-add:hover {
     background: #7fcfc6 !important;
 }
 
@@ -723,14 +726,14 @@ html[data-theme="dark"] .modal-content .btn-add:hover {
 }
 
 /* Perfect adaptation layout contrast for dark mode explicitly */
-html[data-theme="dark"] .nav-item:hover {
-    background: rgba(127, 207, 198, 0.1);
-    color: var(--interior-light);
+html[data-theme*="dark"] .nav-item:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--interior-light) !important;
 }
 
-html[data-theme="dark"] .nav-item.active {
-    background: rgba(127, 207, 198, 0.15);
-    color: var(--text-main);
+html[data-theme*="dark"] .nav-item.active {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: var(--text-main) !important;
 }
 
 .nav-item svg {
@@ -817,7 +820,7 @@ html[data-theme="dark"] .nav-item.active {
     color: var(--exterior);
 }
 
-html[data-theme="dark"] .topbar-title {
+html[data-theme*="dark"] .topbar-title {
     color: var(--interior-light);
 }
 
@@ -928,14 +931,14 @@ html[data-theme="dark"] .topbar-title {
 }
 
 /* Fix for nested box issue in dark mode search bar */
-html[data-theme="dark"] .search-bar input {
+html[data-theme*="dark"] .search-bar input {
     background-color: transparent !important;
     border: none !important;
     color: #ffffff !important;
     box-shadow: none !important;
 }
 
-html[data-theme="dark"] .search-bar input:focus {
+html[data-theme*="dark"] .search-bar input:focus {
     border: none !important;
 }
 
@@ -949,7 +952,7 @@ html[data-theme="dark"] .search-bar input:focus {
     color: var(--exterior);
 }
   
-html[data-theme="dark"] .btn-icon {
+html[data-theme*="dark"] .btn-icon {
     color: var(--interior-light);
 }
 
@@ -1044,7 +1047,7 @@ html[data-theme="dark"] .btn-icon {
 .calendar-grid::-webkit-scrollbar-thumb:hover {
     background: var(--interior-light);
 }
-html[data-theme="dark"] .calendar-grid::-webkit-scrollbar-track {
+html[data-theme*="dark"] .calendar-grid::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.3) !important;
 }
 .calendar-day-card {
@@ -1059,14 +1062,14 @@ html[data-theme="dark"] .calendar-grid::-webkit-scrollbar-track {
     border: 1px solid rgba(4, 93, 93, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-html[data-theme="dark"] .calendar-day-card {
+html[data-theme*="dark"] .calendar-day-card {
     background: rgba(0, 0, 0, 0.2);
-    border-color: rgba(127, 207, 198, 0.15);
+    border-color: var(--border-color);
 }
 .calendar-day-card.today {
-    background: linear-gradient(135deg, rgba(127, 207, 198, 0.3), rgba(4, 93, 93, 0.1));
-    border: 1px solid rgba(4, 93, 93, 0.4);
-    box-shadow: 0 4px 15px rgba(4, 93, 93, 0.1);
+    background: linear-gradient(135deg, var(--interior-pale), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--interior);
+    box-shadow: 0 4px 15px var(--shadow-subtle);
 }
 .day-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; color: var(--text-main); }
 .day-number { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
@@ -1074,7 +1077,7 @@ html[data-theme="dark"] .calendar-day-card {
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 8px;
-    border: 2px dashed rgba(4, 93, 93, 0.2);
+    border: 2px dashed var(--border-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1085,9 +1088,9 @@ html[data-theme="dark"] .calendar-day-card {
     color: var(--text-muted);
     transition: all 0.2s ease;
 }
-.outfit-slot:hover { background: rgba(4, 93, 93, 0.05); border-color: rgba(4, 93, 93, 0.5); color: var(--text-main); }
-html[data-theme="dark"] .outfit-slot { border-color: rgba(127, 207, 198, 0.2); }
-html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1); border-color: rgba(127, 207, 198, 0.5); }
+.outfit-slot:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--interior); color: var(--text-main); }
+html[data-theme*="dark"] .outfit-slot { border-color: var(--border-color); }
+html[data-theme*="dark"] .outfit-slot:hover { background: rgba(255, 255, 255, 0.06) !important; border-color: var(--interior) !important; }
 .outfit-slot.assigned { border: none; background-size: cover; background-position: center; }
 
 .outfit-slot-mosaic {
@@ -1168,7 +1171,7 @@ html[data-theme="dark"] .outfit-slot:hover { background: rgba(127, 207, 198, 0.1
     animation: outfitItemSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-html[data-theme="dark"] .outfit-preview-item {
+html[data-theme*="dark"] .outfit-preview-item {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(127, 207, 198, 0.2);
 }
@@ -1425,12 +1428,12 @@ html[data-theme="dark"] .outfit-preview-item {
     height: 56px;
 }
 
-html[data-theme="dark"] .clothing-img,
-html[data-theme="dark"] .modal-item-image {
+html[data-theme*="dark"] .clothing-img,
+html[data-theme*="dark"] .modal-item-image {
     background: linear-gradient(135deg, #123232, #0f1f1f);
 }
 
-html[data-theme="dark"] .clothing-img-placeholder {
+html[data-theme*="dark"] .clothing-img-placeholder {
     stroke: #7fcfc6;
 }
 
@@ -1444,7 +1447,7 @@ html[data-theme="dark"] .clothing-img-placeholder {
     box-shadow: 0 10px 30px rgba(4, 93, 93, 0.05);
 }
 
-html[data-theme="dark"] .clothing-info {
+html[data-theme*="dark"] .clothing-info {
     background: rgba(0, 0, 0, 0.2) !important;
     border-color: rgba(127, 207, 198, 0.1) !important;
 }
@@ -1587,7 +1590,7 @@ html[data-theme="dark"] .clothing-info {
     margin-bottom: 1rem;
 }
 
-html[data-theme="dark"] .outfit-builder {
+html[data-theme*="dark"] .outfit-builder {
     background: rgba(0, 0, 0, 0.2) !important;
     border-color: rgba(127, 207, 198, 0.15) !important;
 }
@@ -1762,7 +1765,7 @@ html[data-theme="dark"] .outfit-builder {
     background: var(--interior-light);
 }
 
-html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
+html[data-theme*="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.3) !important;
 }
 
@@ -1838,13 +1841,13 @@ html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
     appearance: none;
     -webkit-appearance: none;
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 10px;
+    left: 10px;
     z-index: 10;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     background-color: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.6);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
     border-radius: 50%;
     cursor: pointer;
     backdrop-filter: blur(4px);
@@ -1864,12 +1867,12 @@ html[data-theme="dark"] .outfit-image-gallery::-webkit-scrollbar-track {
 .item-select:checked::after {
     content: '';
     position: absolute;
-    top: 3px;
-    left: 7px;
-    width: 5px;
-    height: 10px;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
     border: solid white;
-    border-width: 0 2.5px 2.5px 0;
+    border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
 
@@ -2030,3 +2033,1096 @@ body {
     align-content: start;
 }
 }
+
+/* =====================================================
+   ANIMATION LAYER — User Panel + Admin Panel
+   ===================================================== */
+
+/* ── Page entrance fade ── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.main, main {
+  animation: pageEnter 0.45s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* ── Stat card staggered entrance ── */
+@keyframes statCardIn {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.stat-card {
+  animation: statCardIn 0.55s cubic-bezier(.22,1,.36,1) both;
+}
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.13s; }
+.stat-card:nth-child(3) { animation-delay: 0.21s; }
+.stat-card:nth-child(4) { animation-delay: 0.29s; }
+
+/* ── Stat value count-up entrance ── */
+@keyframes countBounce {
+  0%   { opacity: 0; transform: translateY(10px); }
+  60%  { opacity: 1; transform: translateY(-3px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.stat-value {
+  animation: countBounce 0.7s ease both;
+  animation-delay: inherit;
+}
+
+/* ── Panel scroll-reveal (JS adds .panel-visible) ── */
+.panel {
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.22,1,.36,1);
+}
+
+.panel-hidden {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.panel-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* ── Skeleton shimmer loader ── */
+@keyframes shimmerMove {
+  from { background-position: -600px 0; }
+  to   { background-position: 600px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--interior-pale) 25%, var(--interior-soft) 50%, var(--interior-pale) 75%);
+  background-size: 600px 100%;
+  animation: shimmerMove 1.6s infinite linear;
+  border-radius: 8px;
+}
+
+.skeleton-card {
+  height: 130px;
+  border-radius: 12px;
+}
+
+.skeleton-row {
+  height: 18px;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+/* ── Clothing card hover lift ── */
+.clothing-card {
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease !important;
+  will-change: transform;
+}
+
+.clothing-card:hover {
+  transform: translateY(-6px) scale(1.015) !important;
+  box-shadow: 0 16px 36px rgba(4,93,93,0.18) !important;
+}
+
+/* ── Category bar animated fill ── */
+.cat-bar {
+  transition: width 1.1s cubic-bezier(.22,1,.36,1) !important;
+}
+
+/* ── Nav-item hover glow slide ── */
+.nav-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--interior);
+  border-radius: 0 2px 2px 0;
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(.22,1,.36,1);
+}
+
+.nav-item.active::before,
+.nav-item:hover::before {
+  transform: scaleY(1);
+}
+
+/* ── Topbar search expand on focus ── */
+.search-bar {
+  transition: width 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.2s ease !important;
+}
+
+.search-bar:focus-within {
+  width: 280px !important;
+  box-shadow: 0 0 0 2px rgba(129,205,198,0.35) !important;
+}
+
+/* ── Notification bell shake ── */
+@keyframes bellShake {
+  0%, 100% { transform: rotate(0deg); }
+  15%       { transform: rotate(15deg); }
+  30%       { transform: rotate(-12deg); }
+  45%       { transform: rotate(8deg); }
+  60%       { transform: rotate(-5deg); }
+  75%       { transform: rotate(3deg); }
+}
+
+.bell-shake {
+  animation: bellShake 0.55s ease;
+}
+
+/* ── Admin view tab transition ── */
+@keyframes viewSlideIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes viewSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-20px); }
+}
+
+.view {
+  transition: opacity 0.25s ease;
+}
+
+.view.active {
+  animation: viewSlideIn 0.38s cubic-bezier(.22,1,.36,1) both;
+}
+
+.view.exiting {
+  animation: viewSlideOut 0.25s ease both;
+  pointer-events: none;
+}
+
+/* ── Admin live feed flash ── */
+@keyframes feedItemIn {
+  from { opacity: 0; transform: translateY(-12px); background: rgba(127,207,198,0.22); }
+  to   { opacity: 1; transform: translateY(0);     background: transparent; }
+}
+
+.live-item.new-entry {
+  animation: feedItemIn 0.7s ease both;
+}
+
+/* ── Table row hover ── */
+.recent-table tbody tr,
+.data-table tbody tr {
+  transition: background 0.15s ease;
+  cursor: default;
+}
+
+.recent-table tbody tr:hover,
+.data-table tbody tr:hover {
+  background: rgba(129,205,198,0.1) !important;
+}
+
+html[data-theme*="dark"] .recent-table tbody tr:hover,
+html[data-theme*="dark"] .data-table tbody tr:hover {
+  background: rgba(127,207,198,0.07) !important;
+}
+
+/* ── Admin sidebar active indicator ── */
+.sidebar-indicator {
+  position: absolute;
+  left: 0;
+  width: 3px;
+  background: var(--interior);
+  border-radius: 0 2px 2px 0;
+  transition: top 0.3s cubic-bezier(.22,1,.36,1), height 0.3s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+
+/* ── Btn-add click ripple ── */
+.btn-add {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-add::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.2);
+  opacity: 0;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.btn-add:active::after {
+  opacity: 1;
+}
+
+/* ── Toast container (user panel) ── */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* ── Outfit card hover ── */
+.outfit-card {
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease !important;
+}
+
+.outfit-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(4,93,93,0.16) !important;
+}
+
+/* ============================================================
+   LOGIN-PAGE DESIGN SYSTEM, PORTED TO THE USER DASHBOARD
+   Brings the brand-teal / shadcn-card language and motion
+   from login.html into the dashboard, on top of the existing
+   glass-card system (no structural HTML changes required).
+   ============================================================ */
+
+:root {
+    /* Same brand ramp as the Tailwind config on login.html */
+    --brand-50:  #f0fdfa;
+    --brand-100: #ccfbf1;
+    --brand-500: #14b8a6;
+    --brand-600: #0d9488;
+    --brand-700: #0f766e;
+    --brand-800: #115e59;
+    --brand-900: #134e4a;
+    --dash-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Typography: adopt Inter for all interactive/UI text, the
+   way login.html does, while keeping Playfair for the display
+   headings that already define this app's identity. --- */
+.nav-item,
+.sidebar-section,
+.brand-sub,
+.topbar-right,
+.search-bar input,
+.btn-add,
+.btn-icon,
+.stat-label,
+.stat-sub,
+.stat-value,
+.panel-action,
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.modal-content label,
+.recent-table th,
+.recent-table td,
+.profile-name {
+    font-family: 'Inter', 'DM Sans', sans-serif !important;
+}
+
+/* --- Page entrance animation, mirroring login.css's fadeIn --- */
+@keyframes dashFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dashFadeInScale {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.sidebar {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+}
+
+.topbar {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+
+/* Stat cards, panels, wardrobe cards and outfit cards all get a
+   soft staggered rise-in on load, same easing family as the
+   login card's animate-in utility. */
+.stats-row .stat-card,
+.two-col .panel,
+.panel {
+    animation: dashFadeIn 0.4s var(--dash-ease) both;
+}
+
+.stats-row .stat-card:nth-child(1) { animation-delay: 0.02s; }
+.stats-row .stat-card:nth-child(2) { animation-delay: 0.08s; }
+.stats-row .stat-card:nth-child(3) { animation-delay: 0.14s; }
+.stats-row .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+.two-col .panel:nth-child(1) { animation-delay: 0.1s; }
+.two-col .panel:nth-child(2) { animation-delay: 0.16s; }
+
+#recent-additions-grid .clothing-card,
+#outfit-suggestions-row .outfit-card {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+}
+#recent-additions-grid .clothing-card:nth-child(1),
+#outfit-suggestions-row .outfit-card:nth-child(1) { animation-delay: 0.06s; }
+#recent-additions-grid .clothing-card:nth-child(2),
+#outfit-suggestions-row .outfit-card:nth-child(2) { animation-delay: 0.11s; }
+#recent-additions-grid .clothing-card:nth-child(3),
+#outfit-suggestions-row .outfit-card:nth-child(3) { animation-delay: 0.16s; }
+#recent-additions-grid .clothing-card:nth-child(4),
+#outfit-suggestions-row .outfit-card:nth-child(4) { animation-delay: 0.21s; }
+#recent-additions-grid .clothing-card:nth-child(n+5),
+#outfit-suggestions-row .outfit-card:nth-child(n+5) { animation-delay: 0.26s; }
+
+.recent-table tbody tr {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+.recent-table tbody tr:nth-child(1) { animation-delay: 0.04s; }
+.recent-table tbody tr:nth-child(2) { animation-delay: 0.08s; }
+.recent-table tbody tr:nth-child(3) { animation-delay: 0.12s; }
+.recent-table tbody tr:nth-child(4) { animation-delay: 0.16s; }
+.recent-table tbody tr:nth-child(n+5) { animation-delay: 0.2s; }
+
+/* --- Sidebar nav items: shadcn-style active accent bar + smooth
+   slide, replacing the flat background swap --- */
+.nav-item {
+    position: relative;
+    transition: background 0.18s var(--dash-ease), color 0.18s var(--dash-ease), transform 0.18s var(--dash-ease);
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%) scaleY(0);
+    width: 3px;
+    height: 60%;
+    border-radius: 0 4px 4px 0;
+    background: var(--brand-600);
+    transition: transform 0.2s var(--dash-ease);
+}
+
+.nav-item:hover {
+    transform: translateX(2px);
+}
+
+.nav-item.active::before {
+    transform: translateY(-50%) scaleY(1);
+}
+
+.brand-icon {
+    transition: transform 0.25s var(--dash-ease);
+}
+.sidebar-brand:hover .brand-icon {
+    transform: scale(1.06) rotate(-2deg);
+}
+
+/* --- Buttons: match login.html's rounded-md / shadow-sm /
+   focus-visible ring / active press --- */
+.btn-add,
+.btn-icon,
+.btn-close,
+.logout-btn {
+    transition: background 0.15s var(--dash-ease), color 0.15s var(--dash-ease),
+                box-shadow 0.15s var(--dash-ease), transform 0.1s var(--dash-ease);
+}
+
+.btn-add {
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(4, 93, 93, 0.08);
+}
+
+.btn-add:hover {
+    box-shadow: 0 4px 10px rgba(4, 93, 93, 0.18);
+}
+
+.btn-add:active,
+.btn-icon:active,
+.save-btn:active {
+    transform: scale(0.96);
+}
+
+.btn-add:focus-visible,
+.btn-icon:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--brand-600);
+    outline-offset: 2px;
+}
+
+/* --- Inputs: brand-600 focus ring like login.html's
+   focus:ring-2 focus:ring-brand-600, replacing the flat
+   border-only focus state --- */
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.search-bar,
+#filter-category-select {
+    transition: border-color 0.15s var(--dash-ease), box-shadow 0.15s var(--dash-ease);
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    border-color: var(--brand-600) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+
+.search-bar:focus-within {
+    border-color: var(--brand-600);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+/* --- Modal: fade + scale entrance instead of an instant pop,
+   same feel as login.css's .animate-in --- */
+.modal-overlay.active .modal-content {
+    animation: dashFadeInScale 0.22s var(--dash-ease) both;
+}
+
+/* --- Stat cards: slightly livelier hover, matching the
+   login card's crisp, quick transitions --- */
+.stat-card,
+.panel,
+.clothing-card,
+.outfit-card {
+    transition: transform 0.25s var(--dash-ease), box-shadow 0.25s var(--dash-ease) !important;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px var(--shadow-deep);
+}
+
+/* --- Sidebar profile avatar: subtle ring on hover, echoing the
+   login page's soft interactive affordances --- */
+.avatar-container {
+    transition: box-shadow 0.2s var(--dash-ease), transform 0.2s var(--dash-ease);
+}
+.sidebar-profile:hover .avatar-container {
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
+}
+
+/* --- Reusable alert/toast, matching login.js's markup classes
+   so the same JS-driven alert can be reused on the dashboard --- */
+.dash-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+    animation: dashFadeIn 0.2s ease-out both;
+}
+.dash-alert.error   { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.dash-alert.success { background: var(--brand-50); color: var(--brand-800); border-color: var(--brand-100); }
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar, .topbar, .stat-card, .panel, .clothing-card, .outfit-card,
+    .nav-item, .recent-table tbody tr, .modal-overlay.active .modal-content {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   LOGIN-PAGE DESIGN SYSTEM — EXTENDED TO WARDROBE, OUTFITS,
+   FAVORITES, CALENDAR & SETTINGS
+   Covers plain-page inputs/buttons that live outside .modal-content
+   (e.g. settings.html's raw <form> fields, wardrobe's filter chips,
+   outfits.html's name field) so every page picks up the same
+   brand-teal focus rings, Inter type and motion as the dashboard.
+   ============================================================ */
+
+/* --- Generic inputs/selects/textareas anywhere in .content,
+   not just inside .modal-content --- */
+.content input[type="text"],
+.content input[type="email"],
+.content input[type="password"],
+.content input[type="date"],
+.content select,
+.content textarea,
+#username, #email, #current-password, #password, #theme,
+#outfit-name-input {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    transition: border-color 0.15s var(--dash-ease), box-shadow 0.15s var(--dash-ease);
+}
+
+.content input[type="text"]:focus,
+.content input[type="email"]:focus,
+.content input[type="password"]:focus,
+.content input[type="date"]:focus,
+.content select:focus,
+.content textarea:focus {
+    border-color: var(--brand-600) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+
+/* Checkboxes get the same brand accent as everything else */
+.content input[type="checkbox"] {
+    accent-color: var(--brand-600);
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+/* --- Settings/Privacy panels: fade the two stacked panels in
+   with the same stagger as the dashboard's two-col layout --- */
+#settings-page .panel {
+    animation: dashFadeIn 0.4s var(--dash-ease) both;
+}
+#settings-page .content > .panel:nth-of-type(1),
+#settings-page .content .panel { animation-delay: 0.04s; }
+#settings-page .content > .content .panel { animation-delay: 0.12s; }
+
+/* --- Wardrobe filter chips: pill-shaped, active state, and a
+   quick press animation instead of a flat hover swap --- */
+.filter-controls {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+.filter-controls button {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-main);
+    transition: background 0.15s var(--dash-ease), border-color 0.15s var(--dash-ease),
+                color 0.15s var(--dash-ease), transform 0.1s var(--dash-ease);
+}
+.filter-controls button:hover {
+    border-color: var(--brand-600);
+    transform: translateY(-1px);
+}
+.filter-controls button:active {
+    transform: scale(0.96);
+}
+.filter-controls button.active {
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+    color: #fff;
+}
+
+/* Dark mode: --text-main is bright and reads fine on --bg-surface,
+   but give the active pill's white text a touch more contrast
+   against the brand-600 fill for consistency. */
+html[data-theme*="dark"] .filter-controls button.active {
+    color: #ffffff;
+}
+
+/* --- Wardrobe / planner / favorites grids: staggered card
+   rise-in, same treatment as the dashboard's recent-additions --- */
+#wardrobe-grid .clothing-card,
+#planner-wardrobe-grid .clothing-card,
+#planner-grid .outfit-card,
+#favorites-grid .outfit-card {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+}
+#wardrobe-grid .clothing-card:nth-child(1), #planner-wardrobe-grid .clothing-card:nth-child(1),
+#planner-grid .outfit-card:nth-child(1), #favorites-grid .outfit-card:nth-child(1) { animation-delay: 0.04s; }
+#wardrobe-grid .clothing-card:nth-child(2), #planner-wardrobe-grid .clothing-card:nth-child(2),
+#planner-grid .outfit-card:nth-child(2), #favorites-grid .outfit-card:nth-child(2) { animation-delay: 0.08s; }
+#wardrobe-grid .clothing-card:nth-child(3), #planner-wardrobe-grid .clothing-card:nth-child(3),
+#planner-grid .outfit-card:nth-child(3), #favorites-grid .outfit-card:nth-child(3) { animation-delay: 0.12s; }
+#wardrobe-grid .clothing-card:nth-child(4), #planner-wardrobe-grid .clothing-card:nth-child(4),
+#planner-grid .outfit-card:nth-child(4), #favorites-grid .outfit-card:nth-child(4) { animation-delay: 0.16s; }
+#wardrobe-grid .clothing-card:nth-child(n+5), #planner-wardrobe-grid .clothing-card:nth-child(n+5),
+#planner-grid .outfit-card:nth-child(n+5), #favorites-grid .outfit-card:nth-child(n+5) { animation-delay: 0.2s; }
+
+/* --- Calendar: day cards rise in left-to-right like a week
+   unfolding, and today's card gets a soft brand pulse --- */
+.calendar-grid {
+    animation: dashFadeIn 0.3s var(--dash-ease) both;
+}
+.calendar-day-card {
+    animation: dashFadeIn 0.35s var(--dash-ease) both;
+    transition: transform 0.2s var(--dash-ease), box-shadow 0.2s var(--dash-ease);
+}
+.calendar-day-card:nth-child(1) { animation-delay: 0.02s; }
+.calendar-day-card:nth-child(2) { animation-delay: 0.06s; }
+.calendar-day-card:nth-child(3) { animation-delay: 0.1s; }
+.calendar-day-card:nth-child(4) { animation-delay: 0.14s; }
+.calendar-day-card:nth-child(5) { animation-delay: 0.18s; }
+.calendar-day-card:nth-child(6) { animation-delay: 0.22s; }
+.calendar-day-card:nth-child(7) { animation-delay: 0.26s; }
+.calendar-day-card:hover {
+    transform: translateY(-3px);
+}
+.calendar-day-card.today {
+    box-shadow: 0 0 0 2px var(--brand-600);
+}
+
+/* --- Outfit builder: name field + save button match the
+   login-style focus ring and press feedback --- */
+.outfit-builder input {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    transition: border-color 0.15s var(--dash-ease), box-shadow 0.15s var(--dash-ease);
+}
+.outfit-builder input:focus {
+    border-color: var(--brand-600) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+.save-btn,
+.outfit-builder .save-btn {
+    transition: background 0.15s var(--dash-ease), transform 0.1s var(--dash-ease),
+                box-shadow 0.15s var(--dash-ease) !important;
+}
+.save-btn:active,
+.outfit-builder .save-btn:active {
+    transform: scale(0.96) !important;
+}
+
+/* ============================================================
+   MORE MOTION — WARDROBE, OUTFIT PLANNER & FAVORITES
+   ============================================================ */
+
+/* --- Wardrobe: image zoom on hover --- */
+.clothing-img img {
+    transition: transform 0.4s var(--dash-ease);
+}
+.clothing-card:hover .clothing-img img {
+    transform: scale(1.08);
+}
+
+/* --- Wardrobe: remove button recedes until the card is hovered,
+   so the grid reads cleaner and the action feels intentional --- */
+.clothing-card .btn-danger {
+    opacity: 0.55;
+    transform: translateY(2px);
+    transition: opacity 0.2s var(--dash-ease), transform 0.2s var(--dash-ease), background 0.2s var(--dash-ease);
+}
+.clothing-card:hover .btn-danger {
+    opacity: 1;
+    transform: translateY(0);
+}
+.clothing-card .btn-danger:active {
+    transform: scale(0.94);
+}
+
+/* --- Wardrobe: checkbox pops when checked (outfit builder grid) --- */
+@keyframes checkPop {
+    0%   { transform: scale(0.85); }
+    50%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+.item-select:checked {
+    animation: checkPop 0.25s var(--dash-ease);
+}
+
+/* --- Outfit cards: banner gets a soft moving shimmer on hover
+   instead of sitting flat --- */
+.outfit-banner {
+    background-size: 200% 100%;
+    transition: background-position 0.6s var(--dash-ease);
+}
+.outfit-banner.warm { background-image: linear-gradient(90deg, #c9a84c, #e0c574, #c9a84c); }
+.outfit-banner.cool { background-image: linear-gradient(90deg, var(--interior), var(--interior-light), var(--interior)); }
+.outfit-banner.mono { background-image: linear-gradient(90deg, #555, #7a7a7a, #555); }
+.outfit-card:hover .outfit-banner {
+    background-position: 100% 0;
+}
+
+/* --- Outfit cards: gallery thumbnails lift slightly on hover --- */
+.outfit-item-img {
+    transition: transform 0.2s var(--dash-ease), border-color 0.2s var(--dash-ease);
+}
+.outfit-item-img:hover {
+    transform: translateY(-3px) scale(1.06);
+    border-color: var(--brand-600);
+}
+
+/* --- Outfit cards: action row (Mark as Worn / Delete) settles in
+   only once the card is engaged, matching the wardrobe pattern --- */
+.outfit-body > div[style*="display:flex"] {
+    opacity: 0.85;
+    transition: opacity 0.2s var(--dash-ease);
+}
+.outfit-card:hover .outfit-body > div[style*="display:flex"] {
+    opacity: 1;
+}
+.aesthetic-remove-btn:active {
+    transform: scale(0.94);
+}
+
+/* --- Favorite heart: hover/press feedback for every heart --- */
+.favorite-btn svg {
+    transition: transform 0.15s var(--dash-ease);
+}
+.favorite-btn:hover svg {
+    animation-play-state: paused;
+    transform: scale(1.15);
+}
+.favorite-btn:active svg {
+    transform: scale(0.9);
+}
+
+/* Already-favorited hearts get a slow, subtle heartbeat so the
+   Favorites page feels alive without being distracting */
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+}
+.favorite-btn.favorited svg {
+    animation: heartBeat 2.6s ease-in-out infinite;
+}
+
+/* Immediate pop feedback the instant a heart is clicked, applied
+   via JS right before the grid re-renders with the server result */
+@keyframes favPop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.4); }
+    60%  { transform: scale(0.92); }
+    100% { transform: scale(1); }
+}
+.favorite-btn.fav-pop svg {
+    animation: favPop 0.35s var(--dash-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .clothing-img img, .outfit-banner, .outfit-item-img, .favorite-btn svg,
+    .item-select, .clothing-card .btn-danger {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS — animated replacement for native alert()
+   ============================================================ */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    pointer-events: none;
+}
+
+.dash-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    box-shadow: 0 8px 22px rgba(4, 93, 93, 0.16);
+    max-width: 260px;
+    opacity: 0;
+    transform: translateX(24px);
+    pointer-events: auto;
+}
+
+.dash-toast.success { background: var(--brand-50); color: var(--brand-800); border-color: var(--brand-100); }
+.dash-toast.error   { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.dash-toast svg { flex-shrink: 0; }
+
+.dash-toast.show {
+    animation: toastIn 0.3s var(--dash-ease) forwards;
+}
+.dash-toast.hide {
+    animation: toastOut 0.25s var(--dash-ease) forwards;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(24px); }
+}
+
+html[data-theme*="dark"] .dash-toast.success { background: #0e3a34; color: #7fcfc6; border-color: rgba(127, 207, 198, 0.25); }
+html[data-theme*="dark"] .dash-toast.error   { background: #3a1414; color: #ffb4b4; border-color: rgba(255, 100, 100, 0.25); }
+
+/* ============================================================
+   BUG FIXES: checkbox & filter animation state
+   ============================================================ */
+
+/* All checkboxes get the same pop-on-check feedback the outfit
+   builder's item-select had — previously only .item-select was
+   covered, so Settings' notification checkboxes had no feedback
+   at all beyond a static accent-color swap. */
+input[type="checkbox"] {
+    transition: transform 0.15s var(--dash-ease);
+}
+input[type="checkbox"]:checked {
+    animation: checkPop 0.25s var(--dash-ease);
+}
+input[type="checkbox"]:hover {
+    transform: scale(1.08);
+}
+
+/* .item-select is a custom absolutely-positioned checkbox that
+   already defines its own hover transform (scale 1.1) — let that
+   more specific rule win instead of the generic one above fighting it. */
+.item-select:hover {
+    transform: scale(1.1) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #toast-container .dash-toast,
+    input[type="checkbox"] {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   SYSTEM ANNOUNCEMENT BANNER
+   ============================================================ */
+.system-announcement-banner {
+  background: rgba(254, 243, 199, 0.95);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+  color: #78350f;
+  padding: 0.75rem 1.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  z-index: 50;
+  animation: slideDown 0.3s cubic-bezier(.22,1,.36,1) both;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+html[data-theme*="dark"] .system-announcement-banner {
+  background: rgba(30, 27, 22, 0.95);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+  color: #fef3c7;
+}
+
+.system-announcement-banner.fade-out {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.system-announcement-banner .banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.system-announcement-banner .banner-badge {
+  background: #f59e0b;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+html[data-theme*="dark"] .system-announcement-banner .banner-badge {
+  background: #d97706;
+}
+
+.system-announcement-banner .banner-text {
+  flex: 1;
+}
+
+.system-announcement-banner .banner-close {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.system-announcement-banner .banner-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+/* ============================================================
+   COLOR VARIANT THEMES
+   ============================================================ */
+
+/* --- 1. Blue Theme --- */
+html[data-theme="light-blue"] {
+  --exterior: #1e40af;
+  --exterior-dark: #1e3a8a;
+  --exterior-light: #3b82f6;
+  --interior: #60a5fa;
+  --interior-light: #93c5fd;
+  --interior-pale: #eff6ff;
+  --interior-soft: #dbeafe;
+  --text-on-exterior: #eff6ff;
+  --text-on-interior: #1e3a8a;
+  --white: #ffffff;
+  --shadow-deep: rgba(30,64,175,0.15);
+  --shadow-subtle: rgba(30,64,175,0.06);
+  --text-main: #1e3a8a;
+  --text-muted: #3b82f6;
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --border-color: rgba(30, 64, 175, 0.12);
+}
+
+html[data-theme="dark-blue"] {
+  --exterior: #1e293b;
+  --exterior-dark: #0f172a;
+  --exterior-light: #1e3a8a;
+  --interior: #3b82f6;
+  --interior-light: #93c5fd;
+  --interior-pale: #020617;
+  --interior-soft: #0f172a;
+  --text-on-exterior: #f1f5f9;
+  --text-on-interior: #f1f5f9;
+  --white: #020617;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #f1f5f9;
+  --text-muted: #93c5fd;
+  --bg-base: #020617;
+  --bg-surface: #0f172a;
+  --border-color: rgba(147, 197, 253, 0.15);
+  --bg-surface-trans: rgba(15, 23, 42, 0.45);
+}
+
+/* --- 2. Purple Theme --- */
+html[data-theme="light-purple"] {
+  --exterior: #6b21a8;
+  --exterior-dark: #581c87;
+  --exterior-light: #a855f7;
+  --interior: #c084fc;
+  --interior-light: #d8b4fe;
+  --interior-pale: #faf5ff;
+  --interior-soft: #f3e8ff;
+  --text-on-exterior: #faf5ff;
+  --text-on-interior: #581c87;
+  --white: #ffffff;
+  --shadow-deep: rgba(107,33,168,0.15);
+  --shadow-subtle: rgba(107,33,168,0.06);
+  --text-main: #581c87;
+  --text-muted: #a855f7;
+  --bg-base: #fafaf9;
+  --bg-surface: #ffffff;
+  --border-color: rgba(107, 33, 168, 0.12);
+}
+
+html[data-theme="dark-purple"] {
+  --exterior: #2e1065;
+  --exterior-dark: #0f052d;
+  --exterior-light: #4c1d95;
+  --interior: #8b5cf6;
+  --interior-light: #c084fc;
+  --interior-pale: #09021a;
+  --interior-soft: #1e1145;
+  --text-on-exterior: #f5f3ff;
+  --text-on-interior: #f5f3ff;
+  --white: #09021a;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #f5f3ff;
+  --text-muted: #c084fc;
+  --bg-base: #09021a;
+  --bg-surface: #1e1145;
+  --border-color: rgba(192, 132, 252, 0.15);
+  --bg-surface-trans: rgba(30, 17, 69, 0.45);
+}
+
+/* --- 3. Crimson Theme --- */
+html[data-theme="light-crimson"] {
+  --exterior: #991b1b;
+  --exterior-dark: #7f1d1d;
+  --exterior-light: #ef4444;
+  --interior: #f87171;
+  --interior-light: #fca5a5;
+  --interior-pale: #fef2f2;
+  --interior-soft: #fee2e2;
+  --text-on-exterior: #fef2f2;
+  --text-on-interior: #7f1d1d;
+  --white: #ffffff;
+  --shadow-deep: rgba(153,27,27,0.15);
+  --shadow-subtle: rgba(153,27,27,0.06);
+  --text-main: #7f1d1d;
+  --text-muted: #ef4444;
+  --bg-base: #fffafb;
+  --bg-surface: #ffffff;
+  --border-color: rgba(153, 27, 27, 0.12);
+}
+
+html[data-theme="dark-crimson"] {
+  --exterior: #450a0a;
+  --exterior-dark: #1a0505;
+  --exterior-light: #7f1d1d;
+  --interior: #ef4444;
+  --interior-light: #fca5a5;
+  --interior-pale: #100202;
+  --interior-soft: #2d0b0b;
+  --text-on-exterior: #fef2f2;
+  --text-on-interior: #fef2f2;
+  --white: #100202;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #fef2f2;
+  --text-muted: #fca5a5;
+  --bg-base: #100202;
+  --bg-surface: #2d0b0b;
+  --border-color: rgba(252, 165, 165, 0.15);
+  --bg-surface-trans: rgba(45, 11, 11, 0.45);
+}
+
+/* --- 4. Amber Theme --- */
+html[data-theme="light-amber"] {
+  --exterior: #9a3412;
+  --exterior-dark: #7c2d12;
+  --exterior-light: #f97316;
+  --interior: #fb923c;
+  --interior-light: #fdba74;
+  --interior-pale: #fff7ed;
+  --interior-soft: #ffedd5;
+  --text-on-exterior: #fff7ed;
+  --text-on-interior: #7c2d12;
+  --white: #ffffff;
+  --shadow-deep: rgba(154,52,18,0.15);
+  --shadow-subtle: rgba(154,52,18,0.06);
+  --text-main: #7c2d12;
+  --text-muted: #f97316;
+  --bg-base: #fffbf7;
+  --bg-surface: #ffffff;
+  --border-color: rgba(154, 52, 18, 0.12);
+}
+
+html[data-theme="dark-amber"] {
+  --exterior: #431407;
+  --exterior-dark: #1c0804;
+  --exterior-light: #7c2d12;
+  --interior: #f97316;
+  --interior-light: #fdba74;
+  --interior-pale: #120402;
+  --interior-soft: #2c0e08;
+  --text-on-exterior: #fff7ed;
+  --text-on-interior: #fff7ed;
+  --white: #120402;
+  --shadow-deep: rgba(0,0,0,0.45);
+  --shadow-subtle: rgba(0,0,0,0.18);
+  --text-main: #fff7ed;
+  --text-muted: #fdba74;
+  --bg-base: #120402;
+  --bg-surface: #2c0e08;
+  --border-color: rgba(253, 186, 116, 0.15);
+  --bg-surface-trans: rgba(44, 14, 8, 0.45);
+}

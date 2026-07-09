@@ -1,20 +1,71 @@
 // ==========================================
+// TOAST NOTIFICATIONS (animated replacement for alert())
+// ==========================================
+/**
+ * Shows a small, non-blocking toast in the corner of the screen.
+ * type: 'success' | 'error'
+ */
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `dash-toast ${type}`;
+    const isError = type === 'error';
+    toast.innerHTML = `
+        <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
+            ${isError
+                ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>'
+                : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.06l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>'
+            }
+        </svg>
+        <span>${message}</span>
+    `;
+    container.appendChild(toast);
+
+    // Trigger the enter animation on the next frame so the class change is observed
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    setTimeout(() => {
+        toast.classList.add('hide');
+        toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    }, 3200);
+}
+window.showToast = showToast;
+
+// ==========================================
 // INITIALIZATION (Runs on every page load)
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    // Auth Guard: redirect to login if not authenticated
+    if (!localStorage.getItem('token')) {
+        localStorage.clear();
+        window.location.href = '/';
+        return;
+    }
+
     // Load per-user settings from the backend when authenticated.
     if (typeof loadSavedUserSettings === 'function') await loadSavedUserSettings();
 
-    // Core features
     if (typeof applyGlobalSettings === 'function') applyGlobalSettings();
     if (document.getElementById('username') && typeof initSettingsPage === 'function') initSettingsPage();
     if (typeof initGeneralFeatures === 'function') initGeneralFeatures();
     if (typeof highlightActiveLink === 'function') highlightActiveLink();
+    checkSystemAnnouncement();
+
+    // ── Wire modal + logout buttons (fixes previously broken buttons) ──
+    initDashboardUIHandlers();
+
 
     // Page: Dashboard (recent-additions-grid)
     if (document.getElementById("recent-additions-grid")) {
-    renderDashboard();
-   }
+        renderDashboard();
+        initScrollReveal();
+    }
     if (document.getElementById('dashboard-search-input')) {
         setupDashboardSearch();
     }
@@ -36,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof initItemPhotoUpload === 'function') initItemPhotoUpload();
     }
 });
+
 
 // ==========================================
 // DASHBOARD SEARCH BAR
@@ -148,18 +200,23 @@ async function renderDashboard() {
         // A. Update Top Stats (With safety checks)
         // ----------------------------------------------------
         const totalItemsEl = document.getElementById("total-items");
-        if (totalItemsEl) totalItemsEl.textContent = wardrobe.length || 0;
+        if (totalItemsEl) {
+            totalItemsEl.textContent = wardrobe.length || 0;
+            animateCountUp(totalItemsEl, wardrobe.length || 0);
+        }
 
         const savedOutfitsEl = document.getElementById("saved-outfits");
-        if (savedOutfitsEl) savedOutfitsEl.textContent = outfits.length || 0;
+        if (savedOutfitsEl) {
+            savedOutfitsEl.textContent = outfits.length || 0;
+            animateCountUp(savedOutfitsEl, outfits.length || 0);
+        }
         
         const outfitsWornEl = document.getElementById("outfits-worn");
         const outfitsWornSub = document.getElementById("outfits-worn-sub");
         if (outfitsWornEl) {
-            // Total times any outfit has actually been marked worn (real
-            // wear_count from the backend), not an arbitrary multiplier.
             const totalWearEvents = outfits.reduce((sum, o) => sum + (o.wear_count || 0), 0);
             outfitsWornEl.textContent = totalWearEvents;
+            animateCountUp(outfitsWornEl, totalWearEvents);
 
             if (outfitsWornSub) {
                 const now = Date.now();
@@ -183,8 +240,6 @@ async function renderDashboard() {
         const utilizationEl = document.getElementById("utilization-rate");
         const utilizationSub = document.getElementById("utilization-sub");
         if (utilizationEl) {
-            // Real utilization: % of wardrobe items that appear in at least
-            // one saved outfit - not a random number on every page load.
             if (wardrobe.length === 0) {
                 utilizationEl.textContent = '0%';
                 if (utilizationSub) utilizationSub.textContent = 'Add items to see usage';
@@ -193,9 +248,11 @@ async function renderDashboard() {
                 outfits.forEach(o => (o.items || []).forEach(item => usedItemIds.add(item.id)));
                 const utilization = Math.round((usedItemIds.size / wardrobe.length) * 100);
                 utilizationEl.textContent = `${utilization}%`;
+                animateCountUp(utilizationEl, `${utilization}%`);
                 if (utilizationSub) utilizationSub.textContent = `${usedItemIds.size} of ${wardrobe.length} items used in outfits`;
             }
         }
+
 
         // B. Update Recent Additions (Last 6 items)
         renderRecentAdditionsGrid(wardrobe);
@@ -429,31 +486,81 @@ async function generateNotifications() {
 
     const events = [];
 
-    wardrobeData.forEach(item => {
-        if (item.created_at) {
-            events.push({
-                timestamp: item.created_at,
-                html: `<span>You added <b>${item.name}</b> to your wardrobe</span><small>${notifTimeAgo(item.created_at)}</small>`
-            });
-        }
-    });
+    // 1. Low wardrobe variety alert
+    if (wardrobeData && wardrobeData.length < 5) {
+        events.push({
+            timestamp: new Date().toISOString(),
+            html: `<div class="notif-alert warning" style="padding: 10px; background: rgba(201, 168, 76, 0.15); border-left: 3px solid var(--warn, #c9a84c); border-radius: 4px; margin-bottom: 8px;">
+                <span style="font-size: 0.8rem; font-weight: 500; display: block; color: var(--text-main);">💡 <b>Styling Tip:</b> Your wardrobe is small (${wardrobeData.length} items). Add more items to unlock better combinations!</span>
+            </div>`
+        });
+    }
 
-    outfitsData.forEach(outfit => {
-        if (outfit.created_at) {
+    // 2. Outfit not planned this week reminder
+    const hasUpcomingPlans = outfitsData && outfitsData.some(o => (o.wear_count || 0) > 0 && o.last_worn);
+    if (!hasUpcomingPlans && wardrobeData && wardrobeData.length > 0) {
+        events.push({
+            timestamp: new Date(Date.now() - 1000).toISOString(),
+            html: `<div class="notif-alert info" style="padding: 10px; background: rgba(129, 205, 198, 0.15); border-left: 3px solid var(--interior, #81cdc6); border-radius: 4px; margin-bottom: 8px;">
+                <span style="font-size: 0.8rem; font-weight: 500; display: block; color: var(--text-main);">📅 <b>Calendar:</b> You haven't scheduled outfits for this week. Use the Outfit Planner to schedule your week!</span>
+            </div>`
+        });
+    }
+
+    // 3. Closet insight about top category
+    if (wardrobeData && wardrobeData.length > 0) {
+        const counts = {};
+        wardrobeData.forEach(item => {
+            counts[item.category] = (counts[item.category] || 0) + 1;
+        });
+        let topCategory = '';
+        let maxCount = 0;
+        for (const [cat, val] of Object.entries(counts)) {
+            if (val > maxCount) {
+                maxCount = val;
+                topCategory = cat;
+            }
+        }
+        if (topCategory) {
             events.push({
-                timestamp: outfit.created_at,
-                html: `<span>You created outfit <b>${outfit.name}</b></span><small>${notifTimeAgo(outfit.created_at)}</small>`
+                timestamp: new Date(Date.now() - 2000).toISOString(),
+                html: `<div class="notif-alert success" style="padding: 10px; background: rgba(46, 156, 110, 0.12); border-left: 3px solid var(--good, #2e9c6e); border-radius: 4px; margin-bottom: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: 500; display: block; color: var(--text-main);">🌟 <b>Closet Insight:</b> Your top category is <b>${topCategory}</b> (${maxCount} items). Match other items!</span>
+                </div>`
             });
         }
-    });
+    }
+
+    if (wardrobeData) {
+        wardrobeData.forEach(item => {
+            if (item.created_at) {
+                events.push({
+                    timestamp: item.created_at,
+                    html: `<span>You added <b>${item.name}</b> to your wardrobe</span><small>${notifTimeAgo(item.created_at)}</small>`
+                });
+            }
+        });
+    }
+
+    if (outfitsData) {
+        outfitsData.forEach(outfit => {
+            if (outfit.created_at) {
+                events.push({
+                    timestamp: outfit.created_at,
+                    html: `<span>You created outfit <b>${outfit.name}</b></span><small>${notifTimeAgo(outfit.created_at)}</small>`
+                });
+            }
+        });
+    }
 
     events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    const recentEvents = events.slice(0, 8);
+    const recentEvents = events.slice(0, 10);
 
     notifContainer.innerHTML = recentEvents.length === 0
         ? '<div class="notif-item"><span>Welcome to your digital closet! Start adding items.</span><small>System</small></div>'
         : recentEvents.map(e => `<div class="notif-item">${e.html}</div>`).join('');
 }
+
 
 // ==========================================
 // 2. OUTFIT PLANNER FUNCTIONS
@@ -475,11 +582,12 @@ async function renderPlannerWardrobe() {
         }
 
         grid.innerHTML = '';
-        items.forEach(item => {
+        items.forEach((item, index) => {
             const card = document.createElement('div');
             card.className = 'clothing-card';
             card.style.cursor = 'pointer';
-            
+            card.style.animationDelay = `${Math.min(index * 0.04, 0.4)}s`;
+
             card.onclick = (e) => {
                 if (e.target.type !== 'checkbox') {
                     const checkbox = card.querySelector('.item-select');
@@ -534,10 +642,11 @@ async function renderSavedOutfits() {
             return;
         }
 
-        outfits.forEach((outfit) => {
+        outfits.forEach((outfit, index) => {
             const outfitElement = document.createElement('div');
             outfitElement.className = 'outfit-card';
-            
+            outfitElement.style.animationDelay = `${Math.min(index * 0.05, 0.4)}s`;
+
             const itemPreviews = (outfit.items || []).map(item => {
                 if (item.image_path) return `<img src="${item.image_path}" class="outfit-item-img" title="${item.name}">`;
                 return `<div class="outfit-item-img" style="display: flex; align-items: center; justify-content: center; background: var(--interior-pale);" title="${item.name}">
@@ -547,7 +656,7 @@ async function renderSavedOutfits() {
 
             outfitElement.innerHTML = `
                 <div class="outfit-banner ${['warm', 'cool', 'mono'][Math.floor(Math.random()*3)]}">
-                    <button class="favorite-btn" onclick="toggleFavorite(${outfit.id})" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer;">
+                    <button class="favorite-btn${outfit.is_favorite ? ' favorited' : ''}" onclick="toggleFavorite(${outfit.id}, this)" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer;">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="${outfit.is_favorite ? '#e74c3c' : 'none'}" stroke="${outfit.is_favorite ? '#e74c3c' : '#ffffff'}" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                         </svg>
@@ -594,10 +703,10 @@ window.markOutfitWorn = async function(outfitId) {
 window.createOutfit = async function() {
     const outfitNameInput = document.getElementById('outfit-name-input');
     const outfitName = outfitNameInput.value.trim();
-    if (!outfitName) return alert("Please enter an outfit name!");
+    if (!outfitName) return showToast("Please enter an outfit name!", "error");
 
     const checkedItems = document.querySelectorAll('.item-select:checked');
-    if (checkedItems.length === 0) return alert("Please select at least one item!");
+    if (checkedItems.length === 0) return showToast("Please select at least one item!", "error");
 
     const itemIds = Array.from(checkedItems).map(item => parseInt(item.value, 10));
 
@@ -615,9 +724,13 @@ window.createOutfit = async function() {
             outfitNameInput.value = '';
             checkedItems.forEach(item => item.checked = false);
             renderSavedOutfits();
+            showToast('Outfit saved!', 'success');
+        } else {
+            showToast('Could not save this outfit. Please try again.', 'error');
         }
     } catch (err) {
         console.error("Error saving outfit:", err);
+        showToast('Could not save this outfit. Please try again.', 'error');
     }
 };
 
@@ -629,9 +742,15 @@ window.removeOutfit = async function(outfitId) {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
-        if (response.ok) renderSavedOutfits(); 
+        if (response.ok) {
+            renderSavedOutfits();
+            showToast('Outfit deleted.', 'success');
+        } else {
+            showToast('Could not delete this outfit.', 'error');
+        }
     } catch (err) {
         console.error("Error deleting outfit:", err);
+        showToast('Could not delete this outfit.', 'error');
     }
 };
 
@@ -639,7 +758,11 @@ window.removeOutfit = async function(outfitId) {
 // 3. FAVORITES FUNCTIONS
 // ==========================================
 
-window.toggleFavorite = async function(outfitId) {
+window.toggleFavorite = async function(outfitId, btnEl) {
+    if (btnEl) {
+        btnEl.classList.add('fav-pop');
+        setTimeout(() => btnEl.classList.remove('fav-pop'), 350);
+    }
     try {
         const response = await fetch(`/api/outfits/${outfitId}/favorite`, {
             method: 'POST',
@@ -681,10 +804,11 @@ async function renderFavorites() {
             return;
         }
 
-        favoriteOutfits.forEach((outfit) => {
+        favoriteOutfits.forEach((outfit, index) => {
             const outfitElement = document.createElement('div');
             outfitElement.className = 'outfit-card';
-            
+            outfitElement.style.animationDelay = `${Math.min(index * 0.05, 0.4)}s`;
+
             const itemPreviews = (outfit.items || []).map(item => {
                 if (item.image_path) return `<img src="${item.image_path}" class="outfit-item-img" title="${item.name}">`;
                 return `<div class="outfit-item-img" style="display: flex; align-items: center; justify-content: center; background: var(--interior-pale);" title="${item.name}">
@@ -694,7 +818,7 @@ async function renderFavorites() {
 
             outfitElement.innerHTML = `
                 <div class="outfit-banner ${['warm', 'cool', 'mono'][Math.floor(Math.random()*3)]}">
-                    <button class="favorite-btn" onclick="toggleFavorite(${outfit.id})" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer;">
+                    <button class="favorite-btn favorited" onclick="toggleFavorite(${outfit.id}, this)" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer;">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="#e74c3c" stroke="#e74c3c" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                         </svg>
@@ -731,7 +855,13 @@ async function loadSavedUserSettings() {
             localStorage.setItem('theme', settings.theme);
         }
         if (settings.avatar) {
-            localStorage.setItem('profileAvatar', settings.avatar);
+            try {
+                localStorage.setItem('profileAvatar', settings.avatar);
+            } catch (storageError) {
+                // Too large for localStorage quota - not fatal, just skip the
+                // local cache so username/notifications below still sync.
+                console.warn("Couldn't cache avatar locally (likely too large for localStorage):", storageError);
+            }
         }
         if (settings.username) {
             const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -749,7 +879,10 @@ async function loadSavedUserSettings() {
 }
 
 function applyGlobalSettings() {
-    const currentUser = JSON.parse(localStorage.getItem("user"));
+    const currentUser = JSON.parse(localStorage.getItem("user") || '{}');
+    // If no user is logged in (e.g. on login/register pages), skip silently
+    if (!currentUser || (!currentUser.username && !currentUser.email)) return;
+
     const savedName =
     currentUser.username ||
     localStorage.getItem("username") ||
@@ -763,8 +896,8 @@ function applyGlobalSettings() {
     const savedTheme = localStorage.getItem('theme') || 'light';
 
     // Apply Global Dark/Light Theme Settings Configuration
-    if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
+    if (savedTheme && savedTheme !== 'light') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
     } else {
         document.documentElement.removeAttribute('data-theme');
     }
@@ -874,11 +1007,21 @@ async function initSettingsPage() {
 
     let loadedAvatarBase64 = localStorage.getItem('profileAvatar') || '';
 
+    // localStorage has a small total quota (~5-10MB per site). Large GIFs/images
+    // as base64 can blow past it on their own, so warn before we even try.
+    const MAX_AVATAR_BYTES = 1.5 * 1024 * 1024; // 1.5MB raw file size
+
     // Monitor custom file upload
     if (profileUpload) {
         profileUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                if (file.size > MAX_AVATAR_BYTES) {
+                    showToast(`That image is ${(file.size / 1024 / 1024).toFixed(1)}MB — please use one under 1.5MB (resize or trim your GIF) so it can be saved.`, 'error');
+                    profileUpload.value = '';
+                    if (fileChosenLabel) fileChosenLabel.textContent = 'No file chosen';
+                    return;
+                }
                 if (fileChosenLabel) fileChosenLabel.textContent = file.name;
                 const reader = new FileReader();
                 reader.onload = function(event) {
@@ -927,7 +1070,7 @@ async function initSettingsPage() {
             }
 
             if (!saveSucceeded) {
-                alert("Couldn't save your settings to the server. Please check your connection and try again.");
+                showToast("Couldn't save your settings to the server. Please check your connection and try again.", "error");
                 return;
             }
 
@@ -948,11 +1091,18 @@ async function initSettingsPage() {
             localStorage.setItem("pushNotif", payload.notifications.push);
 
             if (loadedAvatarBase64) {
-            localStorage.setItem("profileAvatar", loadedAvatarBase64);
+                try {
+                    localStorage.setItem("profileAvatar", loadedAvatarBase64);
+                } catch (storageError) {
+                    // Quota exceeded (e.g. huge GIF/image as base64). The avatar is
+                    // already saved server-side above, so this is just a local cache
+                    // miss — don't let it stop the rest of the save flow.
+                    console.warn("Couldn't cache avatar locally (likely too large for localStorage):", storageError);
+                }
             }
 
             applyGlobalSettings();
-            alert('User preferences saved successfully to server!');
+            showToast('User preferences saved!', 'success');
         });
     }
 
@@ -968,7 +1118,7 @@ async function initSettingsPage() {
             // Only attempt a password change if they actually typed a new one
             if (passwordInput && passwordInput.value) {
                 if (!currentPasswordInput || !currentPasswordInput.value) {
-                    alert('Enter your current password to set a new one.');
+                    showToast('Enter your current password to set a new one.', 'error');
                     return;
                 }
 
@@ -988,7 +1138,7 @@ async function initSettingsPage() {
                     const result = await response.json().catch(() => ({}));
 
                     if (!response.ok) {
-                        alert(result.error || 'Could not change your password. Please try again.');
+                        showToast(result.error || 'Could not change your password. Please try again.', 'error');
                         if (submitBtn) submitBtn.disabled = false;
                         return;
                     }
@@ -999,7 +1149,7 @@ async function initSettingsPage() {
                     passwordInput.value = '';
                 } catch (err) {
                     console.error('Error changing password:', err);
-                    alert('Network error changing your password. Please try again.');
+                    showToast('Network error changing your password. Please try again.', 'error');
                     if (submitBtn) submitBtn.disabled = false;
                     return;
                 }
@@ -1009,7 +1159,7 @@ async function initSettingsPage() {
             if (emailInput) {
                 localStorage.setItem('email', emailInput.value.trim());
             }
-            alert('Account security data updated successfully!');
+            showToast('Account security data updated!', 'success');
         });
     }
 }
@@ -1358,6 +1508,13 @@ async function renderWardrobe(filterCategory = 'All') {
 
     grid.innerHTML = ''; 
 
+    // Highlight whichever filter button matches the current category.
+    // (Previously nothing ever toggled this class, so the "active" filter
+    // pill styling silently never appeared.)
+    document.querySelectorAll('.filter-controls button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim() === filterCategory);
+    });
+
     // Filter items
     const filtered = filterCategory === 'All' 
         ? allWardrobeItems 
@@ -1371,6 +1528,7 @@ async function renderWardrobe(filterCategory = 'All') {
         const card = document.createElement('div');
         card.className = 'clothing-card';
         card.style.cursor = 'pointer';
+        card.style.animationDelay = `${Math.min(index * 0.04, 0.4)}s`;
         // Use the originalIndex to open the correct item details
         card.setAttribute('onclick', `openItemDetails(${originalIndex})`);
         
@@ -1447,7 +1605,7 @@ window.saveNewItem = async function() {
     const name = nameInput ? nameInput.value.trim() : '';
 
     if (!name) {
-        alert('Please enter an item name.');
+        showToast('Please enter an item name.', 'error');
         return;
     }
 
@@ -1480,15 +1638,15 @@ window.saveNewItem = async function() {
         });
 
         if (response.ok) {
-            alert("Item Added!");
-            location.reload();
+            showToast('Item added to your wardrobe!', 'success');
+            setTimeout(() => location.reload(), 900);
         } else {
             const err = await response.json().catch(() => ({}));
-            alert(`Failed to add item: ${err.error || response.statusText}`);
+            showToast(`Failed to add item: ${err.error || response.statusText}`, 'error');
         }
     } catch (err) {
         console.error("Error adding item:", err);
-        alert("Failed to add item. Please check your connection and try again.");
+        showToast('Failed to add item. Please check your connection and try again.', 'error');
     }
 };
 
@@ -1502,13 +1660,14 @@ window.deleteItem = async function(itemId) {
         });
 
         if (response.ok) {
-            alert("Item removed!");
-            location.reload(); // Refresh to see the update
+            showToast('Item removed.', 'success');
+            setTimeout(() => location.reload(), 900); // Refresh to see the update
         } else {
-            alert("Failed to delete item.");
+            showToast('Failed to delete item.', 'error');
         }
     } catch (err) {
         console.error("Error:", err);
+        showToast('Failed to delete item.', 'error');
     }
 };
 
@@ -1540,10 +1699,13 @@ window.openItemDetails = function(index) {
     document.getElementById('detail-modal').classList.add('active');
 };
 
-// 2. Function to close the modal
-document.getElementById('close-detail-modal').addEventListener('click', () => {
-    document.getElementById('detail-modal').classList.remove('active');
-});
+// 2. Function to close the modal (only exists on wardrobe page)
+const _closeDetailModal = document.getElementById('close-detail-modal');
+if (_closeDetailModal) {
+    _closeDetailModal.addEventListener('click', () => {
+        document.getElementById('detail-modal').classList.remove('active');
+    });
+}
 
 /**Automatically highlights the sidebar link for the current page**/
 function highlightActiveLink() {
@@ -1565,3 +1727,163 @@ function highlightActiveLink() {
 window.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("loaded");
 });
+
+// ==========================================
+// DASHBOARD UI HANDLERS (modals, logout, bell)
+// ==========================================
+function initDashboardUIHandlers() {
+    // ── Filter modal ──
+    const openFilterBtn = document.getElementById('open-filter-modal');
+    const filterModal   = document.getElementById('filter-modal');
+    const applyFilters  = document.getElementById('apply-filters-btn');
+
+    if (openFilterBtn && filterModal) {
+        openFilterBtn.addEventListener('click', () => {
+            filterModal.classList.add('active');
+        });
+        filterModal.addEventListener('click', (e) => {
+            if (e.target === filterModal) filterModal.classList.remove('active');
+        });
+    }
+    if (applyFilters) {
+        applyFilters.addEventListener('click', () => {
+            if (typeof applyDashboardFilters === 'function') applyDashboardFilters();
+        });
+    }
+
+    // ── Notification modal ──
+    const openNotifBtn  = document.getElementById('open-notif-modal');
+    const notifModal    = document.getElementById('notif-modal');
+    const notifBell     = openNotifBtn && openNotifBtn.querySelector('svg');
+
+    if (openNotifBtn && notifModal) {
+        openNotifBtn.addEventListener('click', () => {
+            notifModal.classList.add('active');
+            // Bell shake animation
+            if (notifBell) {
+                notifBell.classList.remove('bell-shake');
+                void notifBell.offsetWidth; // reflow to retrigger
+                notifBell.classList.add('bell-shake');
+                notifBell.addEventListener('animationend', () => notifBell.classList.remove('bell-shake'), { once: true });
+            }
+            if (typeof generateNotifications === 'function') generateNotifications();
+        });
+        notifModal.addEventListener('click', (e) => {
+            if (e.target === notifModal) notifModal.classList.remove('active');
+        });
+    }
+
+    // ── Add item modal ──
+    const addItemModal  = document.getElementById('add-item-modal');
+    const closeModal    = document.getElementById('close-modal');
+    if (closeModal && addItemModal) {
+        closeModal.addEventListener('click', () => addItemModal.classList.remove('active'));
+        addItemModal.addEventListener('click', (e) => {
+            if (e.target === addItemModal) addItemModal.classList.remove('active');
+        });
+    }
+
+    // ── Logout button ──
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (typeof logoutUser === 'function') logoutUser();
+            else { localStorage.clear(); window.location.href = '/'; }
+        });
+    }
+}
+
+// ==========================================
+// ANIMATED COUNTER (stat cards)
+// ==========================================
+/**
+ * Animates a number element from 0 to `target` over `duration`ms.
+ * Handles both plain numbers (e.g. 42) and percent strings (e.g. '67%').
+ */
+function animateCountUp(el, target, duration = 900) {
+    if (!el) return;
+    const isPercent = typeof target === 'string' && target.endsWith('%');
+    const end = parseInt(target, 10) || 0;
+    if (end === 0) return; // skip zero — leave as-is
+
+    const startTime = performance.now();
+    function tick(now) {
+        const elapsed  = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(eased * end);
+        el.textContent = isPercent ? `${current}%` : current;
+        if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+window.animateCountUp = animateCountUp;
+
+// ==========================================
+// SCROLL-REVEAL (dashboard panels)
+// ==========================================
+function initScrollReveal() {
+    const panels = document.querySelectorAll('.panel, .stats-row, .two-col');
+    if (!panels.length || typeof IntersectionObserver === 'undefined') return;
+
+    panels.forEach(el => el.classList.add('panel-hidden'));
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.remove('panel-hidden');
+                entry.target.classList.add('panel-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08 });
+
+    panels.forEach(el => observer.observe(el));
+}
+
+// ==========================================
+// SYSTEM ANNOUNCEMENT (Banner across pages)
+// ==========================================
+async function checkSystemAnnouncement() {
+    const mainEl = document.querySelector('main.main');
+    if (!mainEl) return;
+
+    // Check if dismissed in this session
+    if (sessionStorage.getItem('dismissedAnnouncement')) return;
+
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await fetch('/api/auth/announcement', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        if (data.ok && data.announcement) {
+            // Render announcement banner
+            const banner = document.createElement('div');
+            banner.className = 'system-announcement-banner';
+            banner.innerHTML = `
+                <div class="banner-content">
+                  <span class="banner-badge">System Announcement</span>
+                  <span class="banner-text">${data.announcement.message}</span>
+                  <button type="button" class="banner-close" aria-label="Dismiss">&times;</button>
+                </div>
+            `;
+            // Insert at the top of main content
+            mainEl.insertBefore(banner, mainEl.firstChild);
+            
+            // Add dismiss listener
+            banner.querySelector('.banner-close').addEventListener('click', () => {
+                banner.classList.add('fade-out');
+                banner.addEventListener('transitionend', () => banner.remove(), { once: true });
+                sessionStorage.setItem('dismissedAnnouncement', 'true');
+            });
+        }
+    } catch (err) {
+        console.error('Error fetching system announcement:', err);
+    }
+}
+window.checkSystemAnnouncement = checkSystemAnnouncement;

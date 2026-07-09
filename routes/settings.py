@@ -50,6 +50,10 @@ def api_save_settings():
             "username": form.get("username", "").strip(),
             "theme": form.get("theme", "light"),
             "avatar": form.get("avatar"),
+            "banner": form.get("banner"),
+            "border_color": form.get("border_color"),
+            "border_width": form.get("border_width"),
+            "border_style": form.get("border_style"),
             "notifications": {
                 "email": bool(form.get("emailNotif")),
                 "push": bool(form.get("pushNotif"))
@@ -61,7 +65,14 @@ def api_save_settings():
         return jsonify({"ok": False, "error": "Username too long"}), 400
 
     theme = payload.get("theme", "light")
-    if theme not in ("light", "dark"):
+    allowed_themes = (
+        "light", "dark",
+        "light-blue", "dark-blue",
+        "light-purple", "dark-purple",
+        "light-crimson", "dark-crimson",
+        "light-amber", "dark-amber"
+    )
+    if theme not in allowed_themes:
         theme = "light"
 
     notifications = payload.get("notifications", {}) or {}
@@ -90,6 +101,15 @@ def api_save_settings():
     # an empty/missing value here just means "nothing changed", not "clear it"
     if avatar:
         settings.avatar = avatar
+    
+    if "banner" in payload:
+        settings.banner = payload["banner"]
+    if "border_color" in payload:
+        settings.border_color = payload["border_color"]
+    if "border_width" in payload:
+        settings.border_width = payload["border_width"]
+    if "border_style" in payload:
+        settings.border_style = payload["border_style"]
 
     db.session.commit()
 
