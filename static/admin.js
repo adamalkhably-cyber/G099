@@ -1752,3 +1752,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+/* Sidebar toggle for mobile */
+document.addEventListener('DOMContentLoaded', () => {
+  const layout = document.getElementById('adminLayout');
+  const hamburger = document.getElementById('adminHamburgerBtn');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (hamburger) {
+    hamburger.style.display = 'block';
+    hamburger.addEventListener('click', () => {
+      const isOpen = layout.getAttribute('data-sidebar-open') === 'true';
+      layout.setAttribute('data-sidebar-open', (!isOpen).toString());
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      layout.setAttribute('data-sidebar-open', 'false');
+    });
+  }
+});

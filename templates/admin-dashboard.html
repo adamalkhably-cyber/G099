@@ -63,7 +63,7 @@
 <body>
 
 <!-- ADMIN DASHBOARD -->
-<div class="layout visible" id="adminLayout">
+<div class="layout visible" id="adminLayout" data-sidebar-open="false">
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">🧵</div>
@@ -111,6 +111,9 @@
 
   <main class="main">
     <header class="topbar">
+        <button id="adminHamburgerBtn" class="btn-icon" title="Menu" style="display:none;">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
       <div class="topbar-title" id="topbarTitle">Overview</div>
       <div class="topbar-right">
         <div class="search-bar">
@@ -123,6 +126,7 @@
         </button>
       </div>
     </header>
+    <div id="sidebarOverlay" class="sidebar-overlay" style="display:none;"></div>
 
     <div class="content">
 
